@@ -73,10 +73,23 @@ void loadBalanceTest(int K, int M, int W, int N, int S, int failedNodeId) {
 
 
 int main() {
-    // const int k = 6, m = 3, w = 8, failedBlock = 4;
-    // SimilarityGreedy sg = SimilarityGreedy(k,m,w);
-    // vector<vector<int>> opt = sg.generateOptDecodeBitMatrix(failedBlock);
-    // printMatrix(opt, w);
-    reducePacketsTest(6,3,8,0);
+    const int K = 48, M = 3, W = 8, failedBlock = 0;
+    SimilarityGreedy sg = SimilarityGreedy(K, M, W);
+
+    auto start1 = std::chrono::high_resolution_clock::now();
+    // auto decodeBitMatrix1 = sg.generateOptDecodeBitMatrix(failedBlock, 300, 0);
+    auto decodeBitMatrix1 = sg.generateOptDecodeBitMatrix(failedBlock, 0);
+    
+    auto end1 = std::chrono::high_resolution_clock::now();
+    auto duration1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1);
+    auto ranks1 = SimilarityGreedy::computeBinaryMatrixRank(decodeBitMatrix1, W);
+    auto time1 = duration1.count() / 1e6;
+    auto rankSum1 = accumulate(ranks1.begin(), ranks1.end(), 0);
+    cout << "***********K,M,W,FailedBlock(Only One)***********" << K << "," << M << "," << W << "," << failedBlock << endl; 
+    // cout << decodeBitMatrix << endl;
+    cout << "ranks: " << ranks1 << endl;
+    cout << "origin packets: " << K * W << endl;
+    cout << "need packets: " << rankSum1 << endl;
+    std::cout << "duration: " << time1 << " ms\n";
     return 0;
 }

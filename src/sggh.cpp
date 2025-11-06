@@ -6,6 +6,7 @@ vector<vector<int>> SimilarityGreedy::generateOptDecodeBitMatrix(
     int failedBlock, int mode, unsigned int seed) {
     auto bigMatrix = generateAllDecodingMatrix(failedBlock);
     auto bitMatrix = matrix2Bitmatrix(bigMatrix, W);
+    cout << "bitMatrix.size(): " << bitMatrix.size() << endl;
     vector<int> firstSelectSet;
     if(mode == -1) {
         firstSelectSet = {0};
@@ -50,6 +51,10 @@ vector<vector<vector<int>>> SimilarityGreedy::generateAllOptDecodeBitMatrix(int 
         } else if(ranks == minRank) {
             bestMatrices.push_back(std::move(optMatrix));
         }
+        if(ranks <= minRank) {
+            cout << "----->" << ranks;
+        }
+        cout << endl;
     }
     return bestMatrices;
 }
@@ -209,7 +214,7 @@ vector<vector<int>> SimilarityGreedy::generateOptDecodeBitMatrixWithFirstSelect(
     vector<set<int>> closures(N, set<int>());
     vector<bool> isRecovered(W, false);
     vector<vector<int>> optDecodeMatrix(W, vector<int>(N, 0));
-    
+    // cout << firstSelect << " ";
     int leftRecoveredConut = W - 1;
     int firstGroup = firstSelect % W;
     isRecovered[firstGroup] = true;
@@ -234,6 +239,7 @@ vector<vector<int>> SimilarityGreedy::generateOptDecodeBitMatrixWithFirstSelect(
                 }
             }
         }
+        // cout << selectIdx << " ";
         int group = selectIdx % W;
         isRecovered[group] = true;
         leftRecoveredConut--;
@@ -242,5 +248,6 @@ vector<vector<int>> SimilarityGreedy::generateOptDecodeBitMatrixWithFirstSelect(
             optDecodeMatrix[group][i] = intMatrix[selectIdx][i];
         }
     }
+    // cout << endl;
     return ECProject::intMatrixToBitMatrix(optDecodeMatrix, W);
 }
