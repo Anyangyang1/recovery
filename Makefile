@@ -20,7 +20,7 @@ JERASURE_OBJS := $(JERASURE_SRC:Jerasure-1.2A/%.c=$(BUILD_DIR)/%.o)
 CPP_OBJS      := $(CPP_SRC:$(SRC_DIR)/%.cpp=$(BUILD_DIR)/%.o)
 
 # 最终可执行文件
-TARGET := $(BUILD_DIR)/erasure_demo
+TARGET := $(BUILD_DIR)/main
 
 .PHONY: all clean
 

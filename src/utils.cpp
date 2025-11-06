@@ -115,8 +115,8 @@ vector<int> ECProject::generateUniqueRandom(int N, int K, unsigned int seed) {
     return nums;
 }
 
-template<class T>
-void ECProject::writeToCsv(string outputFileName, vector<vector<T>> data) {
+
+void ECProject::writeToCsv(string outputFileName, vector<vector<double>> data) {
     std::ofstream file(outputFileName);
     if (!file.is_open()) {
         std::cerr << "cannot create file!\n";
@@ -204,4 +204,16 @@ vector<vector<int>> ECProject::cauchy_original_coding_matrix_vector(int K, int M
 
     free(cauchy_mat); // ×¢Òâ£ºcauchy_* ·µ»Ø malloc ÄÚ´æ
     return codingMatrix;
+}
+
+void ECProject::printMatrix(const vector<vector<int>>& matrix, int W) {
+    for(size_t i = 0; i < matrix.size(); i++) {
+        for(size_t j = 0; j < matrix[0].size(); j++) {
+            cout << matrix[i][j] << " ";
+            if((j + 1) % W == 0) {
+                cout << " ";
+            }
+        }
+        cout << endl;
+    }
 }

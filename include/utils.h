@@ -49,8 +49,7 @@ namespace ECProject {
     vector<int> generateUniqueRandom(
         int N, int K, unsigned int seed = std::random_device{}());
 
-    template<class T>
-    void writeToCsv(string outputFileName, vector<vector<T>> data);
+    void writeToCsv(string outputFileName, vector<vector<double>> data);
 
     template<class T>
     int getSum(const vector<T>& nums) {
@@ -64,6 +63,8 @@ namespace ECProject {
     vector<int> generateAllRangeN(int N);
 
     vector<vector<int>> cauchy_original_coding_matrix_vector(int K, int M, int W);
+
+    void printMatrix(const vector<vector<int>>& matrix, int W);
 
 
 } // namespace name

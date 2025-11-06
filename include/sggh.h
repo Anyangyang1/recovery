@@ -22,6 +22,7 @@ public:
         int mode = -1, unsigned int seed = std::random_device{}());
 
     vector<vector<vector<vector<int>>>> generateAllOptDecodeBitMatrixWithAllMode();
+    static vector<int> computeBinaryMatrixRank(vector<vector<int>>& bitMmatrix, int W);
 
 private:
     vector<vector<int>> generateAllDecodingMatrix(int failedBlock);
@@ -30,7 +31,7 @@ private:
     int computeSimilarity(const vector<std::set<int>>& closures, const vector<int>& candidate);
     vector<vector<int>> generateOptDecodeBitMatrixWithFirstSelect(
         const vector<vector<int>>& bitMatrix, int firstSelect);
-    vector<int> computeBinaryMatrixRank(vector<vector<int>>& bitMmatrix, int W);
+    
     
 
 private:
