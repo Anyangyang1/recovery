@@ -7,75 +7,178 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)  # 禁用 GNU 扩展，更标准
 set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
-
 # ? 关键：生成 compile_commands.json（解决 VSCode 头文件跳转问题）
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 # 查找基础依赖
 find_package(Threads REQUIRED)
 
-# asio
-# ylt
 
 # set(ASIO_ROOT ${CMAKE_SOURCE_DIR}/asio-1.36.0)
 set(YLT_ROOT  ${CMAKE_SOURCE_DIR}/yalantinglibs)
+set(JERASURE_ROOT ${CMAKE_SOURCE_DIR}/Jerasure-1.2A)
 
-# # 检查路径是否存在
-# if(NOT EXISTS ${ASIO_ROOT}/include/asio.hpp)
-#     message(FATAL_ERROR "asio not found at ${ASIO_ROOT}/include/asio.hpp")
-# endif()
-# if(NOT EXISTS ${YLT_ROOT}/include/ylt/coro_rpc/coro_rpc_server.hpp)
-#     message(FATAL_ERROR "ylt not found at ${YLT_ROOT}/include/ylt/coro_rpc/...")
-# endif()
-
+# ====== 全局编译选项（抑制第三方警告）======
+include_directories(SYSTEM ${YLT_ROOT}/include)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU" OR CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+    add_compile_options(
+        -Wno-unused-parameter
+        -Wno-implicit-fallthrough
+        -Wno-unused-but-set-variable 
+        # 可选：再加 -Wno-shadow 等常见第三方警告
+    )
+endif()
 
 
 # ====== Jerasure 静态库（C）======
 add_library(jerasure STATIC
-    Jerasure-1.2A/jerasure.c
-    Jerasure-1.2A/cauchy.c
-    Jerasure-1.2A/galois.c
-    Jerasure-1.2A/reed_sol.c
+    ${JERASURE_ROOT}/jerasure.c
+    ${JERASURE_ROOT}/cauchy.c
+    ${JERASURE_ROOT}/galois.c
+    ${JERASURE_ROOT}/reed_sol.c
 )
 
 target_include_directories(jerasure PUBLIC
-    ${CMAKE_SOURCE_DIR}/Jerasure-1.2A
+    ${JERASURE_ROOT}
     ${CMAKE_SOURCE_DIR}/include  # 让 jerasure 也能 include "utils.h" 等
 )
 
+# 关闭jerasure的警告
 target_compile_options(jerasure PRIVATE
-    -Wall -Wextra -O2
+    $<$<C_COMPILER_ID:GNU>:-Wno-maybe-uninitialized -Wno-unused-variable>
+    $<$<C_COMPILER_ID:Clang>:-Wno-uninitialized -Wno-unused-variable>
 )
 
-# ====== 主程序（C++）======
-file(GLOB MAIN_SOURCES "src/*.cpp")  # 自动扫描 src/*.cpp
 
-add_executable(main ${MAIN_SOURCES})
-
-# ? 头文件路径：实现“零路径 include”
-target_include_directories(main PRIVATE
-    # 你的本地头文件（实现 #include "sggh.h"）
-    ${CMAKE_SOURCE_DIR}/include
-    
-    # asio
-    # ${ASIO_ROOT}/include
-    
-    # ylt 及其依赖（async_simple, struct_pack）
-    ${YLT_ROOT}/include
-    ${YLT_ROOT}/include/ylt/thirdparty
-    # ${YLT_ROOT}/struct_pack/include
+# ====== 定义公共库（如 utils）======
+# ====== 公共库：algorithm（含多个 cpp）======
+file(GLOB ALGORITHM_SOURCES
+    "src/algorithm/*.cpp"
 )
 
-# 链接依赖
-target_link_libraries(main PRIVATE
+# 若需递归子目录（如 src/algorithm/io/*.cpp）：
+# file(GLOB_RECURSE ALGORITHM_SOURCES "src/algorithm/*.cpp")
+
+add_library(algorithm STATIC ${ALGORITHM_SOURCES})
+
+# 公共头文件路径：所有模块都能 #include "algorithm/utils.h"
+target_include_directories(algorithm PUBLIC
+    ${CMAKE_SOURCE_DIR}/include/algorithm
+    ${CMAKE_SOURCE_DIR}/Jerasure-1.2A
+)
+
+# 公共库自身依赖
+target_link_libraries(algorithm PRIVATE
     jerasure
     Threads::Threads
-    m  # libm (math)
+    m
 )
 
-# ====== 编译选项（与 Makefile 一致）======
-target_compile_options(main PRIVATE
-    -O2 -Wall -Wextra
-    $<$<COMPILE_LANGUAGE:CXX>:-pthread>  # 仅 C++ 加 -pthread
-    $<$<COMPILE_LANGUAGE:CXX>:-fcoroutines>  # ← 关键！启用协程
+# 可选：关闭 algorithm 自身的警告（若需要）
+# target_compile_options(algorithm PRIVATE
+#     -Wall -Wextra
+# )
+
+# ====== 公共库：ec（含多个 cpp）======
+file(GLOB EC_SOURCES
+    "src/ec/*.cpp"
 )
+
+# 若需递归子目录（如 src/ec/io/*.cpp）：
+# file(GLOB_RECURSE EC_SOURCES "src/ec/*.cpp")
+
+add_library(ec STATIC ${EC_SOURCES})
+
+# 公共头文件路径：所有模块都能 #include "ec/utils.h"
+target_include_directories(ec PUBLIC
+    ${CMAKE_SOURCE_DIR}/include/ec
+    ${CMAKE_SOURCE_DIR}/include/algorithm
+    ${CMAKE_SOURCE_DIR}/Jerasure-1.2A
+)
+
+# 公共库自身依赖
+target_link_libraries(ec PRIVATE
+    algorithm
+    Threads::Threads
+    m
+)
+
+
+# ====== 为每个模块创建可执行文件 ======
+
+# —— Client 模块 ——
+file(GLOB CLIENT_SOURCES "src/client/*.cpp")
+add_executable(client ${CLIENT_SOURCES})
+
+target_include_directories(client PRIVATE
+    ${CMAKE_SOURCE_DIR}/include/client
+    ${CMAKE_SOURCE_DIR}/include/ec
+    ${YLT_ROOT}/include
+    ${YLT_ROOT}/include/ylt/thirdparty
+)
+
+target_link_libraries(client PRIVATE jerasure Threads::Threads m ec)
+
+# —— Coordinator 模块 ——
+file(GLOB COORDINATOR_SOURCES "src/coordinator/*.cpp")
+add_executable(coordinator ${COORDINATOR_SOURCES})
+
+target_include_directories(coordinator PRIVATE
+    ${CMAKE_SOURCE_DIR}/include/coordinator
+    ${CMAKE_SOURCE_DIR}/include/ec
+    ${CMAKE_SOURCE_DIR}/include/algorithm
+    ${YLT_ROOT}/include
+    ${YLT_ROOT}/include/ylt/thirdparty
+)
+
+target_link_libraries(coordinator PRIVATE jerasure Threads::Threads m ec)
+
+# —— Datanode 模块 ——
+file(GLOB DATANODE_SOURCES "src/datanode/*.cpp")
+add_executable(datanode ${DATANODE_SOURCES})
+
+target_include_directories(datanode PRIVATE
+    ${CMAKE_SOURCE_DIR}/include/datanode
+    ${CMAKE_SOURCE_DIR}/include/ec
+    ${YLT_ROOT}/include
+    ${YLT_ROOT}/include/ylt/thirdparty
+)
+
+target_link_libraries(datanode PRIVATE jerasure Threads::Threads m ec)
+
+# —— Proxy 模块 ——
+file(GLOB PROXY_SOURCES "src/proxy/*.cpp")
+add_executable(proxy ${PROXY_SOURCES})
+
+target_include_directories(proxy PRIVATE
+    ${CMAKE_SOURCE_DIR}/include/proxy
+    ${CMAKE_SOURCE_DIR}/include/ec
+    ${YLT_ROOT}/include
+    ${YLT_ROOT}/include/ylt/thirdparty
+)
+
+target_link_libraries(proxy PRIVATE jerasure Threads::Threads m ec)
+
+
+# —— test 模块 ——
+file(GLOB TEST_SOURCES "src/test/*.cpp")
+add_executable(test ${TEST_SOURCES})
+
+target_include_directories(test PRIVATE
+    ${CMAKE_SOURCE_DIR}/include/ec
+    ${CMAKE_SOURCE_DIR}/include/algorithm
+    ${YLT_ROOT}/include
+    ${YLT_ROOT}/include/ylt/thirdparty
+)
+
+target_link_libraries(test PRIVATE jerasure Threads::Threads m ec)
+
+
+# ====== 编译选项（协程等）======
+foreach(TARGET client coordinator datanode proxy test)
+    target_compile_options(${TARGET} PRIVATE
+        -O2 -Wall -Wextra
+        $<$<COMPILE_LANGUAGE:CXX>:-pthread>
+        $<$<COMPILE_LANGUAGE:CXX>:-fcoroutines>
+    )
+endforeach()

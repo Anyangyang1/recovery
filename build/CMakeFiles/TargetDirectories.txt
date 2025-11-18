@@ -1,4 +1,10 @@
 /home/anyangyang/study/recovery/build/CMakeFiles/edit_cache.dir
-/home/anyangyang/study/recovery/build/CMakeFiles/main.dir
+/home/anyangyang/study/recovery/build/CMakeFiles/test.dir
+/home/anyangyang/study/recovery/build/CMakeFiles/proxy.dir
+/home/anyangyang/study/recovery/build/CMakeFiles/client.dir
+/home/anyangyang/study/recovery/build/CMakeFiles/datanode.dir
+/home/anyangyang/study/recovery/build/CMakeFiles/ec.dir
+/home/anyangyang/study/recovery/build/CMakeFiles/coordinator.dir
+/home/anyangyang/study/recovery/build/CMakeFiles/algorithm.dir
 /home/anyangyang/study/recovery/build/CMakeFiles/rebuild_cache.dir
 /home/anyangyang/study/recovery/build/CMakeFiles/jerasure.dir

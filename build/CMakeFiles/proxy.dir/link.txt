@@ -1,0 +1,1 @@
+/opt/rh/devtoolset-11/root/usr/bin/c++     CMakeFiles/proxy.dir/src/proxy/run_proxy.cpp.o  -o proxy libjerasure.a -lm libec.a libalgorithm.a libjerasure.a -pthread -lm 

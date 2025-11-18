@@ -65,39 +65,272 @@ CMAKE_SOURCE_DIR = /home/anyangyang/study/recovery
 CMAKE_BINARY_DIR = /home/anyangyang/study/recovery/build
 
 #=============================================================================
-# Target rules for target CMakeFiles/main.dir
+# Target rules for target CMakeFiles/test.dir
 
 # All Build rule for target.
-CMakeFiles/main.dir/all: CMakeFiles/jerasure.dir/all
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/depend
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=6,7,8,9,10 "Built target main"
-.PHONY : CMakeFiles/main.dir/all
+CMakeFiles/test.dir/all: CMakeFiles/ec.dir/all
+CMakeFiles/test.dir/all: CMakeFiles/algorithm.dir/all
+CMakeFiles/test.dir/all: CMakeFiles/jerasure.dir/all
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/depend
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=20,21 "Built target test"
+.PHONY : CMakeFiles/test.dir/all
 
 # Include target in all.
-all: CMakeFiles/main.dir/all
+all: CMakeFiles/test.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/main.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 10
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/main.dir/all
+CMakeFiles/test.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 13
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/test.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 0
-.PHONY : CMakeFiles/main.dir/rule
+.PHONY : CMakeFiles/test.dir/rule
 
 # Convenience name for target.
-main: CMakeFiles/main.dir/rule
+test: CMakeFiles/test.dir/rule
 
-.PHONY : main
-
-# clean rule for target.
-CMakeFiles/main.dir/clean:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/clean
-.PHONY : CMakeFiles/main.dir/clean
+.PHONY : test
 
 # clean rule for target.
-clean: CMakeFiles/main.dir/clean
+CMakeFiles/test.dir/clean:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/clean
+.PHONY : CMakeFiles/test.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/test.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/proxy.dir
+
+# All Build rule for target.
+CMakeFiles/proxy.dir/all: CMakeFiles/ec.dir/all
+CMakeFiles/proxy.dir/all: CMakeFiles/algorithm.dir/all
+CMakeFiles/proxy.dir/all: CMakeFiles/jerasure.dir/all
+	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/depend
+	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=18,19 "Built target proxy"
+.PHONY : CMakeFiles/proxy.dir/all
+
+# Include target in all.
+all: CMakeFiles/proxy.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/proxy.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 13
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/proxy.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 0
+.PHONY : CMakeFiles/proxy.dir/rule
+
+# Convenience name for target.
+proxy: CMakeFiles/proxy.dir/rule
+
+.PHONY : proxy
+
+# clean rule for target.
+CMakeFiles/proxy.dir/clean:
+	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/clean
+.PHONY : CMakeFiles/proxy.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/proxy.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/client.dir
+
+# All Build rule for target.
+CMakeFiles/client.dir/all: CMakeFiles/ec.dir/all
+CMakeFiles/client.dir/all: CMakeFiles/algorithm.dir/all
+CMakeFiles/client.dir/all: CMakeFiles/jerasure.dir/all
+	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/depend
+	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=5,6 "Built target client"
+.PHONY : CMakeFiles/client.dir/all
+
+# Include target in all.
+all: CMakeFiles/client.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/client.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 13
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/client.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 0
+.PHONY : CMakeFiles/client.dir/rule
+
+# Convenience name for target.
+client: CMakeFiles/client.dir/rule
+
+.PHONY : client
+
+# clean rule for target.
+CMakeFiles/client.dir/clean:
+	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/clean
+.PHONY : CMakeFiles/client.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/client.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/datanode.dir
+
+# All Build rule for target.
+CMakeFiles/datanode.dir/all: CMakeFiles/ec.dir/all
+CMakeFiles/datanode.dir/all: CMakeFiles/algorithm.dir/all
+CMakeFiles/datanode.dir/all: CMakeFiles/jerasure.dir/all
+	$(MAKE) -f CMakeFiles/datanode.dir/build.make CMakeFiles/datanode.dir/depend
+	$(MAKE) -f CMakeFiles/datanode.dir/build.make CMakeFiles/datanode.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=9,10 "Built target datanode"
+.PHONY : CMakeFiles/datanode.dir/all
+
+# Include target in all.
+all: CMakeFiles/datanode.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/datanode.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 13
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/datanode.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 0
+.PHONY : CMakeFiles/datanode.dir/rule
+
+# Convenience name for target.
+datanode: CMakeFiles/datanode.dir/rule
+
+.PHONY : datanode
+
+# clean rule for target.
+CMakeFiles/datanode.dir/clean:
+	$(MAKE) -f CMakeFiles/datanode.dir/build.make CMakeFiles/datanode.dir/clean
+.PHONY : CMakeFiles/datanode.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/datanode.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/ec.dir
+
+# All Build rule for target.
+CMakeFiles/ec.dir/all: CMakeFiles/algorithm.dir/all
+CMakeFiles/ec.dir/all: CMakeFiles/jerasure.dir/all
+	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/depend
+	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=11,12 "Built target ec"
+.PHONY : CMakeFiles/ec.dir/all
+
+# Include target in all.
+all: CMakeFiles/ec.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/ec.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 11
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/ec.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 0
+.PHONY : CMakeFiles/ec.dir/rule
+
+# Convenience name for target.
+ec: CMakeFiles/ec.dir/rule
+
+.PHONY : ec
+
+# clean rule for target.
+CMakeFiles/ec.dir/clean:
+	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/clean
+.PHONY : CMakeFiles/ec.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/ec.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/coordinator.dir
+
+# All Build rule for target.
+CMakeFiles/coordinator.dir/all: CMakeFiles/ec.dir/all
+CMakeFiles/coordinator.dir/all: CMakeFiles/algorithm.dir/all
+CMakeFiles/coordinator.dir/all: CMakeFiles/jerasure.dir/all
+	$(MAKE) -f CMakeFiles/coordinator.dir/build.make CMakeFiles/coordinator.dir/depend
+	$(MAKE) -f CMakeFiles/coordinator.dir/build.make CMakeFiles/coordinator.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=7,8 "Built target coordinator"
+.PHONY : CMakeFiles/coordinator.dir/all
+
+# Include target in all.
+all: CMakeFiles/coordinator.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/coordinator.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 13
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/coordinator.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 0
+.PHONY : CMakeFiles/coordinator.dir/rule
+
+# Convenience name for target.
+coordinator: CMakeFiles/coordinator.dir/rule
+
+.PHONY : coordinator
+
+# clean rule for target.
+CMakeFiles/coordinator.dir/clean:
+	$(MAKE) -f CMakeFiles/coordinator.dir/build.make CMakeFiles/coordinator.dir/clean
+.PHONY : CMakeFiles/coordinator.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/coordinator.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/algorithm.dir
+
+# All Build rule for target.
+CMakeFiles/algorithm.dir/all: CMakeFiles/jerasure.dir/all
+	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/depend
+	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=1,2,3,4 "Built target algorithm"
+.PHONY : CMakeFiles/algorithm.dir/all
+
+# Include target in all.
+all: CMakeFiles/algorithm.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/algorithm.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 9
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/algorithm.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 0
+.PHONY : CMakeFiles/algorithm.dir/rule
+
+# Convenience name for target.
+algorithm: CMakeFiles/algorithm.dir/rule
+
+.PHONY : algorithm
+
+# clean rule for target.
+CMakeFiles/algorithm.dir/clean:
+	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/clean
+.PHONY : CMakeFiles/algorithm.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/algorithm.dir/clean
 
 .PHONY : clean
 
@@ -108,7 +341,7 @@ clean: CMakeFiles/main.dir/clean
 CMakeFiles/jerasure.dir/all:
 	$(MAKE) -f CMakeFiles/jerasure.dir/build.make CMakeFiles/jerasure.dir/depend
 	$(MAKE) -f CMakeFiles/jerasure.dir/build.make CMakeFiles/jerasure.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=1,2,3,4,5 "Built target jerasure"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=13,14,15,16,17 "Built target jerasure"
 .PHONY : CMakeFiles/jerasure.dir/all
 
 # Include target in all.

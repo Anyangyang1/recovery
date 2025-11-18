@@ -1,0 +1,2 @@
+/opt/rh/devtoolset-11/root/usr/bin/ar qc libalgorithm.a  CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o
+/opt/rh/devtoolset-11/root/usr/bin/ranlib libalgorithm.a

@@ -111,17 +111,95 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named main
+# Target rules for targets named test
 
 # Build rule for target.
-main: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 main
-.PHONY : main
+test: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test
+.PHONY : test
 
 # fast build rule for target.
-main/fast:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/build
-.PHONY : main/fast
+test/fast:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
+.PHONY : test/fast
+
+#=============================================================================
+# Target rules for targets named proxy
+
+# Build rule for target.
+proxy: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 proxy
+.PHONY : proxy
+
+# fast build rule for target.
+proxy/fast:
+	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/build
+.PHONY : proxy/fast
+
+#=============================================================================
+# Target rules for targets named client
+
+# Build rule for target.
+client: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 client
+.PHONY : client
+
+# fast build rule for target.
+client/fast:
+	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/build
+.PHONY : client/fast
+
+#=============================================================================
+# Target rules for targets named datanode
+
+# Build rule for target.
+datanode: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 datanode
+.PHONY : datanode
+
+# fast build rule for target.
+datanode/fast:
+	$(MAKE) -f CMakeFiles/datanode.dir/build.make CMakeFiles/datanode.dir/build
+.PHONY : datanode/fast
+
+#=============================================================================
+# Target rules for targets named ec
+
+# Build rule for target.
+ec: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ec
+.PHONY : ec
+
+# fast build rule for target.
+ec/fast:
+	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/build
+.PHONY : ec/fast
+
+#=============================================================================
+# Target rules for targets named coordinator
+
+# Build rule for target.
+coordinator: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 coordinator
+.PHONY : coordinator
+
+# fast build rule for target.
+coordinator/fast:
+	$(MAKE) -f CMakeFiles/coordinator.dir/build.make CMakeFiles/coordinator.dir/build
+.PHONY : coordinator/fast
+
+#=============================================================================
+# Target rules for targets named algorithm
+
+# Build rule for target.
+algorithm: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 algorithm
+.PHONY : algorithm
+
+# fast build rule for target.
+algorithm/fast:
+	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/build
+.PHONY : algorithm/fast
 
 #=============================================================================
 # Target rules for targets named jerasure
@@ -244,113 +322,248 @@ Jerasure-1.2A/reed_sol.c.s:
 	$(MAKE) -f CMakeFiles/jerasure.dir/build.make CMakeFiles/jerasure.dir/Jerasure-1.2A/reed_sol.c.s
 .PHONY : Jerasure-1.2A/reed_sol.c.s
 
-src/loadbance.o: src/loadbance.cpp.o
+src/algorithm/loadbance.o: src/algorithm/loadbance.cpp.o
 
-.PHONY : src/loadbance.o
-
-# target to build an object file
-src/loadbance.cpp.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/loadbance.cpp.o
-.PHONY : src/loadbance.cpp.o
-
-src/loadbance.i: src/loadbance.cpp.i
-
-.PHONY : src/loadbance.i
-
-# target to preprocess a source file
-src/loadbance.cpp.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/loadbance.cpp.i
-.PHONY : src/loadbance.cpp.i
-
-src/loadbance.s: src/loadbance.cpp.s
-
-.PHONY : src/loadbance.s
-
-# target to generate assembly for a file
-src/loadbance.cpp.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/loadbance.cpp.s
-.PHONY : src/loadbance.cpp.s
-
-src/main.o: src/main.cpp.o
-
-.PHONY : src/main.o
+.PHONY : src/algorithm/loadbance.o
 
 # target to build an object file
-src/main.cpp.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.o
-.PHONY : src/main.cpp.o
+src/algorithm/loadbance.cpp.o:
+	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o
+.PHONY : src/algorithm/loadbance.cpp.o
 
-src/main.i: src/main.cpp.i
+src/algorithm/loadbance.i: src/algorithm/loadbance.cpp.i
 
-.PHONY : src/main.i
+.PHONY : src/algorithm/loadbance.i
 
 # target to preprocess a source file
-src/main.cpp.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.i
-.PHONY : src/main.cpp.i
+src/algorithm/loadbance.cpp.i:
+	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.i
+.PHONY : src/algorithm/loadbance.cpp.i
 
-src/main.s: src/main.cpp.s
+src/algorithm/loadbance.s: src/algorithm/loadbance.cpp.s
 
-.PHONY : src/main.s
+.PHONY : src/algorithm/loadbance.s
 
 # target to generate assembly for a file
-src/main.cpp.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/main.cpp.s
-.PHONY : src/main.cpp.s
+src/algorithm/loadbance.cpp.s:
+	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.s
+.PHONY : src/algorithm/loadbance.cpp.s
 
-src/sggh.o: src/sggh.cpp.o
+src/algorithm/sggh.o: src/algorithm/sggh.cpp.o
 
-.PHONY : src/sggh.o
+.PHONY : src/algorithm/sggh.o
 
 # target to build an object file
-src/sggh.cpp.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/sggh.cpp.o
-.PHONY : src/sggh.cpp.o
+src/algorithm/sggh.cpp.o:
+	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o
+.PHONY : src/algorithm/sggh.cpp.o
 
-src/sggh.i: src/sggh.cpp.i
+src/algorithm/sggh.i: src/algorithm/sggh.cpp.i
 
-.PHONY : src/sggh.i
+.PHONY : src/algorithm/sggh.i
 
 # target to preprocess a source file
-src/sggh.cpp.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/sggh.cpp.i
-.PHONY : src/sggh.cpp.i
+src/algorithm/sggh.cpp.i:
+	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.i
+.PHONY : src/algorithm/sggh.cpp.i
 
-src/sggh.s: src/sggh.cpp.s
+src/algorithm/sggh.s: src/algorithm/sggh.cpp.s
 
-.PHONY : src/sggh.s
+.PHONY : src/algorithm/sggh.s
 
 # target to generate assembly for a file
-src/sggh.cpp.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/sggh.cpp.s
-.PHONY : src/sggh.cpp.s
+src/algorithm/sggh.cpp.s:
+	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.s
+.PHONY : src/algorithm/sggh.cpp.s
 
-src/utils.o: src/utils.cpp.o
+src/algorithm/utils.o: src/algorithm/utils.cpp.o
 
-.PHONY : src/utils.o
+.PHONY : src/algorithm/utils.o
 
 # target to build an object file
-src/utils.cpp.o:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/utils.cpp.o
-.PHONY : src/utils.cpp.o
+src/algorithm/utils.cpp.o:
+	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o
+.PHONY : src/algorithm/utils.cpp.o
 
-src/utils.i: src/utils.cpp.i
+src/algorithm/utils.i: src/algorithm/utils.cpp.i
 
-.PHONY : src/utils.i
+.PHONY : src/algorithm/utils.i
 
 # target to preprocess a source file
-src/utils.cpp.i:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/utils.cpp.i
-.PHONY : src/utils.cpp.i
+src/algorithm/utils.cpp.i:
+	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.i
+.PHONY : src/algorithm/utils.cpp.i
 
-src/utils.s: src/utils.cpp.s
+src/algorithm/utils.s: src/algorithm/utils.cpp.s
 
-.PHONY : src/utils.s
+.PHONY : src/algorithm/utils.s
 
 # target to generate assembly for a file
-src/utils.cpp.s:
-	$(MAKE) -f CMakeFiles/main.dir/build.make CMakeFiles/main.dir/src/utils.cpp.s
-.PHONY : src/utils.cpp.s
+src/algorithm/utils.cpp.s:
+	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.s
+.PHONY : src/algorithm/utils.cpp.s
+
+src/client/run_client.o: src/client/run_client.cpp.o
+
+.PHONY : src/client/run_client.o
+
+# target to build an object file
+src/client/run_client.cpp.o:
+	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/src/client/run_client.cpp.o
+.PHONY : src/client/run_client.cpp.o
+
+src/client/run_client.i: src/client/run_client.cpp.i
+
+.PHONY : src/client/run_client.i
+
+# target to preprocess a source file
+src/client/run_client.cpp.i:
+	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/src/client/run_client.cpp.i
+.PHONY : src/client/run_client.cpp.i
+
+src/client/run_client.s: src/client/run_client.cpp.s
+
+.PHONY : src/client/run_client.s
+
+# target to generate assembly for a file
+src/client/run_client.cpp.s:
+	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/src/client/run_client.cpp.s
+.PHONY : src/client/run_client.cpp.s
+
+src/coordinator/run_coordinator.o: src/coordinator/run_coordinator.cpp.o
+
+.PHONY : src/coordinator/run_coordinator.o
+
+# target to build an object file
+src/coordinator/run_coordinator.cpp.o:
+	$(MAKE) -f CMakeFiles/coordinator.dir/build.make CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o
+.PHONY : src/coordinator/run_coordinator.cpp.o
+
+src/coordinator/run_coordinator.i: src/coordinator/run_coordinator.cpp.i
+
+.PHONY : src/coordinator/run_coordinator.i
+
+# target to preprocess a source file
+src/coordinator/run_coordinator.cpp.i:
+	$(MAKE) -f CMakeFiles/coordinator.dir/build.make CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.i
+.PHONY : src/coordinator/run_coordinator.cpp.i
+
+src/coordinator/run_coordinator.s: src/coordinator/run_coordinator.cpp.s
+
+.PHONY : src/coordinator/run_coordinator.s
+
+# target to generate assembly for a file
+src/coordinator/run_coordinator.cpp.s:
+	$(MAKE) -f CMakeFiles/coordinator.dir/build.make CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.s
+.PHONY : src/coordinator/run_coordinator.cpp.s
+
+src/datanode/run_datanode.o: src/datanode/run_datanode.cpp.o
+
+.PHONY : src/datanode/run_datanode.o
+
+# target to build an object file
+src/datanode/run_datanode.cpp.o:
+	$(MAKE) -f CMakeFiles/datanode.dir/build.make CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o
+.PHONY : src/datanode/run_datanode.cpp.o
+
+src/datanode/run_datanode.i: src/datanode/run_datanode.cpp.i
+
+.PHONY : src/datanode/run_datanode.i
+
+# target to preprocess a source file
+src/datanode/run_datanode.cpp.i:
+	$(MAKE) -f CMakeFiles/datanode.dir/build.make CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.i
+.PHONY : src/datanode/run_datanode.cpp.i
+
+src/datanode/run_datanode.s: src/datanode/run_datanode.cpp.s
+
+.PHONY : src/datanode/run_datanode.s
+
+# target to generate assembly for a file
+src/datanode/run_datanode.cpp.s:
+	$(MAKE) -f CMakeFiles/datanode.dir/build.make CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.s
+.PHONY : src/datanode/run_datanode.cpp.s
+
+src/ec/erasure_code.o: src/ec/erasure_code.cpp.o
+
+.PHONY : src/ec/erasure_code.o
+
+# target to build an object file
+src/ec/erasure_code.cpp.o:
+	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/src/ec/erasure_code.cpp.o
+.PHONY : src/ec/erasure_code.cpp.o
+
+src/ec/erasure_code.i: src/ec/erasure_code.cpp.i
+
+.PHONY : src/ec/erasure_code.i
+
+# target to preprocess a source file
+src/ec/erasure_code.cpp.i:
+	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/src/ec/erasure_code.cpp.i
+.PHONY : src/ec/erasure_code.cpp.i
+
+src/ec/erasure_code.s: src/ec/erasure_code.cpp.s
+
+.PHONY : src/ec/erasure_code.s
+
+# target to generate assembly for a file
+src/ec/erasure_code.cpp.s:
+	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/src/ec/erasure_code.cpp.s
+.PHONY : src/ec/erasure_code.cpp.s
+
+src/proxy/run_proxy.o: src/proxy/run_proxy.cpp.o
+
+.PHONY : src/proxy/run_proxy.o
+
+# target to build an object file
+src/proxy/run_proxy.cpp.o:
+	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/src/proxy/run_proxy.cpp.o
+.PHONY : src/proxy/run_proxy.cpp.o
+
+src/proxy/run_proxy.i: src/proxy/run_proxy.cpp.i
+
+.PHONY : src/proxy/run_proxy.i
+
+# target to preprocess a source file
+src/proxy/run_proxy.cpp.i:
+	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/src/proxy/run_proxy.cpp.i
+.PHONY : src/proxy/run_proxy.cpp.i
+
+src/proxy/run_proxy.s: src/proxy/run_proxy.cpp.s
+
+.PHONY : src/proxy/run_proxy.s
+
+# target to generate assembly for a file
+src/proxy/run_proxy.cpp.s:
+	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/src/proxy/run_proxy.cpp.s
+.PHONY : src/proxy/run_proxy.cpp.s
+
+src/test/main.o: src/test/main.cpp.o
+
+.PHONY : src/test/main.o
+
+# target to build an object file
+src/test/main.cpp.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/test/main.cpp.o
+.PHONY : src/test/main.cpp.o
+
+src/test/main.i: src/test/main.cpp.i
+
+.PHONY : src/test/main.i
+
+# target to preprocess a source file
+src/test/main.cpp.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/test/main.cpp.i
+.PHONY : src/test/main.cpp.i
+
+src/test/main.s: src/test/main.cpp.s
+
+.PHONY : src/test/main.s
+
+# target to generate assembly for a file
+src/test/main.cpp.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/test/main.cpp.s
+.PHONY : src/test/main.cpp.s
 
 # Help Target
 help:
@@ -359,7 +572,13 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
-	@echo "... main"
+	@echo "... test"
+	@echo "... proxy"
+	@echo "... client"
+	@echo "... datanode"
+	@echo "... ec"
+	@echo "... coordinator"
+	@echo "... algorithm"
 	@echo "... rebuild_cache"
 	@echo "... jerasure"
 	@echo "... Jerasure-1.2A/cauchy.o"
@@ -374,18 +593,33 @@ help:
 	@echo "... Jerasure-1.2A/reed_sol.o"
 	@echo "... Jerasure-1.2A/reed_sol.i"
 	@echo "... Jerasure-1.2A/reed_sol.s"
-	@echo "... src/loadbance.o"
-	@echo "... src/loadbance.i"
-	@echo "... src/loadbance.s"
-	@echo "... src/main.o"
-	@echo "... src/main.i"
-	@echo "... src/main.s"
-	@echo "... src/sggh.o"
-	@echo "... src/sggh.i"
-	@echo "... src/sggh.s"
-	@echo "... src/utils.o"
-	@echo "... src/utils.i"
-	@echo "... src/utils.s"
+	@echo "... src/algorithm/loadbance.o"
+	@echo "... src/algorithm/loadbance.i"
+	@echo "... src/algorithm/loadbance.s"
+	@echo "... src/algorithm/sggh.o"
+	@echo "... src/algorithm/sggh.i"
+	@echo "... src/algorithm/sggh.s"
+	@echo "... src/algorithm/utils.o"
+	@echo "... src/algorithm/utils.i"
+	@echo "... src/algorithm/utils.s"
+	@echo "... src/client/run_client.o"
+	@echo "... src/client/run_client.i"
+	@echo "... src/client/run_client.s"
+	@echo "... src/coordinator/run_coordinator.o"
+	@echo "... src/coordinator/run_coordinator.i"
+	@echo "... src/coordinator/run_coordinator.s"
+	@echo "... src/datanode/run_datanode.o"
+	@echo "... src/datanode/run_datanode.i"
+	@echo "... src/datanode/run_datanode.s"
+	@echo "... src/ec/erasure_code.o"
+	@echo "... src/ec/erasure_code.i"
+	@echo "... src/ec/erasure_code.s"
+	@echo "... src/proxy/run_proxy.o"
+	@echo "... src/proxy/run_proxy.i"
+	@echo "... src/proxy/run_proxy.s"
+	@echo "... src/test/main.o"
+	@echo "... src/test/main.i"
+	@echo "... src/test/main.s"
 .PHONY : help
 
 

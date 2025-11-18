@@ -1,1 +1,0 @@
-/opt/rh/devtoolset-11/root/usr/bin/c++     CMakeFiles/main.dir/src/loadbance.cpp.o CMakeFiles/main.dir/src/main.cpp.o CMakeFiles/main.dir/src/sggh.cpp.o CMakeFiles/main.dir/src/utils.cpp.o  -o main libjerasure.a -lm -pthread 

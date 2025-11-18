@@ -1,0 +1,1 @@
+/opt/rh/devtoolset-11/root/usr/bin/c++     CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o  -o datanode libjerasure.a -lm libec.a libalgorithm.a libjerasure.a -pthread -lm 

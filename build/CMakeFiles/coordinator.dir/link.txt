@@ -1,0 +1,1 @@
+/opt/rh/devtoolset-11/root/usr/bin/c++     CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o  -o coordinator libjerasure.a -lm libec.a libalgorithm.a libjerasure.a -pthread -lm 
