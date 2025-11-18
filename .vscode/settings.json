@@ -53,6 +53,10 @@
         "utility": "cpp",
         "typeindex": "cpp",
         "typeinfo": "cpp",
-        "cassert": "cpp"
+        "cassert": "cpp",
+        "csignal": "cpp",
+        "strstream": "cpp",
+        "future": "cpp",
+        "valarray": "cpp"
     }
 }

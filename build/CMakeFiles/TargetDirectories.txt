@@ -1,0 +1,4 @@
+/home/anyangyang/study/recovery/build/CMakeFiles/edit_cache.dir
+/home/anyangyang/study/recovery/build/CMakeFiles/main.dir
+/home/anyangyang/study/recovery/build/CMakeFiles/rebuild_cache.dir
+/home/anyangyang/study/recovery/build/CMakeFiles/jerasure.dir

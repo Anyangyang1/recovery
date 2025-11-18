@@ -1,11 +1,23 @@
 #include <iostream>
 #include <chrono>
 #include <asio.hpp>
+#include <ylt/coro_rpc/coro_rpc_server.hpp>
 #include "sggh.h"
 #include "utils.h"
 #include "loadbalance.h"
 using namespace std;
 using namespace ECProject;
+
+int add(int a, int b);
+int main() {
+    coro_rpc::coro_rpc_server server(2, 8888);
+    server.register_handler<&add>();
+    server.start();
+    std::cout << "Server running on :8888\n";
+    std::getchar(); // ×èÈû×¡
+    return 0;
+}
+
 
 vector<double> reducePacketsTest(int K, int M, int W, int failedBlock) {
     // Éú³É Cauchy ±àÂë¾ØÕó
@@ -72,13 +84,9 @@ void loadBalanceTest(int K, int M, int W, int N, int S, int failedNodeId) {
     std::cout << "duration: " << time1 << " ms\n";
 }
 
-
-int main() {
-    asio::io_context io;
-    cout << ASIO_VERSION << endl;    
-
-
-    return 0;
+int add(int a, int b) {
+    cout << a + b << endl;
+    return a + b;
 }
 
 
