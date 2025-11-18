@@ -2,7 +2,7 @@
 #define LOADBALANCE_H
 #include <vector>
 #include <random>
-#include "../include/utils.h"
+#include "utils.h"
 using namespace std;
 namespace ECProject {
 

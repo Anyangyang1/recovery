@@ -1,5 +1,5 @@
-#include "../include/loadbalance.h"
-#include "../include/sggh.h"
+#include "loadbalance.h"
+#include "sggh.h"
 using namespace ECProject;
 /**
  * @brief 根据条带的分布情况，以及节点的故障情况，计算每个节点参与修复时的负载

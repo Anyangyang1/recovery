@@ -1,5 +1,5 @@
 #include <fstream>
-#include "../include/utils.h"
+#include "utils.h"
 
 // 高斯消元求 0-1 矩阵的秩
 int ECProject::computeBinaryMatrixRank(vector<vector<int>> matrix) {

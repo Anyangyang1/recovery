@@ -1,12 +1,13 @@
 #include<cassert>
-#include "../include/sggh.h"
-#include "../include/utils.h"
+#include<algorithm>
+#include "sggh.h"
+#include "utils.h"
 using namespace ECProject;
 vector<vector<int>> SimilarityGreedy::generateOptDecodeBitMatrix(
     int failedBlock, int mode, unsigned int seed) {
-    auto bigMatrix = generateAllDecodingMatrix(failedBlock);
+    auto bigMatrix = generateAllDecodingMatrix(failedBlock, 2000);
     auto bitMatrix = matrix2Bitmatrix(bigMatrix, W);
-    cout << "bitMatrix.size(): " << bitMatrix.size() << endl;
+    cout << "\n\nbitMatrix.size(): " << bitMatrix.size() << endl;
     vector<int> firstSelectSet;
     if(mode == -1) {
         firstSelectSet = {0};
@@ -34,7 +35,7 @@ vector<vector<int>> SimilarityGreedy::generateOptDecodeBitMatrix(
 }
 
 vector<vector<vector<int>>> SimilarityGreedy::generateAllOptDecodeBitMatrix(int failedBlock) {
-    auto bigMatrix = generateAllDecodingMatrix(failedBlock);
+    auto bigMatrix = generateAllDecodingMatrix(failedBlock, 10000);
     auto bitMatrix = matrix2Bitmatrix(bigMatrix, W);
     vector<int> firstSelectSet = generateAllRangeN(bitMatrix.size());
     vector<vector<vector<int>>> bestMatrices;
@@ -76,7 +77,7 @@ vector<vector<vector<vector<int>>>> SimilarityGreedy::generateAllOptDecodeBitMat
     return allModeDecodeMatrix;
 }
 
-vector<vector<int>> SimilarityGreedy::generateAllDecodingMatrix(int failedBlock) {
+vector<vector<int>> SimilarityGreedy::generateAllDecodingMatrix(int failedBlock, const size_t maxN) {
     assert(failedBlock >= 0 && failedBlock < N);
 
     // Step 1: 将 codingMatrix 转为 Jerasure 所需的 int* 格式（row-major, M x K）
@@ -166,6 +167,9 @@ vector<vector<int>> SimilarityGreedy::generateAllDecodingMatrix(int failedBlock)
         }
         bigMatrix.push_back(recoveryCoeffs);
     }
+    size_t size = bigMatrix.size();
+    // cout << size << endl;
+    bigMatrix.resize(min(size, maxN));
     return bigMatrix;
 
 }

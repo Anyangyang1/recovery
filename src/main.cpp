@@ -1,8 +1,9 @@
 #include <iostream>
 #include <chrono>
-#include "../include/sggh.h"
-#include "../include/utils.h"
-#include "../include/loadbalance.h"
+#include <asio.hpp>
+#include "sggh.h"
+#include "utils.h"
+#include "loadbalance.h"
 using namespace std;
 using namespace ECProject;
 
@@ -73,23 +74,40 @@ void loadBalanceTest(int K, int M, int W, int N, int S, int failedNodeId) {
 
 
 int main() {
-    const int K = 48, M = 3, W = 8, failedBlock = 0;
-    SimilarityGreedy sg = SimilarityGreedy(K, M, W);
+    asio::io_context io;
+    cout << ASIO_VERSION << endl;    
 
-    auto start1 = std::chrono::high_resolution_clock::now();
-    // auto decodeBitMatrix1 = sg.generateOptDecodeBitMatrix(failedBlock, 300, 0);
-    auto decodeBitMatrix1 = sg.generateOptDecodeBitMatrix(failedBlock, 0);
-    
-    auto end1 = std::chrono::high_resolution_clock::now();
-    auto duration1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1);
-    auto ranks1 = SimilarityGreedy::computeBinaryMatrixRank(decodeBitMatrix1, W);
-    auto time1 = duration1.count() / 1e6;
-    auto rankSum1 = accumulate(ranks1.begin(), ranks1.end(), 0);
-    cout << "***********K,M,W,FailedBlock(Only One)***********" << K << "," << M << "," << W << "," << failedBlock << endl; 
-    // cout << decodeBitMatrix << endl;
-    cout << "ranks: " << ranks1 << endl;
-    cout << "origin packets: " << K * W << endl;
-    cout << "need packets: " << rankSum1 << endl;
-    std::cout << "duration: " << time1 << " ms\n";
+
     return 0;
+}
+
+
+
+void test1() {
+    vector<int> KK {24,48,72,96};
+    vector<int> MM {3, 4};
+    vector<int> NUM {1};
+    const int W = 8, failedBlock = 0;
+    for(int num: NUM) {
+        for(int M: MM) {
+            for(int K: KK) {
+                SimilarityGreedy sg = SimilarityGreedy(K, M, W);
+                auto start1 = std::chrono::high_resolution_clock::now();
+                auto decodeBitMatrix1 = sg.generateOptDecodeBitMatrix(failedBlock, num, 0);
+                // auto decodeBitMatrix1 = sg.generateOptDecodeBitMatrix(failedBlock, 0);
+                
+                auto end1 = std::chrono::high_resolution_clock::now();
+                auto duration1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1);
+                auto ranks1 = SimilarityGreedy::computeBinaryMatrixRank(decodeBitMatrix1, W);
+                auto time1 = duration1.count() / 1e6;
+                auto rankSum1 = accumulate(ranks1.begin(), ranks1.end(), 0);
+                cout << "***********K,M,W,NUM,FailedBlock(Only One)***********" << K << "," << M << "," << W << "," << num << endl; 
+                // cout << decodeBitMatrix << endl;
+                cout << "ranks: " << ranks1 << endl;
+                cout << "origin packets: " << K * W << endl;
+                cout << "need packets: " << rankSum1 << endl;
+                std::cout << "duration: " << time1 << " ms\n";
+            }
+        }
+    }
 }
