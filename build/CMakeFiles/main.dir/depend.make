@@ -24,10 +24,12 @@ CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/coro_io/ibverbs
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/coro_io/ibverbs/ib_socket.hpp
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/coro_io/io_context_pool.hpp
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/coro_io/socket_wrapper.hpp
+CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/coro_rpc/coro_rpc_client.hpp
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/coro_rpc/coro_rpc_server.hpp
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/coro_rpc/impl/common_service.hpp
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/coro_rpc/impl/context.hpp
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/coro_rpc/impl/coro_connection.hpp
+CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/coro_rpc/impl/coro_rpc_client.hpp
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/coro_rpc/impl/coro_rpc_server.hpp
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/coro_rpc/impl/default_config/coro_rpc_config.hpp
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/coro_rpc/impl/errno.h
@@ -703,8 +705,10 @@ CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/thirdparty/asyn
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/FutureAwaiter.h
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/Lazy.h
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/LazyLocalBase.h
+CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/Mutex.h
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/PromiseAllocator.h
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/Sleep.h
+CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/SpinLock.h
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/SyncAwait.h
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/Traits.h
 CMakeFiles/main.dir/src/main.cpp.o: ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/ViaCoroutine.h

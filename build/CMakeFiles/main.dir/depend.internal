@@ -25,10 +25,12 @@ CMakeFiles/main.dir/src/main.cpp.o
  ../yalantinglibs/include/ylt/coro_io/ibverbs/ib_socket.hpp
  ../yalantinglibs/include/ylt/coro_io/io_context_pool.hpp
  ../yalantinglibs/include/ylt/coro_io/socket_wrapper.hpp
+ ../yalantinglibs/include/ylt/coro_rpc/coro_rpc_client.hpp
  ../yalantinglibs/include/ylt/coro_rpc/coro_rpc_server.hpp
  ../yalantinglibs/include/ylt/coro_rpc/impl/common_service.hpp
  ../yalantinglibs/include/ylt/coro_rpc/impl/context.hpp
  ../yalantinglibs/include/ylt/coro_rpc/impl/coro_connection.hpp
+ ../yalantinglibs/include/ylt/coro_rpc/impl/coro_rpc_client.hpp
  ../yalantinglibs/include/ylt/coro_rpc/impl/coro_rpc_server.hpp
  ../yalantinglibs/include/ylt/coro_rpc/impl/default_config/coro_rpc_config.hpp
  ../yalantinglibs/include/ylt/coro_rpc/impl/errno.h
@@ -704,8 +706,10 @@ CMakeFiles/main.dir/src/main.cpp.o
  ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/FutureAwaiter.h
  ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/Lazy.h
  ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/LazyLocalBase.h
+ ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/Mutex.h
  ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/PromiseAllocator.h
  ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/Sleep.h
+ ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/SpinLock.h
  ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/SyncAwait.h
  ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/Traits.h
  ../yalantinglibs/include/ylt/thirdparty/async_simple/coro/ViaCoroutine.h

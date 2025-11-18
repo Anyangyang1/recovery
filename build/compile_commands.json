@@ -1,42 +1,42 @@
 [
 {
   "directory": "/home/anyangyang/study/recovery/build",
-  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/yalantinglibs/include -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A    -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/main.dir/src/loadbance.cpp.o -c /home/anyangyang/study/recovery/src/loadbance.cpp",
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/yalantinglibs/include -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A  -O3 -DNDEBUG   -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/main.dir/src/loadbance.cpp.o -c /home/anyangyang/study/recovery/src/loadbance.cpp",
   "file": "/home/anyangyang/study/recovery/src/loadbance.cpp"
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",
-  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/yalantinglibs/include -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A    -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/main.dir/src/main.cpp.o -c /home/anyangyang/study/recovery/src/main.cpp",
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/yalantinglibs/include -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A  -O3 -DNDEBUG   -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/main.dir/src/main.cpp.o -c /home/anyangyang/study/recovery/src/main.cpp",
   "file": "/home/anyangyang/study/recovery/src/main.cpp"
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",
-  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/yalantinglibs/include -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A    -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/main.dir/src/sggh.cpp.o -c /home/anyangyang/study/recovery/src/sggh.cpp",
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/yalantinglibs/include -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A  -O3 -DNDEBUG   -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/main.dir/src/sggh.cpp.o -c /home/anyangyang/study/recovery/src/sggh.cpp",
   "file": "/home/anyangyang/study/recovery/src/sggh.cpp"
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",
-  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/yalantinglibs/include -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A    -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/main.dir/src/utils.cpp.o -c /home/anyangyang/study/recovery/src/utils.cpp",
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/yalantinglibs/include -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A  -O3 -DNDEBUG   -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/main.dir/src/utils.cpp.o -c /home/anyangyang/study/recovery/src/utils.cpp",
   "file": "/home/anyangyang/study/recovery/src/utils.cpp"
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",
-  "command": "/opt/rh/devtoolset-11/root/usr/bin/cc  -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include    -Wall -Wextra -O2 -o CMakeFiles/jerasure.dir/Jerasure-1.2A/jerasure.c.o   -c /home/anyangyang/study/recovery/Jerasure-1.2A/jerasure.c",
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/cc  -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include  -O3 -DNDEBUG   -Wall -Wextra -O2 -o CMakeFiles/jerasure.dir/Jerasure-1.2A/jerasure.c.o   -c /home/anyangyang/study/recovery/Jerasure-1.2A/jerasure.c",
   "file": "/home/anyangyang/study/recovery/Jerasure-1.2A/jerasure.c"
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",
-  "command": "/opt/rh/devtoolset-11/root/usr/bin/cc  -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include    -Wall -Wextra -O2 -o CMakeFiles/jerasure.dir/Jerasure-1.2A/cauchy.c.o   -c /home/anyangyang/study/recovery/Jerasure-1.2A/cauchy.c",
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/cc  -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include  -O3 -DNDEBUG   -Wall -Wextra -O2 -o CMakeFiles/jerasure.dir/Jerasure-1.2A/cauchy.c.o   -c /home/anyangyang/study/recovery/Jerasure-1.2A/cauchy.c",
   "file": "/home/anyangyang/study/recovery/Jerasure-1.2A/cauchy.c"
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",
-  "command": "/opt/rh/devtoolset-11/root/usr/bin/cc  -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include    -Wall -Wextra -O2 -o CMakeFiles/jerasure.dir/Jerasure-1.2A/galois.c.o   -c /home/anyangyang/study/recovery/Jerasure-1.2A/galois.c",
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/cc  -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include  -O3 -DNDEBUG   -Wall -Wextra -O2 -o CMakeFiles/jerasure.dir/Jerasure-1.2A/galois.c.o   -c /home/anyangyang/study/recovery/Jerasure-1.2A/galois.c",
   "file": "/home/anyangyang/study/recovery/Jerasure-1.2A/galois.c"
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",
-  "command": "/opt/rh/devtoolset-11/root/usr/bin/cc  -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include    -Wall -Wextra -O2 -o CMakeFiles/jerasure.dir/Jerasure-1.2A/reed_sol.c.o   -c /home/anyangyang/study/recovery/Jerasure-1.2A/reed_sol.c",
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/cc  -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include  -O3 -DNDEBUG   -Wall -Wextra -O2 -o CMakeFiles/jerasure.dir/Jerasure-1.2A/reed_sol.c.o   -c /home/anyangyang/study/recovery/Jerasure-1.2A/reed_sol.c",
   "file": "/home/anyangyang/study/recovery/Jerasure-1.2A/reed_sol.c"
 }
 ]
