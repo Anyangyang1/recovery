@@ -15,6 +15,7 @@ set(CMAKE_C_COMPILER_ID "GNU")
 set(CMAKE_C_TARGET_INCLUDE_PATH
   "../Jerasure-1.2A"
   "../include"
+  "../yalantinglibs/include"
   )
 
 # Targets to which this target links.
