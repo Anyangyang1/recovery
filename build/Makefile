@@ -124,19 +124,6 @@ test/fast:
 .PHONY : test/fast
 
 #=============================================================================
-# Target rules for targets named proxy
-
-# Build rule for target.
-proxy: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 proxy
-.PHONY : proxy
-
-# fast build rule for target.
-proxy/fast:
-	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/build
-.PHONY : proxy/fast
-
-#=============================================================================
 # Target rules for targets named client
 
 # Build rule for target.
@@ -430,6 +417,33 @@ src/client/run_client.cpp.s:
 	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/src/client/run_client.cpp.s
 .PHONY : src/client/run_client.cpp.s
 
+src/coordinator/coordinator.o: src/coordinator/coordinator.cpp.o
+
+.PHONY : src/coordinator/coordinator.o
+
+# target to build an object file
+src/coordinator/coordinator.cpp.o:
+	$(MAKE) -f CMakeFiles/coordinator.dir/build.make CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o
+.PHONY : src/coordinator/coordinator.cpp.o
+
+src/coordinator/coordinator.i: src/coordinator/coordinator.cpp.i
+
+.PHONY : src/coordinator/coordinator.i
+
+# target to preprocess a source file
+src/coordinator/coordinator.cpp.i:
+	$(MAKE) -f CMakeFiles/coordinator.dir/build.make CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.i
+.PHONY : src/coordinator/coordinator.cpp.i
+
+src/coordinator/coordinator.s: src/coordinator/coordinator.cpp.s
+
+.PHONY : src/coordinator/coordinator.s
+
+# target to generate assembly for a file
+src/coordinator/coordinator.cpp.s:
+	$(MAKE) -f CMakeFiles/coordinator.dir/build.make CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.s
+.PHONY : src/coordinator/coordinator.cpp.s
+
 src/coordinator/run_coordinator.o: src/coordinator/run_coordinator.cpp.o
 
 .PHONY : src/coordinator/run_coordinator.o
@@ -538,60 +552,6 @@ src/ec/erasure_code.cpp.s:
 	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/src/ec/erasure_code.cpp.s
 .PHONY : src/ec/erasure_code.cpp.s
 
-src/proxy/proxy.o: src/proxy/proxy.cpp.o
-
-.PHONY : src/proxy/proxy.o
-
-# target to build an object file
-src/proxy/proxy.cpp.o:
-	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/src/proxy/proxy.cpp.o
-.PHONY : src/proxy/proxy.cpp.o
-
-src/proxy/proxy.i: src/proxy/proxy.cpp.i
-
-.PHONY : src/proxy/proxy.i
-
-# target to preprocess a source file
-src/proxy/proxy.cpp.i:
-	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/src/proxy/proxy.cpp.i
-.PHONY : src/proxy/proxy.cpp.i
-
-src/proxy/proxy.s: src/proxy/proxy.cpp.s
-
-.PHONY : src/proxy/proxy.s
-
-# target to generate assembly for a file
-src/proxy/proxy.cpp.s:
-	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/src/proxy/proxy.cpp.s
-.PHONY : src/proxy/proxy.cpp.s
-
-src/proxy/run_proxy.o: src/proxy/run_proxy.cpp.o
-
-.PHONY : src/proxy/run_proxy.o
-
-# target to build an object file
-src/proxy/run_proxy.cpp.o:
-	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/src/proxy/run_proxy.cpp.o
-.PHONY : src/proxy/run_proxy.cpp.o
-
-src/proxy/run_proxy.i: src/proxy/run_proxy.cpp.i
-
-.PHONY : src/proxy/run_proxy.i
-
-# target to preprocess a source file
-src/proxy/run_proxy.cpp.i:
-	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/src/proxy/run_proxy.cpp.i
-.PHONY : src/proxy/run_proxy.cpp.i
-
-src/proxy/run_proxy.s: src/proxy/run_proxy.cpp.s
-
-.PHONY : src/proxy/run_proxy.s
-
-# target to generate assembly for a file
-src/proxy/run_proxy.cpp.s:
-	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/src/proxy/run_proxy.cpp.s
-.PHONY : src/proxy/run_proxy.cpp.s
-
 src/test/main.o: src/test/main.cpp.o
 
 .PHONY : src/test/main.o
@@ -627,7 +587,6 @@ help:
 	@echo "... depend"
 	@echo "... edit_cache"
 	@echo "... test"
-	@echo "... proxy"
 	@echo "... client"
 	@echo "... datanode"
 	@echo "... ec"
@@ -659,6 +618,9 @@ help:
 	@echo "... src/client/run_client.o"
 	@echo "... src/client/run_client.i"
 	@echo "... src/client/run_client.s"
+	@echo "... src/coordinator/coordinator.o"
+	@echo "... src/coordinator/coordinator.i"
+	@echo "... src/coordinator/coordinator.s"
 	@echo "... src/coordinator/run_coordinator.o"
 	@echo "... src/coordinator/run_coordinator.i"
 	@echo "... src/coordinator/run_coordinator.s"
@@ -671,12 +633,6 @@ help:
 	@echo "... src/ec/erasure_code.o"
 	@echo "... src/ec/erasure_code.i"
 	@echo "... src/ec/erasure_code.s"
-	@echo "... src/proxy/proxy.o"
-	@echo "... src/proxy/proxy.i"
-	@echo "... src/proxy/proxy.s"
-	@echo "... src/proxy/run_proxy.o"
-	@echo "... src/proxy/run_proxy.i"
-	@echo "... src/proxy/run_proxy.s"
 	@echo "... src/test/main.o"
 	@echo "... src/test/main.i"
 	@echo "... src/test/main.s"

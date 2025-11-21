@@ -1,4 +1,5 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o"
   "CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o"
   "exec/coordinator.pdb"
   "exec/coordinator"

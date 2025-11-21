@@ -1,6 +1,5 @@
 /home/anyangyang/study/recovery/build/CMakeFiles/edit_cache.dir
 /home/anyangyang/study/recovery/build/CMakeFiles/test.dir
-/home/anyangyang/study/recovery/build/CMakeFiles/proxy.dir
 /home/anyangyang/study/recovery/build/CMakeFiles/client.dir
 /home/anyangyang/study/recovery/build/CMakeFiles/datanode.dir
 /home/anyangyang/study/recovery/build/CMakeFiles/ec.dir
