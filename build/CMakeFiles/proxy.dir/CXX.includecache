@@ -55,6 +55,8 @@ ylt/coro_rpc/coro_rpc_client.hpp
 -
 ylt/coro_rpc/coro_rpc_server.hpp
 -
+../../Jerasure-1.2A/galois.h
+Jerasure-1.2A/galois.h
 metadata.h
 ../include/metadata.h
 libmemcached/memcached.h
@@ -95,15 +97,15 @@ rs.h
 ../include/rs.h
 
 ../include/proxy.h
-tinyxml2.h
-../include/tinyxml2.h
-metadata.h
-../include/metadata.h
 datanode.h
 ../include/datanode.h
-mutex
--
+metadata.h
+../include/metadata.h
+tinyxml2.h
+../include/tinyxml2.h
 condition_variable
+-
+mutex
 -
 ylt/coro_rpc/coro_rpc_client.hpp
 -

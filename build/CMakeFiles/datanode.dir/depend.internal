@@ -724,7 +724,6 @@ CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o
  ../yalantinglibs/include/ylt/util/tl/expected.hpp
  ../yalantinglibs/include/ylt/util/type_traits.h
  ../yalantinglibs/include/ylt/util/utils.hpp
- /home/anyangyang/study/recovery/Jerasure-1.2A/galois.h
  /home/anyangyang/study/recovery/src/datanode/datanode.cpp
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o
  /home/anyangyang/study/recovery/src/datanode/run_datanode.cpp

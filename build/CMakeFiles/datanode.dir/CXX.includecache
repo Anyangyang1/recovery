@@ -55,6 +55,8 @@ ylt/coro_rpc/coro_rpc_client.hpp
 -
 ylt/coro_rpc/coro_rpc_server.hpp
 -
+../../Jerasure-1.2A/galois.h
+Jerasure-1.2A/galois.h
 metadata.h
 ../include/metadata.h
 libmemcached/memcached.h
@@ -12924,15 +12926,7 @@ magic_names.hpp
 ylt/struct_pack/md5_constexpr.hpp
 ../yalantinglibs/include/ylt/util/ylt/struct_pack/md5_constexpr.hpp
 
-/home/anyangyang/study/recovery/Jerasure-1.2A/galois.h
-stdio.h
--
-stdlib.h
--
-
 /home/anyangyang/study/recovery/src/datanode/datanode.cpp
 datanode.h
 /home/anyangyang/study/recovery/src/datanode/datanode.h
-../../Jerasure-1.2A/galois.h
-/home/anyangyang/study/recovery/Jerasure-1.2A/galois.h
 
