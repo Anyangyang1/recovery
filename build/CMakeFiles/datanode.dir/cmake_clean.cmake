@@ -1,7 +1,8 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o"
   "CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o"
-  "datanode.pdb"
-  "datanode"
+  "exec/datanode.pdb"
+  "exec/datanode"
 )
 
 # Per-language clean rules from dependency scanning.

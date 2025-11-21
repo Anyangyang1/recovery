@@ -24,7 +24,7 @@ public:
     static vector<int> computeBinaryMatrixRank(vector<vector<int>>& bitMmatrix, int W);
 
 private:
-    vector<vector<int>> generateAllDecodingMatrix(int failedBlock, size_t N);
+    vector<vector<int>> generateAllDecodingMatrix(int failedBlock);
     void updateXorClosure(set<int>& closure, int val);
     void updateXorClosures(vector<set<int>>& closures, const vector<int>& candidate);
     int computeSimilarity(const vector<std::set<int>>& closures, const vector<int>& candidate);

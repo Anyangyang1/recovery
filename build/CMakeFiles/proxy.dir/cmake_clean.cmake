@@ -1,7 +1,8 @@
 file(REMOVE_RECURSE
+  "CMakeFiles/proxy.dir/src/proxy/proxy.cpp.o"
   "CMakeFiles/proxy.dir/src/proxy/run_proxy.cpp.o"
-  "proxy.pdb"
-  "proxy"
+  "exec/proxy.pdb"
+  "exec/proxy"
 )
 
 # Per-language clean rules from dependency scanning.

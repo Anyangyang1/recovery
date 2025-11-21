@@ -1,1 +1,1 @@
-/opt/rh/devtoolset-11/root/usr/bin/c++     CMakeFiles/client.dir/src/client/run_client.cpp.o  -o client libjerasure.a -lm libec.a libalgorithm.a libjerasure.a -pthread -lm 
+/opt/rh/devtoolset-11/root/usr/bin/c++  -g   CMakeFiles/client.dir/src/client/run_client.cpp.o  -o exec/client libjerasure.a -lm libec.a libalgorithm.a libjerasure.a -pthread -lm 

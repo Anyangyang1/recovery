@@ -35,6 +35,10 @@ numeric
 -
 algorithm
 -
+memory
+-
+cstring
+-
 ../../Jerasure-1.2A/jerasure.h
 ../Jerasure-1.2A/jerasure.h
 ../../Jerasure-1.2A/cauchy.h

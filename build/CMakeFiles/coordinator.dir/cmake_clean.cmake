@@ -1,7 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o"
-  "coordinator.pdb"
-  "coordinator"
+  "exec/coordinator.pdb"
+  "exec/coordinator"
 )
 
 # Per-language clean rules from dependency scanning.

@@ -54,12 +54,31 @@ void testClient() {
 }
 
 int main(int argc, char* argv[]) {
-    string arg = argv[1];
-    if(arg == "1") {
-        testServer();
-    }
-    else {
-        testClient();
+    vector<int> KK {24};
+    vector<int> MM {4};
+    vector<int> NUM {500};
+    const int W = 8, failedBlock = 0;
+    for(int num: NUM) {
+        for(int M: MM) {
+            for(int K: KK) {
+                SimilarityGreedy sg = SimilarityGreedy(K, M, W);
+                auto start1 = std::chrono::high_resolution_clock::now();
+                // auto decodeBitMatrix1 = sg.generateOptDecodeBitMatrix(failedBlock, num, 2);
+                auto decodeBitMatrix1 = sg.generateOptDecodeBitMatrix(failedBlock, 0);
+                
+                auto end1 = std::chrono::high_resolution_clock::now();
+                auto duration1 = std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1);
+                auto ranks1 = SimilarityGreedy::computeBinaryMatrixRank(decodeBitMatrix1, W);
+                auto time1 = duration1.count() / 1e6;
+                auto rankSum1 = accumulate(ranks1.begin(), ranks1.end(), 0);
+                cout << "***********K,M,W,NUM,FailedBlock(Only One)***********" << K << "," << M << "," << W << "," << num << endl; 
+                // cout << decodeBitMatrix << endl;
+                cout << "ranks: " << ranks1 << endl;
+                cout << "origin packets: " << K * W << endl;
+                cout << "need packets: " << rankSum1 << endl;
+                std::cout << "duration: " << time1 << " ms\n";
+            }
+        }
     }
     return 0;
 }

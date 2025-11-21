@@ -73,7 +73,7 @@ CMakeFiles/test.dir/all: CMakeFiles/algorithm.dir/all
 CMakeFiles/test.dir/all: CMakeFiles/jerasure.dir/all
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/depend
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=20,21 "Built target test"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=22,23 "Built target test"
 .PHONY : CMakeFiles/test.dir/all
 
 # Include target in all.
@@ -112,7 +112,7 @@ CMakeFiles/proxy.dir/all: CMakeFiles/algorithm.dir/all
 CMakeFiles/proxy.dir/all: CMakeFiles/jerasure.dir/all
 	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/depend
 	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=18,19 "Built target proxy"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=19,20,21 "Built target proxy"
 .PHONY : CMakeFiles/proxy.dir/all
 
 # Include target in all.
@@ -122,7 +122,7 @@ all: CMakeFiles/proxy.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/proxy.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 13
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 14
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/proxy.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 0
 .PHONY : CMakeFiles/proxy.dir/rule
@@ -190,7 +190,7 @@ CMakeFiles/datanode.dir/all: CMakeFiles/algorithm.dir/all
 CMakeFiles/datanode.dir/all: CMakeFiles/jerasure.dir/all
 	$(MAKE) -f CMakeFiles/datanode.dir/build.make CMakeFiles/datanode.dir/depend
 	$(MAKE) -f CMakeFiles/datanode.dir/build.make CMakeFiles/datanode.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=9,10 "Built target datanode"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=9,10,11 "Built target datanode"
 .PHONY : CMakeFiles/datanode.dir/all
 
 # Include target in all.
@@ -200,7 +200,7 @@ all: CMakeFiles/datanode.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/datanode.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 13
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 14
 	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/datanode.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 0
 .PHONY : CMakeFiles/datanode.dir/rule
@@ -228,7 +228,7 @@ CMakeFiles/ec.dir/all: CMakeFiles/algorithm.dir/all
 CMakeFiles/ec.dir/all: CMakeFiles/jerasure.dir/all
 	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/depend
 	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=11,12 "Built target ec"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=12,13 "Built target ec"
 .PHONY : CMakeFiles/ec.dir/all
 
 # Include target in all.
@@ -341,7 +341,7 @@ clean: CMakeFiles/algorithm.dir/clean
 CMakeFiles/jerasure.dir/all:
 	$(MAKE) -f CMakeFiles/jerasure.dir/build.make CMakeFiles/jerasure.dir/depend
 	$(MAKE) -f CMakeFiles/jerasure.dir/build.make CMakeFiles/jerasure.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=13,14,15,16,17 "Built target jerasure"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=14,15,16,17,18 "Built target jerasure"
 .PHONY : CMakeFiles/jerasure.dir/all
 
 # Include target in all.

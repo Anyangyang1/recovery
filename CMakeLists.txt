@@ -1,6 +1,12 @@
 cmake_minimum_required(VERSION 3.14)
 project(DistributedStorage C CXX)
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    add_compile_definitions(MY_DEBUG)  # CMake 3.12+
+    # 或旧版：add_definitions(-DDEBUG)
+endif()
+
+
 # ====== 全局设置 ======
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -9,6 +15,9 @@ set(CMAKE_THREAD_PREFER_PTHREAD TRUE)
 set(THREADS_PREFER_PTHREAD_FLAG ON)
 # ? 关键：生成 compile_commands.json（解决 VSCode 头文件跳转问题）
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
+
+# ====== 设置可执行文件输出目录 ======
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/exec)
 
 # 查找基础依赖
 find_package(Threads REQUIRED)

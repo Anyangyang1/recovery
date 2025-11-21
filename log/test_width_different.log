@@ -1,0 +1,192 @@
+
+
+bitMatrix.size(): 2600
+***********K,M,W,NUM,FailedBlock(Only One)***********24,3,8,100
+ranks: 0 5 5 5 5 7 6 7 6 5 4 6 6 6 5 5 5 7 6 6 7 5 5 5 7 6 7 
+origin packets: 192
+need packets: 149
+duration: 749.452 ms
+
+
+bitMatrix.size(): 9800
+***********K,M,W,NUM,FailedBlock(Only One)***********48,3,8,100
+ranks: 0 5 6 5 6 5 7 5 6 6 7 7 6 7 6 5 7 6 7 5 7 5 7 6 6 6 7 6 7 7 6 6 6 7 6 7 6 6 6 7 5 7 6 5 6 6 7 7 5 7 5 
+origin packets: 384
+need packets: 307
+duration: 4836.57 ms
+
+
+bitMatrix.size(): 21608
+***********K,M,W,NUM,FailedBlock(Only One)***********72,3,8,100
+ranks: 0 4 6 5 7 6 6 4 7 5 7 6 7 6 6 7 6 7 7 7 7 6 5 7 7 5 6 7 7 6 6 7 7 6 7 7 7 6 6 6 6 7 7 6 7 5 7 6 6 6 6 6 7 7 7 6 7 4 6 5 7 6 7 7 7 6 5 6 7 7 6 7 6 7 6 
+origin packets: 576
+need packets: 465
+duration: 16863.9 ms
+
+
+bitMatrix.size(): 38024
+***********K,M,W,NUM,FailedBlock(Only One)***********96,3,8,100
+ranks: 0 6 7 6 7 6 6 6 7 7 7 7 6 7 7 7 6 7 7 7 7 8 7 6 8 7 6 6 6 7 6 6 5 7 6 6 5 6 6 7 7 5 6 6 6 6 7 7 6 6 7 6 6 6 6 6 6 5 7 7 7 6 6 6 7 7 6 6 6 6 7 6 6 7 6 6 7 6 6 7 7 6 7 6 7 6 4 5 6 6 6 7 5 6 6 7 7 6 6 
+origin packets: 768
+need packets: 621
+duration: 41141.2 ms
+
+
+bitMatrix.size(): 23400
+***********K,M,W,NUM,FailedBlock(Only One)***********24,4,8,100
+ranks: 0 6 5 3 5 5 5 7 6 5 4 5 5 6 5 6 4 5 5 5 6 5 6 6 5 7 7 5 
+origin packets: 192
+need packets: 144
+duration: 5248.28 ms
+
+
+bitMatrix.size(): 166600
+***********K,M,W,NUM,FailedBlock(Only One)***********48,4,8,100
+ranks: 0 6 5 6 5 4 6 7 7 6 6 5 7 5 7 6 6 5 5 6 6 7 7 5 6 5 7 6 6 6 7 6 7 6 6 7 5 8 6 5 6 5 6 6 6 6 7 6 6 6 7 3 
+origin packets: 384
+need packets: 304
+duration: 79778.1 ms
+
+
+bitMatrix.size(): 540200
+***********K,M,W,NUM,FailedBlock(Only One)***********72,4,8,100
+ranks: 0 6 6 6 6 6 6 5 4 7 5 8 6 5 6 5 5 6 5 7 6 7 7 6 6 7 7 6 8 7 5 6 6 6 5 5 7 6 7 5 6 6 7 6 6 6 6 8 7 6 7 5 7 7 7 7 6 7 6 6 6 7 7 6 7 5 6 6 6 6 6 6 6 6 6 7 
+origin packets: 576
+need packets: 463
+duration: 417897 ms
+
+
+bitMatrix.size(): 1254792
+***********K,M,W,NUM,FailedBlock(Only One)***********96,4,8,100
+ranks: 0 6 5 7 6 7 7 7 7 6 6 6 7 6 5 7 6 6 7 5 6 6 7 6 6 8 6 7 5 6 7 6 6 6 6 6 7 5 8 6 6 7 6 6 6 5 6 7 6 7 7 6 6 8 6 7 6 7 7 7 6 7 7 6 5 7 6 6 7 6 7 6 5 6 7 6 7 6 5 7 6 7 6 6 7 7 6 7 6 6 6 6 7 6 6 7 7 7 5 6 
+origin packets: 768
+need packets: 626
+duration: 1.39155e+06 ms
+
+
+bitMatrix.size(): 2600
+***********K,M,W,NUM,FailedBlock(Only One)***********24,3,8,300
+ranks: 0 6 5 4 6 7 7 6 7 5 6 3 7 6 5 4 6 6 7 6 7 4 5 4 6 7 5 
+origin packets: 192
+need packets: 147
+duration: 1930.8 ms
+
+
+bitMatrix.size(): 9800
+***********K,M,W,NUM,FailedBlock(Only One)***********48,3,8,300
+ranks: 0 5 6 5 6 5 7 5 6 6 7 7 6 7 6 5 7 6 7 5 7 5 7 6 6 6 7 6 7 7 6 6 6 7 6 7 6 6 6 7 5 7 6 5 6 6 7 7 5 7 5 
+origin packets: 384
+need packets: 307
+duration: 14248.8 ms
+
+
+bitMatrix.size(): 21608
+***********K,M,W,NUM,FailedBlock(Only One)***********72,3,8,300
+ranks: 0 4 6 5 7 6 6 4 7 5 7 6 7 6 6 7 6 7 7 7 7 6 5 7 7 5 6 7 7 6 6 7 7 6 7 7 7 6 6 6 6 7 7 6 7 5 7 6 6 6 6 6 7 7 7 6 7 4 6 5 7 6 7 7 7 6 5 6 7 7 6 7 6 7 6 
+origin packets: 576
+need packets: 465
+duration: 49524.8 ms
+
+
+bitMatrix.size(): 38024
+***********K,M,W,NUM,FailedBlock(Only One)***********96,3,8,300
+ranks: 0 6 7 6 7 6 6 6 7 7 7 7 6 7 7 7 6 7 7 7 7 8 7 6 8 7 6 6 6 7 6 6 5 7 6 6 5 6 6 7 7 5 6 6 6 6 7 7 6 6 7 6 6 6 6 6 6 5 7 7 7 6 6 6 7 7 6 6 6 6 7 6 6 7 6 6 7 6 6 7 7 6 7 6 7 6 4 5 6 6 6 7 5 6 6 7 7 6 6 
+origin packets: 768
+need packets: 621
+duration: 121533 ms
+
+
+bitMatrix.size(): 23400
+***********K,M,W,NUM,FailedBlock(Only One)***********24,4,8,300
+ranks: 0 6 5 3 5 5 5 7 6 5 4 5 5 6 5 6 4 5 5 5 6 5 6 6 5 7 7 5 
+origin packets: 192
+need packets: 144
+duration: 15496.8 ms
+
+
+bitMatrix.size(): 166600
+***********K,M,W,NUM,FailedBlock(Only One)***********48,4,8,300
+ranks: 0 6 6 5 7 6 6 6 7 6 6 6 5 6 6 5 7 7 6 7 6 5 5 6 5 4 6 8 6 6 7 6 7 6 6 6 5 5 6 6 5 6 6 6 5 6 6 6 5 6 6 6 
+origin packets: 384
+need packets: 302
+duration: 235500 ms
+
+
+bitMatrix.size(): 540200
+***********K,M,W,NUM,FailedBlock(Only One)***********72,4,8,300
+ranks: 0 5 6 6 6 6 6 6 7 6 6 7 6 5 6 6 5 7 7 7 6 6 6 5 5 7 5 7 5 7 6 6 6 7 6 5 6 6 6 6 5 6 8 8 7 6 6 7 7 7 6 6 7 5 5 6 6 7 6 6 7 7 6 4 7 6 6 6 6 5 6 7 7 7 7 5 
+origin packets: 576
+need packets: 461
+duration: 1.22262e+06 ms
+
+
+bitMatrix.size(): 1254792
+***********K,M,W,NUM,FailedBlock(Only One)***********96,4,8,300
+ranks: 0 6 6 7 5 5 6 6 7 7 7 7 6 6 6 8 6 6 6 5 7 6 6 7 6 7 6 6 6 6 5 6 6 7 6 7 5 6 7 6 7 6 7 5 6 6 6 7 7 6 6 6 6 5 6 7 7 7 7 7 7 7 7 8 7 7 6 6 6 6 6 6 5 6 6 6 6 6 8 6 6 7 7 7 6 6 6 6 6 7 7 7 6 7 5 6 6 6 6 7 
+origin packets: 768
+need packets: 624
+duration: 3.97502e+06 ms
+
+
+bitMatrix.size(): 2600
+***********K,M,W,NUM,FailedBlock(Only One)***********24,3,8,1000
+ranks: 0 6 5 4 6 7 7 6 7 5 6 3 7 6 5 4 6 6 7 6 7 4 5 4 6 7 5 
+origin packets: 192
+need packets: 147
+duration: 6406.99 ms
+
+
+bitMatrix.size(): 9800
+***********K,M,W,NUM,FailedBlock(Only One)***********48,3,8,1000
+ranks: 0 6 7 7 7 5 6 6 7 7 6 7 6 5 6 5 7 7 6 6 6 6 5 6 7 5 5 7 5 6 5 7 6 4 6 5 6 6 5 7 5 5 4 5 5 8 8 8 7 7 7 
+origin packets: 384
+need packets: 303
+duration: 47286.1 ms
+
+
+bitMatrix.size(): 21608
+***********K,M,W,NUM,FailedBlock(Only One)***********72,3,8,1000
+ranks: 0 4 6 5 7 6 6 4 7 5 7 6 7 6 6 7 6 7 7 7 7 6 5 7 7 5 6 7 7 6 6 7 7 6 7 7 7 6 6 6 6 7 7 6 7 5 7 6 6 6 6 6 7 7 7 6 7 4 6 5 7 6 7 7 7 6 5 6 7 7 6 7 6 7 6 
+origin packets: 576
+need packets: 465
+duration: 168491 ms
+
+
+bitMatrix.size(): 38024
+***********K,M,W,NUM,FailedBlock(Only One)***********96,3,8,1000
+ranks: 0 6 7 6 7 6 6 6 7 7 7 7 6 7 7 7 6 7 7 7 7 8 7 6 8 7 6 6 6 7 6 6 5 7 6 6 5 6 6 7 7 5 6 6 6 6 7 7 6 6 7 6 6 6 6 6 6 5 7 7 7 6 6 6 7 7 6 6 6 6 7 6 6 7 6 6 7 6 6 7 7 6 7 6 7 6 4 5 6 6 6 7 5 6 6 7 7 6 6 
+origin packets: 768
+need packets: 621
+duration: 401440 ms
+
+
+bitMatrix.size(): 23400
+***********K,M,W,NUM,FailedBlock(Only One)***********24,4,8,1000
+ranks: 0 6 5 3 5 5 5 7 6 5 4 5 5 6 5 6 4 5 5 5 6 5 6 6 5 7 7 5 
+origin packets: 192
+need packets: 144
+duration: 51425.1 ms
+
+
+bitMatrix.size(): 166600
+***********K,M,W,NUM,FailedBlock(Only One)***********48,4,8,1000
+ranks: 0 6 6 5 7 6 6 6 7 6 6 6 5 6 6 5 7 7 6 7 6 5 5 6 5 4 6 8 6 6 7 6 7 6 6 6 5 5 6 6 5 6 6 6 5 6 6 6 5 6 6 6 
+origin packets: 384
+need packets: 302
+duration: 781048 ms
+
+
+bitMatrix.size(): 540200
+***********K,M,W,NUM,FailedBlock(Only One)***********72,4,8,1000
+ranks: 0 6 5 6 7 7 5 6 5 7 6 6 6 6 6 6 6 6 6 6 7 5 5 6 6 5 7 6 6 5 6 7 7 6 5 6 6 6 7 6 6 5 5 6 6 6 6 5 7 6 6 6 7 6 6 6 7 6 5 7 6 6 7 7 6 8 7 6 6 7 7 6 7 7 6 6 
+origin packets: 576
+need packets: 459
+duration: 4.04113e+06 ms
+
+
+bitMatrix.size(): 1254792
+***********K,M,W,NUM,FailedBlock(Only One)***********96,4,8,1000
+ranks: 0 4 6 6 5 6 5 6 7 7 6 7 7 6 6 7 5 6 6 7 7 6 4 7 6 7 7 5 6 6 6 7 7 6 7 6 7 5 7 6 5 7 7 6 7 7 6 6 6 7 8 7 6 5 6 7 7 7 6 6 5 7 6 5 7 7 6 6 7 7 7 6 7 8 6 5 7 6 6 6 6 6 6 7 6 6 4 6 7 6 7 5 8 7 7 6 7 7 6 6 
+origin packets: 768
+need packets: 622
+duration: 1.30904e+07 ms

@@ -61,6 +61,7 @@
         "regex": "cpp",
         "random": "cpp",
         "algorithm": "cpp",
-        "set": "cpp"
+        "set": "cpp",
+        "string": "cpp"
     }
 }

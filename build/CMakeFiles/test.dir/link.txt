@@ -1,1 +1,1 @@
-/opt/rh/devtoolset-11/root/usr/bin/c++     CMakeFiles/test.dir/src/test/main.cpp.o  -o test libjerasure.a -lm libec.a libalgorithm.a libjerasure.a -pthread -lm 
+/opt/rh/devtoolset-11/root/usr/bin/c++  -g   CMakeFiles/test.dir/src/test/main.cpp.o  -o exec/test libjerasure.a -lm libec.a libalgorithm.a libjerasure.a -pthread -lm 

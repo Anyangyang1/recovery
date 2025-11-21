@@ -7,6 +7,8 @@
 #include <cmath>
 #include <numeric>
 #include <algorithm>
+#include <memory>
+#include <cstring>
 
 extern "C" {
 #include "../../Jerasure-1.2A/jerasure.h"
@@ -65,5 +67,13 @@ namespace ECProject {
 
     void printMatrix(const vector<vector<int>>& matrix, int W);
 
+
+    int bytes_to_int(std::vector<unsigned char> &bytes);
+
+    std::vector<unsigned char> int_to_bytes(int integer);
+
+    double bytes_to_double(std::vector<unsigned char> &bytes);
+
+    std::vector<unsigned char> double_to_bytes(double doubler);
 
 } // namespace name

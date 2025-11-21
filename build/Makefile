@@ -457,6 +457,33 @@ src/coordinator/run_coordinator.cpp.s:
 	$(MAKE) -f CMakeFiles/coordinator.dir/build.make CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.s
 .PHONY : src/coordinator/run_coordinator.cpp.s
 
+src/datanode/datanode.o: src/datanode/datanode.cpp.o
+
+.PHONY : src/datanode/datanode.o
+
+# target to build an object file
+src/datanode/datanode.cpp.o:
+	$(MAKE) -f CMakeFiles/datanode.dir/build.make CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o
+.PHONY : src/datanode/datanode.cpp.o
+
+src/datanode/datanode.i: src/datanode/datanode.cpp.i
+
+.PHONY : src/datanode/datanode.i
+
+# target to preprocess a source file
+src/datanode/datanode.cpp.i:
+	$(MAKE) -f CMakeFiles/datanode.dir/build.make CMakeFiles/datanode.dir/src/datanode/datanode.cpp.i
+.PHONY : src/datanode/datanode.cpp.i
+
+src/datanode/datanode.s: src/datanode/datanode.cpp.s
+
+.PHONY : src/datanode/datanode.s
+
+# target to generate assembly for a file
+src/datanode/datanode.cpp.s:
+	$(MAKE) -f CMakeFiles/datanode.dir/build.make CMakeFiles/datanode.dir/src/datanode/datanode.cpp.s
+.PHONY : src/datanode/datanode.cpp.s
+
 src/datanode/run_datanode.o: src/datanode/run_datanode.cpp.o
 
 .PHONY : src/datanode/run_datanode.o
@@ -510,6 +537,33 @@ src/ec/erasure_code.s: src/ec/erasure_code.cpp.s
 src/ec/erasure_code.cpp.s:
 	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/src/ec/erasure_code.cpp.s
 .PHONY : src/ec/erasure_code.cpp.s
+
+src/proxy/proxy.o: src/proxy/proxy.cpp.o
+
+.PHONY : src/proxy/proxy.o
+
+# target to build an object file
+src/proxy/proxy.cpp.o:
+	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/src/proxy/proxy.cpp.o
+.PHONY : src/proxy/proxy.cpp.o
+
+src/proxy/proxy.i: src/proxy/proxy.cpp.i
+
+.PHONY : src/proxy/proxy.i
+
+# target to preprocess a source file
+src/proxy/proxy.cpp.i:
+	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/src/proxy/proxy.cpp.i
+.PHONY : src/proxy/proxy.cpp.i
+
+src/proxy/proxy.s: src/proxy/proxy.cpp.s
+
+.PHONY : src/proxy/proxy.s
+
+# target to generate assembly for a file
+src/proxy/proxy.cpp.s:
+	$(MAKE) -f CMakeFiles/proxy.dir/build.make CMakeFiles/proxy.dir/src/proxy/proxy.cpp.s
+.PHONY : src/proxy/proxy.cpp.s
 
 src/proxy/run_proxy.o: src/proxy/run_proxy.cpp.o
 
@@ -608,12 +662,18 @@ help:
 	@echo "... src/coordinator/run_coordinator.o"
 	@echo "... src/coordinator/run_coordinator.i"
 	@echo "... src/coordinator/run_coordinator.s"
+	@echo "... src/datanode/datanode.o"
+	@echo "... src/datanode/datanode.i"
+	@echo "... src/datanode/datanode.s"
 	@echo "... src/datanode/run_datanode.o"
 	@echo "... src/datanode/run_datanode.i"
 	@echo "... src/datanode/run_datanode.s"
 	@echo "... src/ec/erasure_code.o"
 	@echo "... src/ec/erasure_code.i"
 	@echo "... src/ec/erasure_code.s"
+	@echo "... src/proxy/proxy.o"
+	@echo "... src/proxy/proxy.i"
+	@echo "... src/proxy/proxy.s"
 	@echo "... src/proxy/run_proxy.o"
 	@echo "... src/proxy/run_proxy.i"
 	@echo "... src/proxy/run_proxy.s"

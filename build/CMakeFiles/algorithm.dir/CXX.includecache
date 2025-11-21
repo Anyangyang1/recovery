@@ -51,6 +51,10 @@ numeric
 -
 algorithm
 -
+memory
+-
+cstring
+-
 ../../Jerasure-1.2A/jerasure.h
 ../Jerasure-1.2A/jerasure.h
 ../../Jerasure-1.2A/cauchy.h
@@ -63,12 +67,12 @@ sggh.h
 /home/anyangyang/study/recovery/src/algorithm/sggh.h
 
 /home/anyangyang/study/recovery/src/algorithm/sggh.cpp
-cassert
--
-algorithm
--
 sggh.h
 /home/anyangyang/study/recovery/src/algorithm/sggh.h
+algorithm
+-
+cassert
+-
 utils.h
 /home/anyangyang/study/recovery/src/algorithm/utils.h
 
