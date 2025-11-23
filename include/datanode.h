@@ -30,10 +30,13 @@ class Datanode {
     void handle_get(const std::string &key, size_t value_size,
                     const vector<vector<int>> &matrix);
 
+    void handle_get(const std::string &key, size_t value_size);
+
     void handle_set(const std::string &key, size_t value_size);
 
   private:
-    bool store_data(std::string &key, const char *value, size_t value_size);
+    bool store_data(const std::string &key, const char *value,
+                    size_t value_size);
     bool access_data(const std::string &key, char *value_buf,
                      size_t value_size);
     bool access_data(const std::string &key, char *value_buf,

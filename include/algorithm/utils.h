@@ -14,6 +14,10 @@ extern "C" {
 #include "../../Jerasure-1.2A/jerasure.h"
 #include "../../Jerasure-1.2A/cauchy.h"
 }
+
+#include <source_location>
+
+#define my_assert(condition) exit_when((condition), std::source_location::current())
 using namespace std;
 
 namespace ECProject {

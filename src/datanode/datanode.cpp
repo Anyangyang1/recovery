@@ -56,8 +56,7 @@ void Datanode::handle_set(const std::string &key, size_t value_size) {
 
 #ifdef MY_DEBUG
             std::cout << "[Datanode" << port_ << "][Write] successfully write "
-                      << key_buf << " with " << value_size << "bytes"
-                      << std::endl;
+                      << key << " with " << value_size << "bytes" << std::endl;
 #endif
 
         } catch (const std::exception &e) {
@@ -77,14 +76,54 @@ void Datanode::handle_get(const std::string &key, size_t value_size,
         size_t packet_size = value_size / need_packets;
         size_t w = matrix[0].size();
 
-        std::string data_buf(w * packet_size);
+        std::string data_buf(w * packet_size, 0);
         bool ret = access_data(key, data_buf.data(), packet_size * w);
 
-        std::string decode_buf(value_size);
+        std::string decode_buf(value_size, 0);
         local_decode(matrix, data_buf.data(), decode_buf.data(), packet_size);
 
         asio::write(socket_,
                     asio::buffer(decode_buf.data(), decode_buf.size()));
+        std::vector<unsigned char> finish_buf(sizeof(int));
+        asio::read(socket_, asio::buffer(finish_buf, finish_buf.size()));
+        int finish = bytes_to_int(finish_buf);
+        if (!finish) {
+            std::cout << "[Datanode" << port_
+                      << "][GET] destination set failed!" << std::endl;
+            asio::error_code ignore_ec;
+            socket_.shutdown(asio::ip::tcp::socket::shutdown_both, ignore_ec);
+            socket_.close(ignore_ec);
+#ifdef MY_DEBUG
+            std::cout << "[Datanode" << port_ << "][GET] write to socket!"
+                      << std::endl;
+#endif
+        }
+    };
+    try {
+#ifdef MY_DEBUG
+        std::cout << "[Datanode" << port_ << "][GET] ready to handle get!"
+                  << std::endl;
+#endif
+        std::thread my_thread(handler);
+        my_thread.detach();
+    } catch (std::exception &e) {
+        std::cout << "exception" << std::endl;
+        std::cout << e.what() << std::endl;
+    }
+}
+
+void Datanode::handle_get(const std::string &key, size_t value_size) {
+    auto handler = [this, key, value_size]() mutable {
+        asio::error_code ec;
+        asio::ip::tcp::socket socket_(io_context_);
+        acceptor_.accept(socket_);
+
+        std::string data_buf(value_size, 0);
+        bool ret = access_data(key, data_buf.data(), value_size);
+
+
+        asio::write(socket_,
+                    asio::buffer(data_buf.data(), data_buf.size()));
         std::vector<unsigned char> finish_buf(sizeof(int));
         asio::read(socket_, asio::buffer(finish_buf, finish_buf.size()));
         int finish = bytes_to_int(finish_buf);
@@ -165,7 +204,7 @@ bool Datanode::access_data(const std::string &key, char *value_buf,
     return true;
 }
 
-bool Datanode::store_data(std::string &key, const char *value,
+bool Datanode::store_data(const std::string &key, const char *value,
                           size_t value_size) {
     std::string targetdir = "./storage/" + std::to_string(port_) + "/";
     std::string writepath = targetdir + key;
@@ -181,6 +220,7 @@ bool Datanode::store_data(std::string &key, const char *value,
         std::cout << "[Datanode" << port_ << "][Disk] failed to set!\n";
         return false;
     }
+    return true;
 }
 
 void Datanode::local_decode(const std::vector<std::vector<int>> &matrix,

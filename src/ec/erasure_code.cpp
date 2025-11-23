@@ -2,19 +2,7 @@
 #include <cstring>
 using namespace ECProject;
 
-void ErasureCode::init_coding_parameters(CodingParameters cp)
-{
-	k = cp.k;
-	m = cp.m;
-	local_or_column = cp.local_or_column;
-}
 
-void ErasureCode::get_coding_parameters(CodingParameters& cp)
-{
-	cp.k = k;
-	cp.m = m;
-	cp.local_or_column = local_or_column;
-}
 
 void ErasureCode::print_matrix(int *matrix, int rows, int cols, std::string msg)
 {
@@ -213,47 +201,4 @@ void ErasureCode::encode_partial_blocks_for_failures_v2_(int k_,
 	jerasure_matrix_encode(datas_num, failures_num, w, encoding_matrix.data(),
 												 data_ptrs, coding_ptrs, block_size);
 	free(decoding_matrix);
-}
-
-void ErasureCode::partition_flat()
-{
-	int n = k + m;
-  for(int i = 0; i < n; i++) {
-    partition_plan.push_back({i});
-  }
-}
-
-void ErasureCode::generate_partition()
-{
-	partition_plan.clear();
-	if (placement_rule == FLAT) {
-		partition_flat();
-	} else if (placement_rule == RANDOM) {
-		partition_random();
-	} else if (placement_rule == OPTIMAL) {
-		partition_optimal();
-	} 
-}
-
-void ErasureCode::print_info(std::vector<std::vector<int>> info, std::string info_str)
-{
-	if (info_str == "partition") {
-		std::string placement_type = "_flat";
-		if (placement_rule == RANDOM) {
-			placement_type = "_random";
-		} else if (placement_rule == OPTIMAL) {
-			placement_type = "_optimal";
-		}
-		info_str += placement_type;
-	}
-	
-	std::cout << info_str << " result:\n";
-	int cnt = 0;
-	for (auto& vec : info) {
-		std::cout << cnt++ << ": ";
-		for (int ele : vec) {
-			std::cout << ele << " ";
-		}
-		std::cout << "\n";
-	}
 }

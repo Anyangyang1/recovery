@@ -155,19 +155,6 @@ target_include_directories(datanode PRIVATE
 
 target_link_libraries(datanode PRIVATE jerasure Threads::Threads m ec)
 
-# —— Proxy 模块 ——
-file(GLOB PROXY_SOURCES "src/proxy/*.cpp")
-add_executable(proxy ${PROXY_SOURCES})
-
-target_include_directories(proxy PRIVATE
-    ${CMAKE_SOURCE_DIR}/include/proxy
-    ${CMAKE_SOURCE_DIR}/include/ec
-    ${YLT_ROOT}/include
-    ${YLT_ROOT}/include/ylt/thirdparty
-)
-
-target_link_libraries(proxy PRIVATE jerasure Threads::Threads m ec)
-
 
 # —— test 模块 ——
 file(GLOB TEST_SOURCES "src/test/*.cpp")
@@ -184,7 +171,7 @@ target_link_libraries(test PRIVATE jerasure Threads::Threads m ec)
 
 
 # ====== 编译选项（协程等）======
-foreach(TARGET client coordinator datanode proxy test)
+foreach(TARGET client coordinator datanode test)
     target_compile_options(${TARGET} PRIVATE
         -O2 -Wall -Wextra
         $<$<COMPILE_LANGUAGE:CXX>:-pthread>
