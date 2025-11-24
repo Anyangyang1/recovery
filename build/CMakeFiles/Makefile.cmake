@@ -133,5 +133,6 @@ set(CMAKE_DEPEND_INFO_FILES
   "CMakeFiles/ec.dir/DependInfo.cmake"
   "CMakeFiles/coordinator.dir/DependInfo.cmake"
   "CMakeFiles/algorithm.dir/DependInfo.cmake"
+  "CMakeFiles/tinyxml2.dir/DependInfo.cmake"
   "CMakeFiles/jerasure.dir/DependInfo.cmake"
   )

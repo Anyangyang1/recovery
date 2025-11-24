@@ -6,6 +6,8 @@
 
 #IncludeRegexTransform: 
 
+/home/anyangyang/study/recovery/src/client/client.cpp
+
 /home/anyangyang/study/recovery/src/client/run_client.cpp
 iostream
 -

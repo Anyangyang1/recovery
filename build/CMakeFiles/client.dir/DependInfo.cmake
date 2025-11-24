@@ -4,6 +4,7 @@ set(CMAKE_DEPENDS_LANGUAGES
   )
 # The set of files for implicit dependencies of each language:
 set(CMAKE_DEPENDS_CHECK_CXX
+  "/home/anyangyang/study/recovery/src/client/client.cpp" "/home/anyangyang/study/recovery/build/CMakeFiles/client.dir/src/client/client.cpp.o"
   "/home/anyangyang/study/recovery/src/client/run_client.cpp" "/home/anyangyang/study/recovery/build/CMakeFiles/client.dir/src/client/run_client.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")

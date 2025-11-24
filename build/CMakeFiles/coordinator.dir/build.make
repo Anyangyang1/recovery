@@ -96,6 +96,7 @@ exec/coordinator: CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp
 exec/coordinator: CMakeFiles/coordinator.dir/build.make
 exec/coordinator: libjerasure.a
 exec/coordinator: libec.a
+exec/coordinator: libtinyxml2.a
 exec/coordinator: libalgorithm.a
 exec/coordinator: libjerasure.a
 exec/coordinator: CMakeFiles/coordinator.dir/link.txt

@@ -6,5 +6,5 @@ CXX_FLAGS =   -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-se
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/anyangyang/study/recovery/include/coordinator -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -isystem /home/anyangyang/study/recovery/yalantinglibs/include 
+CXX_INCLUDES = -I/home/anyangyang/study/recovery/include/coordinator -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/tinyxml2 -isystem /home/anyangyang/study/recovery/yalantinglibs/include 
 

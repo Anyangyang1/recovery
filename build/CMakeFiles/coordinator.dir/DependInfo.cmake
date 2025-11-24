@@ -17,6 +17,7 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../yalantinglibs/include/ylt/thirdparty"
   "../Jerasure-1.2A"
   "../include"
+  "../tinyxml2"
   "../yalantinglibs/include"
   )
 
@@ -24,6 +25,7 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
 set(CMAKE_TARGET_LINKED_INFO_FILES
   "/home/anyangyang/study/recovery/build/CMakeFiles/jerasure.dir/DependInfo.cmake"
   "/home/anyangyang/study/recovery/build/CMakeFiles/ec.dir/DependInfo.cmake"
+  "/home/anyangyang/study/recovery/build/CMakeFiles/tinyxml2.dir/DependInfo.cmake"
   "/home/anyangyang/study/recovery/build/CMakeFiles/algorithm.dir/DependInfo.cmake"
   )
 

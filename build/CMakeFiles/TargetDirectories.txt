@@ -5,5 +5,6 @@
 /home/anyangyang/study/recovery/build/CMakeFiles/ec.dir
 /home/anyangyang/study/recovery/build/CMakeFiles/coordinator.dir
 /home/anyangyang/study/recovery/build/CMakeFiles/algorithm.dir
+/home/anyangyang/study/recovery/build/CMakeFiles/tinyxml2.dir
 /home/anyangyang/study/recovery/build/CMakeFiles/rebuild_cache.dir
 /home/anyangyang/study/recovery/build/CMakeFiles/jerasure.dir

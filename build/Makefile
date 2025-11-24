@@ -189,6 +189,19 @@ algorithm/fast:
 .PHONY : algorithm/fast
 
 #=============================================================================
+# Target rules for targets named tinyxml2
+
+# Build rule for target.
+tinyxml2: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 tinyxml2
+.PHONY : tinyxml2
+
+# fast build rule for target.
+tinyxml2/fast:
+	$(MAKE) -f CMakeFiles/tinyxml2.dir/build.make CMakeFiles/tinyxml2.dir/build
+.PHONY : tinyxml2/fast
+
+#=============================================================================
 # Target rules for targets named jerasure
 
 # Build rule for target.
@@ -390,6 +403,33 @@ src/algorithm/utils.cpp.s:
 	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.s
 .PHONY : src/algorithm/utils.cpp.s
 
+src/client/client.o: src/client/client.cpp.o
+
+.PHONY : src/client/client.o
+
+# target to build an object file
+src/client/client.cpp.o:
+	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/src/client/client.cpp.o
+.PHONY : src/client/client.cpp.o
+
+src/client/client.i: src/client/client.cpp.i
+
+.PHONY : src/client/client.i
+
+# target to preprocess a source file
+src/client/client.cpp.i:
+	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/src/client/client.cpp.i
+.PHONY : src/client/client.cpp.i
+
+src/client/client.s: src/client/client.cpp.s
+
+.PHONY : src/client/client.s
+
+# target to generate assembly for a file
+src/client/client.cpp.s:
+	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/src/client/client.cpp.s
+.PHONY : src/client/client.cpp.s
+
 src/client/run_client.o: src/client/run_client.cpp.o
 
 .PHONY : src/client/run_client.o
@@ -579,6 +619,33 @@ src/test/main.cpp.s:
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/test/main.cpp.s
 .PHONY : src/test/main.cpp.s
 
+tinyxml2/tinyxml2.o: tinyxml2/tinyxml2.cpp.o
+
+.PHONY : tinyxml2/tinyxml2.o
+
+# target to build an object file
+tinyxml2/tinyxml2.cpp.o:
+	$(MAKE) -f CMakeFiles/tinyxml2.dir/build.make CMakeFiles/tinyxml2.dir/tinyxml2/tinyxml2.cpp.o
+.PHONY : tinyxml2/tinyxml2.cpp.o
+
+tinyxml2/tinyxml2.i: tinyxml2/tinyxml2.cpp.i
+
+.PHONY : tinyxml2/tinyxml2.i
+
+# target to preprocess a source file
+tinyxml2/tinyxml2.cpp.i:
+	$(MAKE) -f CMakeFiles/tinyxml2.dir/build.make CMakeFiles/tinyxml2.dir/tinyxml2/tinyxml2.cpp.i
+.PHONY : tinyxml2/tinyxml2.cpp.i
+
+tinyxml2/tinyxml2.s: tinyxml2/tinyxml2.cpp.s
+
+.PHONY : tinyxml2/tinyxml2.s
+
+# target to generate assembly for a file
+tinyxml2/tinyxml2.cpp.s:
+	$(MAKE) -f CMakeFiles/tinyxml2.dir/build.make CMakeFiles/tinyxml2.dir/tinyxml2/tinyxml2.cpp.s
+.PHONY : tinyxml2/tinyxml2.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -592,6 +659,7 @@ help:
 	@echo "... ec"
 	@echo "... coordinator"
 	@echo "... algorithm"
+	@echo "... tinyxml2"
 	@echo "... rebuild_cache"
 	@echo "... jerasure"
 	@echo "... Jerasure-1.2A/cauchy.o"
@@ -615,6 +683,9 @@ help:
 	@echo "... src/algorithm/utils.o"
 	@echo "... src/algorithm/utils.i"
 	@echo "... src/algorithm/utils.s"
+	@echo "... src/client/client.o"
+	@echo "... src/client/client.i"
+	@echo "... src/client/client.s"
 	@echo "... src/client/run_client.o"
 	@echo "... src/client/run_client.i"
 	@echo "... src/client/run_client.s"
@@ -636,6 +707,9 @@ help:
 	@echo "... src/test/main.o"
 	@echo "... src/test/main.i"
 	@echo "... src/test/main.s"
+	@echo "... tinyxml2/tinyxml2.o"
+	@echo "... tinyxml2/tinyxml2.i"
+	@echo "... tinyxml2/tinyxml2.s"
 .PHONY : help
 
 
