@@ -48,10 +48,10 @@ namespace ECProject
 						std::vector<std::vector<int>>& help_blocks,
 						bool partial_scheme);
 		
-		bool generate_repair_plan(std::vector<int> failure_idxs,
-															std::vector<RepairPlan>& plans,
-															bool partial_scheme,
-															bool repair_priority,
-															bool repair_method) override;
+		// bool generate_repair_plan(std::vector<int> failure_idxs,
+		// 													std::vector<RepairPlan>& plans,
+		// 													bool partial_scheme,
+		// 													bool repair_priority,
+		// 													bool repair_method) override;
 	};
 }

@@ -17,6 +17,7 @@ class ErasureCode {
     int w = 8; /* word size for encoding */
 
     ErasureCode() = default;
+    ErasureCode(int k, int m) : k(k), m(m) {}
     ErasureCode(int k, int m, int w) : k(k), m(m), w(w) {}
     virtual ~ErasureCode() {}
 

@@ -1,0 +1,203 @@
+GenerateAllDecodeMatrix Time: 0.299607 ms
+SGGH Time: 359.404 ms
+ranks: 0 4 3 4 5 6 6 4 3 
+origin packets: 48
+need packets: 35
+duration: 360.514 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^6,3,8
+GenerateAllDecodeMatrix Time: 0.328611 ms
+SGGH Time: 945.402 ms
+ranks: 0 5 3 3 5 4 4 5 5 6 6 
+origin packets: 64
+need packets: 46
+duration: 946.414 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^8,3,8
+GenerateAllDecodeMatrix Time: 0.404703 ms
+SGGH Time: 2185.69 ms
+ranks: 0 3 4 4 4 5 2 5 3 3 
+origin packets: 48
+need packets: 33
+duration: 2187.12 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^6,4,8
+GenerateAllDecodeMatrix Time: 1.18492 ms
+SGGH Time: 10384.9 ms
+ranks: 0 2 1 4 5 5 5 5 4 5 5 4 
+origin packets: 64
+need packets: 45
+duration: 10388.5 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^8,4,8
+
+
+GenerateAllDecodeMatrix Time: 0.322657 ms
+SGGH Time: 359.139 ms
+ranks: 0 4 3 4 5 6 6 4 3 
+origin packets: 48
+need packets: 35
+duration: 360.299 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^6,3,8
+GenerateAllDecodeMatrix Time: 0.32409 ms
+SGGH Time: 944.547 ms
+ranks: 0 5 3 3 5 4 4 5 5 6 6 
+origin packets: 64
+need packets: 46
+duration: 945.536 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^8,3,8
+GenerateAllDecodeMatrix Time: 0.394911 ms
+SGGH Time: 2188.83 ms
+ranks: 0 3 4 4 4 5 2 5 3 3 
+origin packets: 48
+need packets: 33
+duration: 2190.27 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^6,4,8
+GenerateAllDecodeMatrix Time: 1.21133 ms
+SGGH Time: 10679.4 ms
+ranks: 0 2 1 4 5 5 5 5 4 5 5 4 
+origin packets: 64
+need packets: 45
+duration: 10683.1 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^8,4,8
+
+GenerateAllDecodeMatrix Time: 0.305786 ms
+matrix2Bitmatrix Time: 0.631908 ms
+SGGH Time: 355.824 ms
+ranks: 0 4 3 4 5 6 6 4 3 
+origin packets: 48
+need packets: 35
+duration: 356.976 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^6,3,8
+GenerateAllDecodeMatrix Time: 0.331505 ms
+matrix2Bitmatrix Time: 0.631505 ms
+SGGH Time: 1002.59 ms
+ranks: 0 5 3 3 5 4 4 5 5 6 6 
+origin packets: 64
+need packets: 46
+duration: 1003.64 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^8,3,8
+GenerateAllDecodeMatrix Time: 0.501125 ms
+matrix2Bitmatrix Time: 1.17582 ms
+SGGH Time: 2281.62 ms
+ranks: 0 3 4 4 4 5 2 5 3 3 
+origin packets: 48
+need packets: 33
+duration: 2283.39 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^6,4,8
+GenerateAllDecodeMatrix Time: 1.36978 ms
+matrix2Bitmatrix Time: 2.52439 ms
+SGGH Time: 10610.2 ms
+ranks: 0 2 1 4 5 5 5 5 4 5 5 4 
+origin packets: 64
+need packets: 45
+duration: 10614.3 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^8,4,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 0.921855 ms
+SGGH Time: 358.948 ms
+ranks: 0 4 3 4 5 6 6 4 3 
+origin packets: 48
+need packets: 35
+duration: 360.089 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^6,3,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 0.964009 ms
+SGGH Time: 951.039 ms
+ranks: 0 5 3 3 5 4 4 5 5 6 6 
+origin packets: 64
+need packets: 46
+duration: 952.059 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^8,3,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 1.38449 ms
+SGGH Time: 2390.66 ms
+ranks: 0 3 4 4 4 5 2 5 3 3 
+origin packets: 48
+need packets: 33
+duration: 2392.12 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^6,4,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 3.3985 ms
+SGGH Time: 10506.9 ms
+ranks: 0 2 1 4 5 5 5 5 4 5 5 4 
+origin packets: 64
+need packets: 45
+duration: 10510.5 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^8,4,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 40.6689 ms
+SGGH Time: 60.2496 ms
+ranks: 0 5 6 3 6 7 6 6 8 6 6 7 6 5 5 6 5 6 5 5 7 6 6 6 6 5 6 
+origin packets: 192
+need packets: 151
+duration: 101.692 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^24,3,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 277.371 ms
+SGGH Time: 352.289 ms
+ranks: 0 6 6 5 5 7 7 7 7 7 7 5 5 6 7 6 7 7 7 6 6 6 6 7 6 7 6 6 6 7 6 5 6 6 6 5 7 7 4 6 7 5 8 6 6 6 6 7 7 7 6 
+origin packets: 384
+need packets: 312
+duration: 631.269 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^48,3,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 218.623 ms
+SGGH Time: 383.089 ms
+ranks: 0 3 6 6 4 6 6 4 7 5 7 4 6 6 5 6 6 4 6 4 6 6 5 5 6 7 6 7 
+origin packets: 192
+need packets: 149
+duration: 605.226 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^24,4,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 4895.92 ms
+SGGH Time: 5689.9 ms
+ranks: 0 6 6 4 6 7 5 6 6 5 8 5 5 7 6 5 7 6 8 5 5 7 6 6 5 6 6 5 6 6 6 7 7 5 6 6 7 6 6 6 7 6 7 6 6 5 6 5 6 6 6 7 
+origin packets: 384
+need packets: 306
+duration: 10626.4 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^48,4,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 21.2858 ms
+SGGH Time: 4415.32 ms
+ranks: 0 7 6 7 6 6 4 5 5 5 5 5 5 6 5 4 5 5 5 6 5 6 7 8 7 7 6 
+origin packets: 192
+need packets: 148
+duration: 4437.03 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^24,3,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 242.148 ms
+SGGH Time: 32446.2 ms
+ranks: 0 4 6 6 7 5 7 7 6 6 4 6 5 5 7 6 6 6 6 6 6 5 7 6 6 6 7 6 6 6 7 7 6 6 6 6 7 7 6 7 6 6 5 6 6 6 6 7 8 7 7 
+origin packets: 384
+need packets: 307
+duration: 32690.9 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^48,3,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 227.08 ms
+SGGH Time: 37878.4 ms
+ranks: 0 7 6 6 3 4 3 4 6 6 5 6 5 6 6 6 4 5 6 5 6 5 7 6 7 4 6 6 
+origin packets: 192
+need packets: 146
+duration: 38115.6 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^24,4,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 4788.01 ms
+SGGH Time: 538358 ms
+ranks: 0 4 6 6 6 7 6 7 5 5 5 7 6 6 5 6 6 6 7 6 5 6 6 6 6 7 6 5 6 6 5 5 7 7 7 7 6 6 5 7 6 7 5 5 7 6 5 4 6 7 5 6 
+origin packets: 384
+need packets: 302
+duration: 543179 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^48,4,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 20.8019 ms
+SGGH Time: 13248.3 ms
+ranks: 0 7 6 7 6 6 4 5 5 5 5 5 5 6 5 4 5 5 5 6 5 6 7 8 7 7 6 
+origin packets: 192
+need packets: 148
+duration: 13269.5 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^24,3,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 242.287 ms
+SGGH Time: 96949 ms
+ranks: 0 6 6 6 7 7 7 6 6 8 7 7 7 6 6 6 5 6 5 6 6 7 6 6 5 6 5 6 6 6 7 6 7 5 6 6 6 6 5 4 6 5 6 5 7 6 6 7 6 6 6 
+origin packets: 384
+need packets: 303
+duration: 97192.8 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^48,3,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 219.701 ms
+SGGH Time: 113143 ms
+ranks: 0 6 4 6 6 7 6 5 6 5 5 6 7 3 6 4 5 6 6 6 5 5 5 5 5 4 5 6 
+origin packets: 192
+need packets: 145
+duration: 113371 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^24,4,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 4790.22 ms
+SGGH Time: 1.61373e+06 ms
+ranks: 0 4 6 6 6 7 6 7 5 5 5 7 6 6 5 6 6 6 7 6 5 6 6 6 6 7 6 5 6 6 5 5 7 7 7 7 6 6 5 7 6 7 5 5 7 6 5 4 6 7 5 6 
+origin packets: 384
+need packets: 302
+duration: 1.61856e+06 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^48,4,8

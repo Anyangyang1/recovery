@@ -26,6 +26,7 @@ find_package(Threads REQUIRED)
 # set(ASIO_ROOT ${CMAKE_SOURCE_DIR}/asio-1.36.0)
 set(YLT_ROOT  ${CMAKE_SOURCE_DIR}/yalantinglibs)
 set(JERASURE_ROOT ${CMAKE_SOURCE_DIR}/Jerasure-1.2A)
+set(TINYXML2_ROOT  ${CMAKE_SOURCE_DIR}/tinyxml2)  
 
 # ====== 全局编译选项（抑制第三方警告）======
 include_directories(SYSTEM ${YLT_ROOT}/include)
@@ -56,6 +57,19 @@ target_include_directories(jerasure PUBLIC
 target_compile_options(jerasure PRIVATE
     $<$<C_COMPILER_ID:GNU>:-Wno-maybe-uninitialized -Wno-unused-variable>
     $<$<C_COMPILER_ID:Clang>:-Wno-uninitialized -Wno-unused-variable>
+)
+
+# ====== TinyXML2 静态库（C++）======
+add_library(tinyxml2 STATIC
+    ${TINYXML2_ROOT}/tinyxml2.cpp
+)
+target_include_directories(tinyxml2 PUBLIC
+    ${TINYXML2_ROOT}
+)
+# 抑制其警告（可选）
+target_compile_options(tinyxml2 PRIVATE
+    $<$<CXX_COMPILER_ID:GNU>:-Wno-unused-parameter -Wno-missing-field-initializers>
+    $<$<CXX_COMPILER_ID:Clang>:-Wno-unused-parameter -Wno-missing-field-initializers>
 )
 
 
@@ -140,7 +154,7 @@ target_include_directories(coordinator PRIVATE
     ${YLT_ROOT}/include/ylt/thirdparty
 )
 
-target_link_libraries(coordinator PRIVATE jerasure Threads::Threads m ec)
+target_link_libraries(coordinator PRIVATE jerasure Threads::Threads m ec tinyxml2)
 
 # —— Datanode 模块 ——
 file(GLOB DATANODE_SOURCES "src/datanode/*.cpp")

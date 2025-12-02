@@ -1,10 +1,11 @@
-#include <fstream>
 #include "utils.h"
+#include <fstream>
 
 // 高斯消元求 0-1 矩阵的秩
 int ECProject::computeBinaryMatrixRank(vector<vector<int>> matrix) {
     int rows = matrix.size();
-    if (rows == 0) return 0;
+    if (rows == 0)
+        return 0;
     int cols = matrix[0].size();
     int rank = 0;
 
@@ -17,7 +18,8 @@ int ECProject::computeBinaryMatrixRank(vector<vector<int>> matrix) {
                 break;
             }
         }
-        if (pivot == -1) continue;
+        if (pivot == -1)
+            continue;
 
         // 交换行
         swap(matrix[rank], matrix[pivot]);
@@ -35,7 +37,6 @@ int ECProject::computeBinaryMatrixRank(vector<vector<int>> matrix) {
     return rank;
 }
 
-
 /**
  * @brief 将简化位矩阵（每行 R x (C*W)）转换为整数矩阵（R x C）
  *
@@ -43,11 +44,11 @@ int ECProject::computeBinaryMatrixRank(vector<vector<int>> matrix) {
  * @param W: 每组位数
  * @return std::vector<std::vector<int>>: R x C 的整数矩阵
  */
-std::vector<std::vector<int>> ECProject::bitMatrixToIntMatrix(
-    const std::vector<std::vector<int>>& bitMatrix,
-    int W
-) {
-    if (bitMatrix.empty()) return {};
+std::vector<std::vector<int>>
+ECProject::bitMatrixToIntMatrix(const std::vector<std::vector<int>> &bitMatrix,
+                                int W) {
+    if (bitMatrix.empty())
+        return {};
 
     size_t R = bitMatrix.size();
     size_t totalBits = bitMatrix[0].size();
@@ -69,12 +70,11 @@ std::vector<std::vector<int>> ECProject::bitMatrixToIntMatrix(
     return intMatrix;
 }
 
-
-std::vector<std::vector<int>> ECProject::intMatrixToBitMatrix(
-    const std::vector<std::vector<int>>& intMatrix,
-    int W
-) {
-    if (intMatrix.empty()) return {};
+std::vector<std::vector<int>>
+ECProject::intMatrixToBitMatrix(const std::vector<std::vector<int>> &intMatrix,
+                                int W) {
+    if (intMatrix.empty())
+        return {};
 
     size_t R = intMatrix.size();
     size_t C = intMatrix[0].size();
@@ -96,14 +96,14 @@ std::vector<std::vector<int>> ECProject::intMatrixToBitMatrix(
     return bitMatrix;
 }
 
-
-vector<int> ECProject::generateUniqueRandom(int N, int K, unsigned int seed) {
+vector<unsigned int> ECProject::generateUniqueRandom(int N, int K,
+                                                     unsigned int seed) {
     if (K > N || K < 0) {
         // throw std::invalid_argument("K must be between 0 and N");
         K = N;
     }
     // 创建 0 到 N-1 的序列
-    vector<int> nums(N);
+    vector<unsigned int> nums(N);
     std::iota(nums.begin(), nums.end(), 0); // 填充 0,1,2,...,N-1
 
     // 随机打乱
@@ -115,7 +115,6 @@ vector<int> ECProject::generateUniqueRandom(int N, int K, unsigned int seed) {
     return nums;
 }
 
-
 void ECProject::writeToCsv(string outputFileName, vector<vector<double>> data) {
     std::ofstream file(outputFileName);
     if (!file.is_open()) {
@@ -123,10 +122,11 @@ void ECProject::writeToCsv(string outputFileName, vector<vector<double>> data) {
         return;
     }
 
-    for (const auto& row : data) {
+    for (const auto &row : data) {
         for (size_t i = 0; i < row.size(); ++i) {
             file << row[i];
-            if (i < row.size() - 1) file << ",";
+            if (i < row.size() - 1)
+                file << ",";
         }
         file << "\n";
     }
@@ -136,8 +136,10 @@ void ECProject::writeToCsv(string outputFileName, vector<vector<double>> data) {
 }
 
 int ECProject::comb(int n, int k) {
-    if (k < 0 || k > n) return 0;
-    if (k == 0 || k == n) return 1;
+    if (k < 0 || k > n)
+        return 0;
+    if (k == 0 || k == n)
+        return 1;
     k = min(k, n - k); // 利用对称性减少计算
     long long res = 1;
     for (long long i = 1; i <= k; ++i) {
@@ -153,10 +155,11 @@ int ECProject::comb(int n, int k) {
  * @param W: 字长
  * @return: 位矩阵，维度 (R*W) x (C*W)
  */
-vector<vector<int>> ECProject::matrix2Bitmatrix(
-    const vector<vector<int>>& mat, int W) {
+vector<vector<int>> ECProject::matrix2Bitmatrix(const vector<vector<int>> &mat,
+                                                int W) {
     size_t R = mat.size();
-    if (R == 0) return {};
+    if (R == 0)
+        return {};
     size_t C = mat[0].size();
 
     // 转为 flat int array (row-major)
@@ -168,7 +171,7 @@ vector<vector<int>> ECProject::matrix2Bitmatrix(
     }
 
     // 调用 Jerasure
-    int* bitPtr = jerasure_matrix_to_bitmatrix(C, R, W, flat.data());
+    int *bitPtr = jerasure_matrix_to_bitmatrix(C, R, W, flat.data());
     if (!bitPtr) {
         throw std::runtime_error("jerasure_matrix_to_bitmatrix failed");
     }
@@ -188,15 +191,17 @@ vector<vector<int>> ECProject::matrix2Bitmatrix(
     return result;
 }
 
-vector<int> ECProject::generateAllRangeN(int N) {
-    if (N <= 0) return {};
-    vector<int> result(N);
+vector<unsigned int> ECProject::generateAllRangeN(int N) {
+    if (N <= 0)
+        return {};
+    vector<unsigned int> result(N);
     std::iota(result.begin(), result.end(), 0);
     return result;
 }
 
-vector<vector<int>> ECProject::cauchy_original_coding_matrix_vector(int K, int M, int W) {
-    int* cauchy_mat = cauchy_original_coding_matrix(K, M, W);
+vector<vector<int>>
+ECProject::cauchy_original_coding_matrix_vector(int K, int M, int W) {
+    int *cauchy_mat = cauchy_original_coding_matrix(K, M, W);
     vector<vector<int>> codingMatrix(M, vector<int>(K));
     for (int i = 0; i < M; ++i)
         for (int j = 0; j < K; ++j)
@@ -206,11 +211,11 @@ vector<vector<int>> ECProject::cauchy_original_coding_matrix_vector(int K, int M
     return codingMatrix;
 }
 
-void ECProject::printMatrix(const vector<vector<int>>& matrix, int W) {
-    for(size_t i = 0; i < matrix.size(); i++) {
-        for(size_t j = 0; j < matrix[0].size(); j++) {
+void ECProject::printMatrix(const vector<vector<int>> &matrix, int W) {
+    for (size_t i = 0; i < matrix.size(); i++) {
+        for (size_t j = 0; j < matrix[0].size(); j++) {
             cout << matrix[i][j] << " ";
-            if((j + 1) % W == 0) {
+            if ((j + 1) % W == 0) {
                 cout << " ";
             }
         }
@@ -218,22 +223,45 @@ void ECProject::printMatrix(const vector<vector<int>>& matrix, int W) {
     }
 }
 
-int ECProject::bytes_to_int(std::vector<unsigned char> &bytes)
-{
-  int integer;
-  unsigned char *p = (unsigned char *)(&integer);
-  for (int i = 0; i < int(bytes.size()); i++) {
-    memcpy(p + i, &bytes[i], 1);
-  }
-  return integer;
+int ECProject::bytes_to_int(std::vector<unsigned char> &bytes) {
+    int integer;
+    unsigned char *p = (unsigned char *)(&integer);
+    for (int i = 0; i < int(bytes.size()); i++) {
+        memcpy(p + i, &bytes[i], 1);
+    }
+    return integer;
 }
 
-std::vector<unsigned char> ECProject::int_to_bytes(int integer)
+std::vector<unsigned char> ECProject::int_to_bytes(int integer) {
+    std::vector<unsigned char> bytes(sizeof(int));
+    unsigned char *p = (unsigned char *)(&integer);
+    for (int i = 0; i < int(bytes.size()); i++) {
+        memcpy(&bytes[i], p + i, 1);
+    }
+    return bytes;
+}
+
+double ECProject::bytes_to_double(std::vector<unsigned char> &bytes)
 {
-  std::vector<unsigned char> bytes(sizeof(int));
-  unsigned char *p = (unsigned char *)(&integer);
-  for (int i = 0; i < int(bytes.size()); i++) {
-    memcpy(&bytes[i], p + i, 1);
-  }
+  double doubler;
+  memcpy(&doubler, bytes.data(), sizeof(double));
+  return doubler;
+}
+
+std::vector<unsigned char> ECProject::double_to_bytes(double doubler)
+{
+  std::vector<unsigned char> bytes(sizeof(double));
+  memcpy(bytes.data(), &doubler, sizeof(double));
   return bytes;
+}
+
+
+void ECProject::exit_when(bool condition,
+                          const std::source_location &location) {
+    if (!condition) {
+        std::cerr << "Condition failed at " << location.file_name() << ":"
+                  << location.line() << " - " << location.function_name()
+                  << std::endl;
+        std::exit(EXIT_FAILURE);
+    }
 }

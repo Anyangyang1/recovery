@@ -5,6 +5,7 @@ CMakeFiles/test.dir/src/test/main.cpp.o: ../Jerasure-1.2A/cauchy.h
 CMakeFiles/test.dir/src/test/main.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/test.dir/src/test/main.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/test.dir/src/test/main.cpp.o: ../include/algorithm/loadbalance.h
+CMakeFiles/test.dir/src/test/main.cpp.o: ../include/algorithm/logging.hpp
 CMakeFiles/test.dir/src/test/main.cpp.o: ../include/algorithm/sggh.h
 CMakeFiles/test.dir/src/test/main.cpp.o: ../include/algorithm/utils.h
 CMakeFiles/test.dir/src/test/main.cpp.o: ../yalantinglibs/include/ylt/coro_io/coro_io.hpp

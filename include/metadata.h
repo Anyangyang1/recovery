@@ -85,10 +85,10 @@ struct RelocateResp {
     double cross_cluster_time;
 };
 
-ECFAMILY check_ec_family(ECTYPE ec_type);
-ErasureCode *ec_factory(ECTYPE ec_type, CodingParameters cp);
-RSCode *rs_factory(ECTYPE ec_type, CodingParameters cp);
-ErasureCode *clone_ec(ECTYPE ec_type, ErasureCode *ec);
-void parse_args(ParametersInfo &paras, std::string config_file);
-int stripe_wide_after_merge(ParametersInfo paras, int step_size);
+// ECFAMILY check_ec_family(ECTYPE ec_type);
+// ErasureCode *ec_factory(ECTYPE ec_type, CodingParameters cp);
+// RSCode *rs_factory(ECTYPE ec_type, CodingParameters cp);
+// ErasureCode *clone_ec(ECTYPE ec_type, ErasureCode *ec);
+// void parse_args(ParametersInfo &paras, std::string config_file);
+// int stripe_wide_after_merge(ParametersInfo paras, int step_size);
 } // namespace ECProject

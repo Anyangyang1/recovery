@@ -6,6 +6,7 @@ CMakeFiles/test.dir/src/test/main.cpp.o
  ../Jerasure-1.2A/galois.h
  ../Jerasure-1.2A/jerasure.h
  ../include/algorithm/loadbalance.h
+ ../include/algorithm/logging.hpp
  ../include/algorithm/sggh.h
  ../include/algorithm/utils.h
  ../yalantinglibs/include/ylt/coro_io/coro_io.hpp

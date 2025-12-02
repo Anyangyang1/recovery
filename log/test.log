@@ -1,75 +1,4565 @@
-***********K,M,W,NUM,FailedBlock(Only One)***********14,4,8,500
-ranks: 0 5 4 4 5 5 4 4 4 4 4 5 7 6 5 6 5 4 
-origin packets: 112
-need packets: 81
-duration: 26386.1 ms
-***********K,M,W,NUM,FailedBlock(Only One)***********16,4,8,500
-ranks: 0 4 3 5 6 6 5 4 6 6 6 4 4 5 5 6 4 5 6 4 
-origin packets: 128
-need packets: 94
-duration: 42220.7 ms
-***********K,M,W,NUM,FailedBlock(Only One)***********18,4,8,500
-ranks: 0 4 4 7 6 5 5 6 6 5 5 6 3 6 5 5 4 4 5 6 4 6 
-origin packets: 144
-need packets: 107
-duration: 64789.4 ms
-***********K,M,W,NUM,FailedBlock(Only One)***********14,4,8,300
-ranks: 0 7 5 5 5 5 6 2 4 5 4 6 7 3 4 6 5 4 
-origin packets: 112
-need packets: 83
-duration: 15894.3 ms
-***********K,M,W,NUM,FailedBlock(Only One)***********16,4,8,300
-ranks: 0 4 3 5 6 6 5 4 6 6 6 4 4 5 5 6 4 5 6 4 
-origin packets: 128
-need packets: 94
-duration: 25361.5 ms
-***********K,M,W,NUM,FailedBlock(Only One)***********18,4,8,300
-ranks: 0 6 6 6 4 4 5 6 5 5 4 4 4 6 6 7 6 5 6 5 4 4 
-origin packets: 144
-need packets: 108
-duration: 38901.4 ms
-***********K,M,W,NUM,FailedBlock(Only One)***********14,4,8,300
-ranks: 0 6 6 5 6 4 3 4 5 5 2 5 5 4 6 5 5 5 
-origin packets: 112
-need packets: 81
-duration: 15802.2 ms
-***********K,M,W,NUM,FailedBlock(Only One)***********16,4,8,300
-ranks: 0 4 5 5 5 6 3 4 4 5 6 6 5 5 6 4 5 4 7 6 
-origin packets: 128
-need packets: 95
-duration: 25371.7 ms
-***********K,M,W,NUM,FailedBlock(Only One)***********18,4,8,300
-ranks: 0 5 6 6 5 5 5 5 6 4 5 5 7 6 6 5 5 3 5 4 3 7 
-origin packets: 144
-need packets: 108
-duration: 38922.7 ms
-***********K,M,W,NUM,FailedBlock(Only One)***********14,4,8,500
-ranks: 0 6 6 5 6 4 3 4 5 5 2 5 5 4 6 5 5 5 
-origin packets: 112
-need packets: 81
-duration: 26254.6 ms
-***********K,M,W,NUM,FailedBlock(Only One)***********16,4,8,500
-ranks: 0 4 5 5 5 6 3 4 4 5 6 6 5 5 6 4 5 4 7 6 
-origin packets: 128
-need packets: 95
-duration: 42242.6 ms
-***********K,M,W,NUM,FailedBlock(Only One)***********18,4,8,500
-ranks: 0 2 5 5 4 5 6 6 4 4 6 5 6 4 6 7 5 3 5 7 6 6 
-origin packets: 144
-need packets: 107
-duration: 64809.9 ms
-***********K,M,W,NUM,FailedBlock(Only One)***********14,4,8,500
-ranks: 0 3 5 5 5 5 3 5 5 4 4 4 6 7 5 5 5 5 
-origin packets: 112
-need packets: 81
-duration: 26266.7 ms
-***********K,M,W,NUM,FailedBlock(Only One)***********16,4,8,500
-ranks: 0 4 5 5 4 4 5 6 5 5 5 6 6 5 4 5 5 5 4 6 
-origin packets: 128
-need packets: 94
-duration: 42219.1 ms
-***********K,M,W,NUM,FailedBlock(Only One)***********18,4,8,500
-ranks: 0 5 7 6 5 5 6 3 5 3 6 6 3 6 6 5 5 5 5 6 5 5 
-origin packets: 144
-need packets: 108
-duration: 64817.2 ms
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 0.956194 ms
+0 13 30 124 1 7 75 90 
+need packets: 23
+1 14 2 31 125 179 0 164 
+need packets: 22
+2 14 1 31 125 179 0 164 
+need packets: 22
+3 170 0 13 124 30 1 7 
+need packets: 24
+4 0 13 30 1 7 75 26 
+need packets: 25
+5 51 0 30 1 186 31 28 
+need packets: 25
+6 28 7 131 29 0 114 81 
+need packets: 24
+7 12 29 99 0 6 114 265 
+need packets: 24
+8 25 127 74 166 20 91 37 
+need packets: 23
+9 26 15 24 126 20 45 163 
+need packets: 24
+10 0 13 17 158 75 71 76 
+need packets: 25
+11 0 13 30 124 1 7 50 
+need packets: 25
+12 7 29 99 0 6 114 265 
+need packets: 24
+13 0 30 124 1 7 75 90 
+need packets: 23
+14 1 2 31 125 179 0 164 
+need packets: 22
+15 24 126 1 18 164 125 203 
+need packets: 22
+16 78 50 73 79 157 19 12 
+need packets: 24
+17 58 40 86 164 15 45 3 
+need packets: 23
+18 24 164 15 126 1 125 203 
+need packets: 22
+19 0 13 30 124 1 7 130 
+need packets: 24
+20 0 13 30 1 7 75 34 
+need packets: 25
+21 0 30 1 31 99 2 164 
+need packets: 24
+22 76 77 227 23 0 50 73 
+need packets: 24
+23 77 227 50 68 0 46 73 
+need packets: 22
+24 15 126 1 18 164 125 203 
+need packets: 22
+25 8 127 74 166 20 91 37 
+need packets: 23
+26 9 15 24 126 20 45 163 
+need packets: 24
+27 133 0 30 1 31 2 164 
+need packets: 25
+28 6 7 131 29 0 114 81 
+need packets: 24
+29 0 7 99 124 30 1 2 
+need packets: 24
+30 0 1 125 203 31 2 164 
+need packets: 22
+31 1 179 14 125 0 2 164 
+need packets: 22
+32 47 1 85 14 2 44 83 
+need packets: 24
+33 40 18 35 85 159 44 6 
+need packets: 24
+34 176 35 25 36 166 127 165 
+need packets: 24
+35 266 89 64 93 23 156 78 
+need packets: 24
+36 0 13 18 30 1 203 7 
+need packets: 25
+37 44 6 265 216 186 195 7 
+need packets: 25
+38 45 7 12 50 73 3 32 
+need packets: 25
+39 46 0 84 13 51 10 17 
+need packets: 24
+40 18 33 35 85 159 44 6 
+need packets: 24
+41 58 32 47 84 158 43 5 
+need packets: 24
+42 0 13 30 124 155 1 7 
+need packets: 24
+43 0 13 30 124 1 2 31 
+need packets: 24
+44 6 21 265 216 186 3 191 
+need packets: 25
+45 7 12 22 131 0 42 161 
+need packets: 25
+46 0 84 13 23 51 10 17 
+need packets: 24
+47 1 85 14 2 16 44 83 
+need packets: 24
+48 97 31 14 125 2 60 59 
+need packets: 24
+49 102 53 7 12 32 42 35 
+need packets: 25
+50 73 78 16 79 157 19 12 
+need packets: 24
+51 5 0 30 1 186 31 28 
+need packets: 25
+52 101 6 39 187 48 97 226 
+need packets: 23
+53 102 7 12 32 42 35 177 
+need packets: 24
+54 103 0 13 33 59 124 202 
+need packets: 24
+55 96 1 14 2 36 125 203 
+need packets: 24
+56 47 1 85 14 2 28 75 
+need packets: 24
+57 40 18 63 214 84 43 85 
+need packets: 24
+58 17 40 86 164 15 45 3 
+need packets: 23
+59 266 89 160 175 270 109 44 
+need packets: 25
+60 0 13 30 1 7 75 18 
+need packets: 25
+61 44 6 265 216 186 3 183 
+need packets: 25
+62 45 7 12 83 41 24 18 
+need packets: 25
+63 46 0 84 13 51 10 17 
+need packets: 24
+64 93 39 187 46 10 84 73 
+need packets: 24
+65 94 32 172 47 66 67 85 
+need packets: 24
+66 89 15 24 126 164 165 179 
+need packets: 24
+67 133 0 30 1 31 2 164 
+need packets: 25
+68 117 71 235 112 222 9 26 
+need packets: 23
+69 118 220 64 113 223 107 2 
+need packets: 24
+70 116 59 113 74 223 64 93 
+need packets: 23
+71 92 38 45 51 66 89 24 
+need packets: 25
+72 98 73 159 4 158 35 93 
+need packets: 24
+73 50 78 16 79 157 19 12 
+need packets: 24
+74 166 9 80 47 84 43 5 
+need packets: 24
+75 13 0 30 124 1 7 90 
+need packets: 23
+76 22 77 227 23 0 50 73 
+need packets: 24
+77 227 23 50 68 0 46 73 
+need packets: 22
+78 16 50 73 79 157 19 12 
+need packets: 24
+79 17 58 40 86 164 157 3 
+need packets: 22
+80 47 1 85 14 2 3 4 
+need packets: 24
+81 40 18 85 44 86 31 179 
+need packets: 23
+82 0 13 30 124 1 7 75 
+need packets: 24
+83 0 13 30 124 1 7 18 
+need packets: 25
+84 23 46 0 13 51 10 17 
+need packets: 24
+85 16 44 6 47 1 203 2 
+need packets: 25
+86 17 40 58 164 15 45 3 
+need packets: 23
+87 41 165 8 19 42 46 4 
+need packets: 24
+88 113 223 114 174 269 11 4 
+need packets: 23
+89 66 15 24 126 164 165 179 
+need packets: 24
+90 0 13 1 30 124 7 75 
+need packets: 23
+91 0 13 30 124 1 7 42 
+need packets: 25
+92 38 45 7 50 73 3 48 
+need packets: 25
+93 39 187 46 0 84 225 2 
+need packets: 24
+94 32 172 47 1 85 66 67 
+need packets: 23
+95 33 173 40 18 35 86 164 
+need packets: 23
+96 55 1 14 2 36 125 203 
+need packets: 24
+97 48 31 14 125 2 60 59 
+need packets: 24
+98 72 73 159 4 158 35 93 
+need packets: 24
+99 0 13 30 124 1 31 2 
+need packets: 23
+100 55 51 5 38 2 96 1 
+need packets: 25
+101 48 52 6 39 187 97 226 
+need packets: 23
+102 49 53 7 12 32 42 35 
+need packets: 25
+103 54 0 13 33 59 124 202 
+need packets: 24
+104 47 1 85 14 2 12 27 
+need packets: 24
+105 40 18 85 44 6 47 203 
+need packets: 25
+106 112 222 71 92 51 5 73 
+need packets: 24
+107 0 13 30 124 1 234 7 
+need packets: 24
+108 0 13 9 26 15 3 126 
+need packets: 25
+109 44 6 144 33 95 2 43 
+need packets: 26
+110 45 7 12 131 0 42 73 
+need packets: 25
+111 46 0 84 13 99 186 1 
+need packets: 24
+112 222 71 92 51 5 2 73 
+need packets: 24
+113 223 64 93 118 220 203 218 
+need packets: 23
+114 88 174 41 87 165 251 84 
+need packets: 23
+115 181 56 47 1 14 2 28 
+need packets: 25
+116 70 59 113 74 223 64 93 
+need packets: 23
+117 68 71 235 112 222 9 26 
+need packets: 23
+118 220 64 69 113 223 107 2 
+need packets: 24
+119 221 65 70 107 0 66 124 
+need packets: 23
+120 9 26 15 126 163 76 165 
+need packets: 24
+121 74 166 80 47 27 84 85 
+need packets: 24
+122 9 120 35 36 165 87 46 
+need packets: 25
+123 183 89 66 24 46 20 165 
+need packets: 25
+124 0 7 29 99 30 1 2 
+need packets: 24
+125 0 1 30 203 31 2 164 
+need packets: 22
+126 1 15 24 18 164 125 203 
+need packets: 22
+127 8 25 74 166 20 91 37 
+need packets: 23
+128 94 65 119 221 172 66 227 
+need packets: 24
+129 95 112 222 106 173 12 259 
+need packets: 24
+130 17 79 72 158 157 148 3 
+need packets: 24
+131 7 6 28 29 0 114 81 
+need packets: 24
+132 0 13 30 1 203 7 18 
+need packets: 25
+133 27 0 30 1 31 2 164 
+need packets: 25
+134 92 71 51 5 2 16 57 
+need packets: 25
+135 93 64 113 118 220 203 2 
+need packets: 25
+136 25 74 166 127 164 165 227 
+need packets: 24
+137 98 72 87 30 13 124 75 
+need packets: 24
+138 25 8 127 164 27 6 261 
+need packets: 23
+139 13 0 30 124 1 7 90 
+need packets: 24
+140 7 29 99 0 30 1 2 
+need packets: 24
+141 0 30 1 31 99 2 164 
+need packets: 23
+142 1 11 31 50 72 125 68 
+need packets: 25
+143 24 18 164 73 86 45 251 
+need packets: 24
+144 33 86 45 7 12 11 58 
+need packets: 25
+145 87 46 0 84 13 51 10 
+need packets: 24
+146 0 13 30 124 1 7 75 
+need packets: 24
+147 0 13 30 124 1 7 74 
+need packets: 25
+148 37 0 30 1 3 15 2 
+need packets: 26
+149 38 92 71 235 112 97 106 
+need packets: 24
+150 39 84 93 187 64 113 18 
+need packets: 24
+151 32 85 44 6 90 43 121 
+need packets: 25
+152 202 73 5 51 159 148 150 
+need packets: 25
+153 178 208 3 7 5 6 28 
+need packets: 24
+154 160 167 81 83 77 76 22 
+need packets: 24
+155 0 13 30 42 124 1 7 
+need packets: 24
+156 23 77 78 227 16 1 50 
+need packets: 23
+157 16 78 79 17 10 116 3 
+need packets: 25
+158 17 58 40 164 15 85 35 
+need packets: 24
+159 73 50 72 4 19 78 93 
+need packets: 25
+160 154 167 81 83 77 76 22 
+need packets: 24
+161 0 13 30 124 170 3 7 
+need packets: 24
+162 0 13 30 124 1 7 75 
+need packets: 24
+163 0 13 30 124 1 167 90 
+need packets: 24
+164 15 24 18 126 1 125 203 
+need packets: 22
+165 8 25 127 18 164 86 19 
+need packets: 24
+166 74 9 80 47 84 43 5 
+need packets: 24
+167 81 40 18 85 44 43 86 
+need packets: 23
+168 81 58 86 164 15 19 5 
+need packets: 24
+169 0 13 30 124 139 7 170 
+need packets: 24
+170 3 0 13 124 30 1 7 
+need packets: 24
+171 0 13 30 124 1 7 74 
+need packets: 25
+172 32 94 47 1 85 66 67 
+need packets: 23
+173 33 95 40 18 35 86 164 
+need packets: 23
+174 41 58 32 47 21 84 43 
+need packets: 25
+175 80 74 166 9 44 85 27 
+need packets: 23
+176 34 35 25 36 166 127 165 
+need packets: 24
+177 0 13 30 124 7 75 82 
+need packets: 25
+178 81 208 167 100 83 5 222 
+need packets: 25
+179 31 1 14 125 0 2 164 
+need packets: 22
+180 63 46 0 13 75 1 90 
+need packets: 26
+181 56 47 1 14 2 28 75 
+need packets: 25
+182 57 40 18 15 85 212 99 
+need packets: 24
+183 89 66 24 59 4 110 29 
+need packets: 25
+184 234 4 41 86 45 7 3 
+need packets: 25
+185 263 80 74 166 123 108 5 
+need packets: 25
+186 216 65 94 76 39 45 187 
+need packets: 24
+187 39 93 46 0 84 225 2 
+need packets: 24
+188 110 45 7 43 145 168 90 
+need packets: 25
+189 111 46 0 84 51 1 26 
+need packets: 24
+190 104 47 1 85 115 260 2 
+need packets: 23
+191 105 40 18 85 44 6 259 
+need packets: 25
+192 175 89 242 270 61 44 67 
+need packets: 24
+193 168 218 271 108 222 3 45 
+need packets: 26
+194 0 13 30 124 1 7 75 
+need packets: 24
+195 0 13 30 124 1 234 7 
+need packets: 24
+196 39 46 0 13 27 90 1 
+need packets: 25
+197 32 47 1 14 2 83 84 
+need packets: 25
+198 33 40 18 15 35 85 44 
+need packets: 25
+199 41 58 32 85 44 6 27 
+need packets: 25
+200 49 79 102 253 156 11 2 
+need packets: 24
+201 226 128 6 28 7 131 29 
+need packets: 24
+202 73 5 51 48 7 6 28 
+need packets: 24
+203 0 13 30 124 1 7 42 
+need packets: 24
+204 38 45 7 50 73 3 48 
+need packets: 25
+205 39 46 0 84 42 51 177 
+need packets: 24
+206 32 47 1 85 4 106 203 
+need packets: 24
+207 33 40 5 18 35 86 164 
+need packets: 24
+208 57 86 45 7 12 10 11 
+need packets: 25
+209 0 13 30 124 7 75 90 
+need packets: 25
+210 3 41 86 40 164 85 15 
+need packets: 23
+211 0 13 30 124 1 31 2 
+need packets: 24
+212 32 47 1 85 14 2 83 
+need packets: 24
+213 33 40 18 35 62 23 68 
+need packets: 25
+214 41 58 32 47 84 43 5 
+need packets: 25
+215 56 17 58 85 35 86 164 
+need packets: 22
+216 186 65 94 76 39 45 187 
+need packets: 24
+217 271 82 93 64 83 118 220 
+need packets: 23
+218 168 81 167 3 109 44 6 
+need packets: 26
+219 135 93 64 68 70 113 2 
+need packets: 25
+220 118 64 69 113 223 107 2 
+need packets: 24
+221 119 65 70 107 0 66 124 
+need packets: 23
+222 112 71 92 51 5 2 73 
+need packets: 24
+223 113 64 93 118 220 203 218 
+need packets: 23
+224 26 9 15 126 100 91 5 
+need packets: 25
+225 0 13 30 124 7 19 2 
+need packets: 25
+226 49 102 53 7 12 32 107 
+need packets: 25
+227 77 23 50 68 0 46 73 
+need packets: 22
+228 0 13 30 1 7 75 90 
+need packets: 25
+229 0 30 1 7 75 124 2 
+need packets: 25
+230 0 13 31 1 124 179 2 
+need packets: 24
+231 0 13 30 124 1 99 90 
+need packets: 24
+232 34 57 15 13 19 20 118 
+need packets: 24
+233 0 13 30 124 7 75 90 
+need packets: 25
+234 41 86 40 164 85 15 3 
+need packets: 24
+235 31 1 14 125 0 2 124 
+need packets: 23
+236 61 226 49 102 67 47 32 
+need packets: 25
+237 62 115 0 20 87 41 58 
+need packets: 26
+238 63 84 227 77 50 56 33 
+need packets: 24
+239 56 85 44 6 83 97 50 
+need packets: 25
+240 113 223 269 78 50 3 108 
+need packets: 24
+241 216 186 270 43 79 84 157 
+need packets: 24
+242 65 8 94 119 221 76 275 
+need packets: 24
+243 93 0 30 1 31 2 164 
+need packets: 23
+244 71 78 16 50 85 73 35 
+need packets: 24
+245 64 79 17 58 86 164 163 
+need packets: 24
+246 65 72 98 87 165 251 84 
+need packets: 25
+247 112 222 106 44 109 73 3 
+need packets: 24
+248 97 175 226 254 203 29 12 
+need packets: 25
+249 200 167 212 5 51 114 46 
+need packets: 25
+250 73 159 72 4 29 19 30 
+need packets: 25
+251 24 15 126 1 18 164 125 
+need packets: 23
+252 101 48 207 33 26 78 115 
+need packets: 24
+253 96 55 204 1 14 2 43 
+need packets: 24
+254 97 48 205 31 60 179 82 
+need packets: 24
+255 96 18 73 99 29 12 158 
+need packets: 24
+256 58 17 79 86 164 157 3 
+need packets: 24
+257 210 3 160 4 6 7 29 
+need packets: 25
+258 24 15 126 1 108 125 203 
+need packets: 23
+259 0 13 30 124 1 7 74 
+need packets: 25
+260 85 16 47 1 14 2 203 
+need packets: 23
+261 86 17 40 58 164 15 259 
+need packets: 22
+262 87 41 165 8 19 36 42 
+need packets: 24
+263 80 74 166 9 37 44 123 
+need packets: 24
+264 18 113 223 269 118 220 3 
+need packets: 24
+265 216 186 270 12 7 29 99 
+need packets: 23
+266 35 89 64 93 23 156 78 
+need packets: 24
+267 183 89 66 24 126 164 165 
+need packets: 25
+268 95 33 173 40 18 35 86 
+need packets: 24
+269 88 113 223 11 4 114 174 
+need packets: 23
+270 89 66 15 24 165 164 179 
+need packets: 24
+271 112 222 34 217 268 91 21 
+need packets: 24
+272 215 1 14 2 125 203 164 
+need packets: 25
+273 208 178 111 46 52 101 27 
+need packets: 25
+274 40 33 85 44 6 47 203 
+need packets: 25
+275 119 221 65 70 116 216 186 
+need packets: 22
+276 0 13 30 1 7 75 18 
+need packets: 25
+277 212 32 47 1 14 2 83 
+need packets: 25
+278 213 33 40 18 35 87 108 
+need packets: 25
+279 214 41 58 32 85 212 99 
+need packets: 24
+SGGH Time: 365.273 ms
+ranks: 0 3 0 4 4 3 5 3 
+origin packets: 32
+need packets: 22
+duration: 366.45 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^4,4,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 1.47805 ms
+0 15 46 1 117 58 284 3 
+need packets: 35
+1 8 47 19 602 117 78 228 
+need packets: 35
+2 30 1 7 29 244 179 0 
+need packets: 36
+3 16 474 73 4 21 294 527 
+need packets: 37
+4 175 43 57 26 134 64 61 
+need packets: 37
+5 12 83 162 6 7 0 89 
+need packets: 37
+6 13 44 123 7 338 8 169 
+need packets: 36
+7 14 45 203 44 472 385 66 
+need packets: 35
+8 1 47 19 602 117 78 228 
+need packets: 35
+9 34 40 107 36 31 246 285 
+need packets: 34
+10 23 110 165 68 89 80 307 
+need packets: 35
+11 63 0 20 94 1 477 594 
+need packets: 35
+12 5 83 162 6 7 0 89 
+need packets: 37
+13 6 44 123 7 338 8 169 
+need packets: 36
+14 7 45 203 44 472 385 66 
+need packets: 35
+15 0 46 1 117 58 284 3 
+need packets: 35
+16 3 474 73 4 21 294 527 
+need packets: 37
+17 101 14 7 106 88 412 579 
+need packets: 36
+18 99 87 30 117 28 153 56 
+need packets: 37
+19 1 8 47 602 117 78 228 
+need packets: 35
+20 32 57 135 26 30 139 109 
+need packets: 35
+21 33 90 55 427 126 192 532 
+need packets: 36
+22 109 164 560 603 71 250 481 
+need packets: 35
+23 10 110 165 68 89 80 307 
+need packets: 35
+24 19 1 31 246 357 58 20 
+need packets: 34
+25 42 422 31 107 112 292 349 
+need packets: 35
+26 1 8 47 19 6 13 44 
+need packets: 38
+27 79 1 262 189 348 88 26 
+need packets: 35
+28 7 434 5 24 35 22 177 
+need packets: 36
+29 0 6 28 146 617 391 3 
+need packets: 37
+30 1 2 7 29 244 179 0 
+need packets: 36
+31 2 0 30 245 356 3 1 
+need packets: 35
+32 20 57 135 26 30 139 109 
+need packets: 35
+33 21 90 55 427 126 192 532 
+need packets: 36
+34 9 40 107 36 31 246 285 
+need packets: 34
+35 87 89 496 36 85 50 62 
+need packets: 36
+36 9 40 34 107 31 246 285 
+need packets: 34
+37 41 178 163 358 184 191 316 
+need packets: 35
+38 180 113 531 280 402 93 303 
+need packets: 35
+39 51 56 134 133 74 124 585 
+need packets: 36
+40 9 34 107 36 31 246 285 
+need packets: 34
+41 178 163 358 184 191 285 316 
+need packets: 33
+42 25 422 31 107 112 292 349 
+need packets: 35
+43 95 56 1 60 133 34 46 
+need packets: 36
+44 6 13 123 7 338 8 169 
+need packets: 36
+45 0 7 14 116 203 49 114 
+need packets: 35
+46 0 15 1 117 58 284 3 
+need packets: 35
+47 1 8 19 602 117 78 228 
+need packets: 35
+48 79 188 610 139 29 46 1 
+need packets: 34
+49 72 189 20 75 114 6 143 
+need packets: 37
+50 137 430 343 27 36 48 189 
+need packets: 37
+51 39 56 134 133 74 124 585 
+need packets: 36
+52 135 405 118 56 1 58 67 
+need packets: 35
+53 76 9 6 226 287 96 515 
+need packets: 35
+54 77 7 260 275 280 241 402 
+need packets: 35
+55 67 594 78 329 48 188 117 
+need packets: 34
+56 1 95 67 58 118 405 556 
+need packets: 33
+57 20 16 3 226 78 21 31 
+need packets: 37
+58 1 118 8 119 301 67 284 
+need packets: 33
+59 0 4 6 29 122 159 361 
+need packets: 36
+60 5 6 179 599 41 178 224 
+need packets: 36
+61 6 92 7 34 9 40 107 
+need packets: 35
+62 7 93 0 476 203 9 362 
+need packets: 36
+63 0 94 1 477 348 67 450 
+need packets: 34
+64 30 1 2 7 29 244 179 
+need packets: 36
+65 31 2 35 116 422 40 69 
+need packets: 36
+66 7 3 5 28 145 360 158 
+need packets: 36
+67 1 8 47 74 142 357 188 
+need packets: 36
+68 80 89 127 139 293 86 130 
+need packets: 35
+69 81 108 120 219 207 470 562 
+need packets: 33
+70 28 7 434 3 320 69 473 
+need packets: 36
+71 29 0 6 28 146 73 483 
+need packets: 36
+72 9 20 75 189 114 198 239 
+need packets: 36
+73 451 149 191 40 90 148 22 
+need packets: 34
+74 67 1 8 47 142 357 188 
+need packets: 36
+75 20 72 9 189 114 198 239 
+need packets: 36
+76 6 9 53 226 287 96 515 
+need packets: 35
+77 7 260 14 48 491 433 74 
+need packets: 37
+78 0 188 261 537 607 186 203 
+need packets: 33
+79 1 189 262 27 348 88 26 
+need packets: 35
+80 68 89 127 139 293 86 130 
+need packets: 35
+81 69 108 120 219 207 470 562 
+need packets: 33
+82 57 20 88 183 349 262 123 
+need packets: 35
+83 5 162 12 6 7 0 89 
+need packets: 37
+84 57 88 107 286 247 373 82 
+need packets: 35
+85 89 27 124 32 10 190 95 
+need packets: 38
+86 125 44 7 179 1 56 26 
+need packets: 36
+87 35 89 496 36 85 50 62 
+need packets: 36
+88 20 189 33 479 566 42 3 
+need packets: 36
+89 21 190 43 378 440 628 31 
+need packets: 37
+90 21 33 55 427 126 192 532 
+need packets: 36
+91 160 438 151 114 641 604 317 
+need packets: 35
+92 61 6 7 34 9 40 107 
+need packets: 35
+93 62 7 0 476 203 9 362 
+need packets: 36
+94 63 0 1 477 348 67 450 
+need packets: 34
+95 43 56 1 60 133 34 46 
+need packets: 36
+96 9 34 107 286 28 325 359 
+need packets: 36
+97 130 112 286 107 303 93 28 
+need packets: 36
+98 193 635 40 12 230 383 189 
+need packets: 36
+99 18 87 30 117 28 153 56 
+need packets: 37
+100 3 13 16 474 6 345 7 
+need packets: 37
+101 14 17 7 106 88 412 579 
+need packets: 36
+102 15 0 12 347 74 29 369 
+need packets: 37
+103 8 1 499 221 142 308 138 
+need packets: 35
+104 17 167 437 150 516 570 211 
+need packets: 35
+105 18 195 16 111 166 605 156 
+need packets: 34
+106 17 38 535 3 180 93 184 
+need packets: 37
+107 286 9 34 40 36 31 37 
+need packets: 35
+108 21 22 250 351 363 169 216 
+need packets: 35
+109 22 164 560 603 71 250 481 
+need packets: 35
+110 23 165 561 26 363 104 148 
+need packets: 35
+111 16 166 436 149 185 523 418 
+need packets: 34
+112 25 22 107 31 42 292 349 
+need packets: 36
+113 531 546 95 56 30 205 84 
+need packets: 35
+114 7 317 14 185 132 104 275 
+need packets: 36
+115 24 7 14 45 28 434 505 
+need packets: 36
+116 0 621 62 7 19 1 354 
+need packets: 37
+117 419 0 262 180 633 15 2 
+need packets: 36
+118 1 58 8 119 301 67 284 
+need packets: 33
+119 9 285 58 302 92 128 59 
+need packets: 34
+120 25 42 246 549 31 107 36 
+need packets: 36
+121 340 34 40 107 263 190 77 
+need packets: 36
+122 302 9 107 40 36 31 61 
+need packets: 35
+123 13 6 44 7 338 8 169 
+need packets: 36
+124 29 0 6 617 146 51 599 
+need packets: 36
+125 30 1 2 7 44 56 11 
+need packets: 38
+126 31 2 244 29 40 643 537 
+need packets: 34
+127 24 19 245 30 41 178 348 
+need packets: 35
+128 406 119 57 26 124 235 405 
+need packets: 34
+129 407 112 5 326 60 42 107 
+need packets: 35
+130 41 24 247 414 435 12 357 
+need packets: 37
+131 36 9 40 34 173 534 15 
+need packets: 37
+132 7 14 45 203 473 176 282 
+need packets: 36
+133 0 15 46 74 67 388 65 
+need packets: 35
+134 404 117 63 0 1 51 18 
+need packets: 35
+135 405 118 56 1 58 556 67 
+need packets: 33
+136 49 55 142 250 308 29 323 
+need packets: 35
+137 50 430 343 27 36 48 189 
+need packets: 37
+138 49 341 31 310 136 356 459 
+need packets: 36
+139 20 32 135 57 26 30 109 
+need packets: 35
+140 53 54 15 153 248 27 50 
+need packets: 37
+141 54 26 579 433 607 328 108 
+need packets: 36
+142 55 48 188 9 667 197 338 
+need packets: 37
+143 48 49 189 564 190 554 11 
+need packets: 37
+144 75 20 45 191 265 74 654 
+need packets: 37
+145 66 7 28 3 5 360 158 
+need packets: 36
+146 6 13 44 123 7 0 1 
+need packets: 38
+147 25 358 178 37 64 308 63 
+need packets: 37
+148 22 177 351 250 363 149 176 
+need packets: 34
+149 451 73 191 40 90 148 22 
+need packets: 34
+150 16 66 316 317 345 87 563 
+need packets: 34
+151 17 317 66 214 595 4 0 
+need packets: 36
+152 42 25 422 75 223 333 524 
+need packets: 36
+153 221 12 103 142 216 67 530 
+need packets: 37
+154 334 17 39 51 348 56 309 
+need packets: 35
+155 350 176 250 263 73 52 21 
+need packets: 35
+156 80 105 318 469 610 55 451 
+need packets: 36
+157 81 120 596 178 46 63 163 
+need packets: 35
+158 135 405 40 9 34 107 28 
+need packets: 35
+159 122 302 4 3 9 112 277 
+need packets: 37
+160 438 151 379 641 604 154 317 
+need packets: 34
+161 439 144 10 44 381 6 91 
+need packets: 36
+162 5 83 12 6 7 0 89 
+need packets: 37
+163 178 41 358 184 191 285 316 
+need packets: 33
+164 70 109 355 471 121 200 410 
+need packets: 35
+165 64 30 1 2 31 68 187 
+need packets: 37
+166 436 149 451 73 191 40 90 
+need packets: 34
+167 437 150 640 201 619 164 490 
+need packets: 34
+168 5 12 83 162 6 7 561 
+need packets: 38
+169 6 13 44 123 7 338 8 
+need packets: 36
+170 55 91 292 126 253 16 153 
+need packets: 36
+171 97 194 368 15 46 357 284 
+need packets: 36
+172 19 217 487 2 30 192 285 
+need packets: 36
+173 97 524 408 10 63 46 11 
+need packets: 36
+174 242 25 515 605 16 215 28 
+need packets: 37
+175 4 43 57 26 134 64 61 
+need packets: 37
+176 148 22 177 187 202 55 429 
+need packets: 36
+177 82 149 451 183 40 660 118 
+need packets: 35
+178 41 163 358 184 191 285 316 
+need packets: 33
+179 29 0 6 28 7 434 1 
+need packets: 36
+180 38 113 531 280 402 93 303 
+need packets: 35
+181 491 6 39 620 322 17 336 
+need packets: 36
+182 32 13 123 335 20 82 249 
+need packets: 35
+183 33 14 250 148 648 117 267 
+need packets: 36
+184 23 10 67 1 252 134 421 
+need packets: 37
+185 16 3 474 149 23 94 316 
+need packets: 37
+186 89 163 358 184 23 149 44 
+need packets: 35
+187 22 109 164 26 23 57 88 
+need packets: 36
+188 39 48 51 74 201 325 22 
+need packets: 36
+189 20 88 33 479 566 42 3 
+need packets: 36
+190 21 89 43 378 440 628 31 
+need packets: 37
+191 22 73 451 40 90 148 269 
+need packets: 33
+192 2 30 1 415 12 155 5 
+need packets: 38
+193 635 34 40 356 295 549 6 
+need packets: 34
+194 15 0 46 117 1 235 60 
+need packets: 36
+195 18 105 16 111 166 605 156 
+need packets: 34
+196 27 54 26 97 103 141 120 
+need packets: 37
+197 55 379 388 222 33 610 32 
+need packets: 35
+198 48 364 389 223 667 410 89 
+need packets: 35
+199 34 9 40 107 36 158 21 
+need packets: 35
+200 25 42 324 135 62 123 165 
+need packets: 36
+201 64 341 30 151 2 52 19 
+need packets: 37
+202 15 0 46 243 284 41 245 
+need packets: 35
+203 0 9 29 308 2 31 6 
+need packets: 36
+204 29 0 6 146 617 599 155 
+need packets: 36
+205 30 1 2 47 8 19 84 
+need packets: 37
+206 31 2 372 0 107 9 285 
+need packets: 36
+207 24 19 373 556 610 193 558 
+need packets: 36
+208 79 1 100 189 262 27 194 
+need packets: 35
+209 72 20 75 189 114 198 239 
+need packets: 36
+210 137 216 486 311 565 395 92 
+need packets: 35
+211 144 148 7 10 14 45 593 
+need packets: 37
+212 35 65 2 31 422 40 69 
+need packets: 36
+213 76 6 657 55 536 10 379 
+need packets: 38
+214 77 7 114 260 321 75 280 
+need packets: 36
+215 78 0 188 261 537 626 203 
+need packets: 35
+216 486 103 51 137 50 101 156 
+need packets: 37
+217 487 20 32 19 213 198 178 
+need packets: 37
+218 192 366 171 325 391 193 4 
+need packets: 36
+219 69 23 10 316 6 169 16 
+need packets: 37
+220 43 23 10 553 549 48 46 
+need packets: 37
+221 100 3 16 474 6 671 337 
+need packets: 37
+222 484 96 143 309 1 579 298 
+need packets: 35
+223 485 97 136 130 310 420 667 
+need packets: 35
+224 9 4 362 3 85 134 111 
+need packets: 37
+225 50 294 47 371 373 548 120 
+need packets: 36
+226 9 287 96 6 37 76 195 
+need packets: 36
+227 24 41 178 247 220 341 166 
+need packets: 35
+228 13 6 123 41 178 543 584 
+need packets: 35
+229 14 7 260 203 536 33 50 
+need packets: 37
+230 15 0 261 1 235 122 92 
+need packets: 37
+231 8 1 58 118 301 284 187 
+need packets: 34
+232 17 101 14 530 7 331 244 
+need packets: 37
+233 154 334 4 160 389 439 51 
+need packets: 36
+234 17 45 0 318 244 7 219 
+need packets: 36
+235 31 40 34 9 36 246 285 
+need packets: 35
+236 21 33 479 88 35 386 478 
+need packets: 35
+237 22 89 472 44 275 50 303 
+need packets: 36
+238 23 10 96 1 259 253 292 
+need packets: 38
+239 2 11 16 273 581 148 606 
+need packets: 37
+240 25 42 422 31 35 132 45 
+need packets: 37
+241 52 135 405 118 56 178 163 
+need packets: 36
+242 25 95 43 78 0 117 60 
+need packets: 35
+243 18 46 108 256 109 177 351 
+need packets: 35
+244 0 7 29 46 243 209 34 
+need packets: 36
+245 0 30 47 1 67 180 2 
+need packets: 37
+246 1 31 40 235 10 356 245 
+need packets: 35
+247 24 41 178 163 358 356 285 
+need packets: 35
+248 106 17 38 535 3 180 93 
+need packets: 38
+249 110 23 165 604 16 323 410 
+need packets: 35
+250 21 22 108 351 363 169 216 
+need packets: 35
+251 7 6 28 45 162 561 0 
+need packets: 37
+252 11 63 0 94 77 1 122 
+need packets: 38
+253 43 95 78 248 68 610 105 
+need packets: 36
+254 196 27 249 79 88 189 410 
+need packets: 35
+255 82 57 88 20 70 195 469 
+need packets: 34
+256 41 178 163 358 431 21 76 
+need packets: 36
+257 466 112 99 253 6 44 31 
+need packets: 37
+258 35 41 359 132 32 357 558 
+need packets: 35
+259 29 0 6 28 7 145 66 
+need packets: 36
+260 7 77 14 48 491 433 74 
+need packets: 37
+261 0 78 188 537 607 186 203 
+need packets: 33
+262 1 27 79 189 348 88 26 
+need packets: 35
+263 40 121 340 451 149 650 598 
+need packets: 35
+264 49 95 163 178 476 117 78 
+need packets: 34
+265 20 32 75 565 298 182 7 
+need packets: 37
+266 339 24 41 247 325 366 12 
+need packets: 35
+267 20 304 25 42 422 349 183 
+need packets: 36
+268 53 128 406 119 57 26 235 
+need packets: 36
+269 54 92 0 458 649 15 235 
+need packets: 37
+270 55 93 1 67 76 122 8 
+need packets: 36
+271 34 9 40 107 36 213 310 
+need packets: 34
+272 70 439 161 394 644 635 109 
+need packets: 36
+273 71 432 322 645 499 324 158 
+need packets: 35
+274 148 22 177 351 256 363 149 
+need packets: 36
+275 7 14 45 0 50 28 137 
+need packets: 37
+276 86 125 95 610 457 67 56 
+need packets: 36
+277 87 35 224 9 276 374 122 
+need packets: 37
+278 68 437 167 104 17 570 211 
+need packets: 35
+279 18 1 8 421 19 94 28 
+need packets: 37
+280 38 61 44 275 303 50 225 
+need packets: 37
+281 39 51 346 46 349 596 544 
+need packets: 37
+282 45 473 359 382 544 292 467 
+need packets: 35
+283 312 114 7 317 116 286 65 
+need packets: 37
+284 8 118 58 1 117 119 67 
+need packets: 33
+285 8 1 47 19 30 602 284 
+need packets: 36
+286 107 9 34 40 36 31 37 
+need packets: 35
+287 26 1 5 27 262 364 0 
+need packets: 37
+288 41 178 163 357 119 358 4 
+need packets: 36
+289 50 48 430 3 79 188 389 
+need packets: 36
+290 400 113 531 6 69 76 287 
+need packets: 35
+291 15 117 300 118 0 1 2 
+need packets: 35
+292 45 296 3 207 86 81 290 
+need packets: 36
+293 46 297 372 0 15 187 122 
+need packets: 36
+294 47 371 1 8 373 548 26 
+need packets: 35
+295 34 6 5 60 168 179 153 
+need packets: 37
+296 91 94 57 109 391 418 20 
+need packets: 36
+297 95 429 43 220 272 90 142 
+need packets: 36
+298 33 13 6 44 123 32 375 
+need packets: 36
+299 177 82 56 245 95 36 262 
+need packets: 37
+300 15 117 118 0 1 58 3 
+need packets: 35
+301 8 118 58 119 1 67 284 
+need packets: 33
+302 122 9 107 40 36 31 61 
+need packets: 35
+303 42 25 422 28 107 93 112 
+need packets: 37
+304 20 267 25 42 422 349 183 
+need packets: 36
+305 21 80 67 14 7 44 58 
+need packets: 38
+306 169 6 13 44 123 7 480 
+need packets: 38
+307 122 302 9 119 112 285 36 
+need packets: 36
+308 0 15 46 269 347 34 9 
+need packets: 36
+309 1 404 134 8 47 19 106 
+need packets: 36
+310 31 2 213 0 3 25 252 
+need packets: 37
+311 24 19 172 58 1 117 30 
+need packets: 34
+312 202 15 46 243 241 20 93 
+need packets: 38
+313 330 13 423 299 6 44 328 
+need packets: 36
+314 14 7 45 185 132 203 176 
+need packets: 36
+315 102 305 413 2 103 480 612 
+need packets: 36
+316 6 13 123 330 16 345 23 
+need packets: 37
+317 7 114 14 185 132 104 275 
+need packets: 36
+318 0 15 17 4 59 34 29 
+need packets: 38
+319 1 8 19 26 6 61 404 
+need packets: 38
+320 3 641 47 30 245 404 162 
+need packets: 37
+321 284 8 118 58 117 119 11 
+need packets: 35
+322 432 145 651 606 319 484 357 
+need packets: 33
+323 23 149 344 202 316 150 177 
+need packets: 35
+324 42 25 135 200 62 123 165 
+need packets: 36
+325 64 25 30 242 19 47 76 
+need packets: 39
+326 42 25 367 40 36 69 99 
+need packets: 37
+327 34 9 40 107 36 37 118 
+need packets: 34
+328 259 20 29 662 41 119 418 
+need packets: 36
+329 594 55 67 78 48 188 117 
+need packets: 34
+330 13 6 44 123 7 0 1 
+need packets: 38
+331 346 25 32 20 29 111 158 
+need packets: 38
+332 23 10 24 19 110 489 157 
+need packets: 36
+333 16 3 42 380 1 111 326 
+need packets: 36
+334 154 17 39 51 348 56 309 
+need packets: 35
+335 42 25 422 587 392 165 20 
+need packets: 37
+336 161 439 74 307 69 174 244 
+need packets: 37
+337 189 20 88 606 82 267 183 
+need packets: 35
+338 6 7 44 13 123 8 169 
+need packets: 36
+339 73 21 62 260 386 191 40 
+need packets: 37
+340 121 34 40 107 263 190 77 
+need packets: 36
+341 64 201 30 151 2 52 19 
+need packets: 37
+342 65 31 2 35 116 32 5 
+need packets: 37
+343 50 27 542 61 40 9 196 
+need packets: 38
+344 23 149 323 202 316 150 177 
+need packets: 35
+345 16 150 66 316 317 87 563 
+need packets: 34
+346 331 25 32 20 29 111 158 
+need packets: 38
+347 144 161 439 10 44 381 6 
+need packets: 37
+348 39 197 35 304 222 385 338 
+need packets: 36
+349 20 88 42 131 6 25 311 
+need packets: 36
+350 155 176 250 263 73 52 21 
+need packets: 35
+351 22 148 177 250 363 149 176 
+need packets: 34
+352 36 9 6 555 311 42 37 
+need packets: 36
+353 37 136 2 147 590 31 244 
+need packets: 38
+354 257 112 126 19 549 292 391 
+need packets: 37
+355 277 38 87 44 129 56 34 
+need packets: 38
+356 31 2 0 30 245 3 1 
+need packets: 35
+357 24 19 1 31 246 58 20 
+need packets: 34
+358 163 178 41 184 191 285 316 
+need packets: 33
+359 113 531 546 4 126 205 552 
+need packets: 35
+360 185 4 18 319 333 286 99 
+need packets: 37
+361 156 80 91 37 534 335 370 
+need packets: 37
+362 3 9 4 134 224 85 111 
+need packets: 37
+363 23 562 640 110 149 177 260 
+need packets: 36
+364 48 198 389 223 667 410 89 
+need packets: 35
+365 49 199 98 324 163 358 184 
+need packets: 35
+366 73 451 149 191 256 90 148 
+need packets: 34
+367 184 75 20 194 193 6 13 
+need packets: 37
+368 50 41 51 311 52 29 254 
+need packets: 36
+369 232 227 5 6 10 55 388 
+need packets: 37
+370 9 16 3 4 111 5 622 
+need packets: 37
+371 8 1 47 294 373 548 26 
+need packets: 35
+372 2 30 1 293 56 15 19 
+need packets: 37
+373 88 20 106 537 35 543 6 
+need packets: 38
+374 89 21 68 0 203 250 351 
+need packets: 37
+375 193 635 34 381 30 208 124 
+need packets: 37
+376 79 1 189 262 27 82 188 
+need packets: 35
+377 72 20 75 645 22 34 55 
+need packets: 38
+378 480 21 33 52 14 55 67 
+need packets: 38
+379 55 197 388 222 33 610 32 
+need packets: 35
+380 114 7 317 120 14 185 379 
+need packets: 37
+381 76 6 169 450 199 155 432 
+need packets: 36
+382 77 7 260 48 491 386 433 
+need packets: 37
+383 78 0 188 261 218 209 571 
+need packets: 35
+384 235 18 31 206 13 52 577 
+need packets: 38
+385 360 95 43 220 21 58 190 
+need packets: 36
+386 455 160 438 489 20 3 477 
+need packets: 38
+387 22 109 164 560 273 527 322 
+need packets: 36
+388 55 197 222 379 33 610 32 
+need packets: 35
+389 48 198 223 364 667 410 89 
+need packets: 35
+390 49 199 216 365 92 98 459 
+need packets: 35
+391 73 451 149 40 650 350 36 
+need packets: 37
+392 105 18 195 37 622 239 236 
+need packets: 37
+393 170 55 91 292 126 61 200 
+need packets: 36
+394 12 5 55 32 6 179 41 
+need packets: 38
+395 24 41 178 247 358 652 189 
+need packets: 35
+396 22 13 39 48 459 274 209 
+need packets: 38
+397 23 10 14 20 32 75 33 
+need packets: 38
+398 16 3 474 15 73 4 285 
+need packets: 37
+399 17 8 22 52 306 117 275 
+need packets: 37
+400 290 113 531 6 69 76 287 
+need packets: 35
+401 87 35 517 104 2 110 36 
+need packets: 38
+402 93 62 7 260 48 457 251 
+need packets: 36
+403 106 17 38 535 16 117 84 
+need packets: 38
+404 134 117 63 0 1 51 18 
+need packets: 35
+405 135 118 56 1 58 556 67 
+need packets: 33
+406 128 119 57 26 124 235 405 
+need packets: 34
+407 129 112 5 326 60 42 107 
+need packets: 35
+408 10 23 86 139 260 177 61 
+need packets: 37
+409 42 54 573 35 132 263 40 
+need packets: 35
+410 109 22 164 523 560 103 289 
+need packets: 36
+411 63 133 116 62 0 433 450 
+need packets: 35
+412 101 14 17 7 88 106 579 
+need packets: 36
+413 102 15 0 210 300 25 147 
+need packets: 36
+414 34 9 40 107 36 31 293 
+need packets: 35
+415 96 291 172 9 18 46 133 
+need packets: 38
+416 25 42 422 135 180 405 667 
+need packets: 36
+417 156 80 494 586 559 3 37 
+need packets: 37
+418 57 20 16 125 150 3 87 
+need packets: 38
+419 117 0 262 180 633 15 2 
+need packets: 36
+420 0 15 46 205 67 65 74 
+need packets: 36
+421 1 8 47 19 206 602 20 
+need packets: 37
+422 31 2 0 107 9 84 69 
+need packets: 37
+423 24 19 1 58 229 172 118 
+need packets: 35
+424 68 69 478 89 95 43 218 
+need packets: 36
+425 69 70 479 88 90 108 91 
+need packets: 36
+426 33 21 567 108 272 307 350 
+need packets: 37
+427 21 33 90 55 126 192 532 
+need packets: 36
+428 54 48 143 1 141 26 427 
+need packets: 36
+429 55 49 136 142 250 100 411 
+need packets: 35
+430 48 50 137 143 123 140 13 
+need packets: 35
+431 49 72 90 356 190 107 189 
+need packets: 34
+432 322 145 651 606 319 484 357 
+need packets: 33
+433 21 90 72 107 76 190 263 
+need packets: 36
+434 7 28 5 24 35 22 177 
+need packets: 36
+435 24 41 178 207 566 253 52 
+need packets: 34
+436 166 149 451 73 191 40 90 
+need packets: 34
+437 167 150 640 201 619 164 490 
+need packets: 34
+438 160 151 379 641 604 154 317 
+need packets: 34
+439 161 144 10 44 381 6 91 
+need packets: 36
+440 18 99 87 124 605 209 30 
+need packets: 37
+441 125 30 404 663 2 216 19 
+need packets: 38
+442 153 30 291 412 15 117 64 
+need packets: 34
+443 32 20 29 71 89 462 426 
+need packets: 37
+444 90 21 33 350 155 176 263 
+need packets: 36
+445 138 49 163 184 358 252 175 
+need packets: 35
+446 11 63 0 1 4 85 234 
+need packets: 36
+447 42 25 422 0 77 356 35 
+need packets: 37
+448 3 100 13 585 74 439 14 
+need packets: 37
+449 60 5 6 136 179 130 535 
+need packets: 36
+450 6 13 44 123 7 201 328 
+need packets: 37
+451 73 149 191 40 90 148 22 
+need packets: 34
+452 71 29 0 66 3 33 6 
+need packets: 37
+453 64 30 1 67 308 95 2 
+need packets: 37
+454 65 31 356 2 0 35 45 
+need packets: 37
+455 90 116 0 621 62 131 105 
+need packets: 36
+456 140 37 41 178 155 119 350 
+need packets: 37
+457 141 38 40 180 18 667 23 
+need packets: 38
+458 52 69 56 1 95 43 126 
+need packets: 38
+459 48 79 188 118 610 105 189 
+need packets: 35
+460 113 531 546 95 48 549 598 
+need packets: 37
+461 174 228 103 619 330 369 640 
+need packets: 37
+462 175 4 43 50 88 137 277 
+need packets: 38
+463 98 20 6 13 123 24 41 
+need packets: 37
+464 36 9 611 6 21 559 314 
+need packets: 36
+465 37 64 166 111 332 370 179 
+need packets: 36
+466 257 112 99 253 6 44 31 
+need packets: 37
+467 0 15 46 1 245 602 284 
+need packets: 35
+468 54 129 407 85 112 346 331 
+need packets: 33
+469 55 610 41 188 67 126 288 
+need packets: 36
+470 48 69 47 81 108 202 267 
+need packets: 37
+471 49 70 164 109 355 288 82 
+need packets: 36
+472 44 6 13 123 385 298 55 
+need packets: 36
+473 45 282 359 382 544 292 467 
+need packets: 35
+474 3 16 73 4 21 294 527 
+need packets: 37
+475 23 10 78 184 397 172 169 
+need packets: 37
+476 48 79 1 26 189 262 27 
+need packets: 36
+477 49 72 20 75 94 666 7 
+need packets: 38
+478 73 451 149 191 40 90 148 
+need packets: 35
+479 88 20 57 82 189 86 99 
+need packets: 36
+480 378 21 33 52 14 55 67 
+need packets: 38
+481 22 53 76 32 34 11 63 
+need packets: 39
+482 327 153 589 20 72 75 126 
+need packets: 38
+483 71 29 0 6 28 73 146 
+need packets: 36
+484 222 96 143 309 1 579 298 
+need packets: 35
+485 223 97 136 130 310 420 667 
+need packets: 35
+486 216 103 51 137 50 101 156 
+need packets: 37
+487 217 20 32 19 213 198 178 
+need packets: 37
+488 42 25 407 21 108 107 422 
+need packets: 35
+489 171 95 546 552 205 126 164 
+need packets: 36
+490 64 111 166 332 165 65 659 
+need packets: 35
+491 181 6 39 620 322 17 336 
+need packets: 36
+492 131 40 405 135 62 17 58 
+need packets: 36
+493 169 6 44 7 91 218 216 
+need packets: 38
+494 247 24 41 37 26 43 356 
+need packets: 36
+495 10 150 16 316 345 45 3 
+need packets: 37
+496 50 62 7 93 89 260 187 
+need packets: 37
+497 69 108 552 166 355 479 490 
+need packets: 36
+498 69 57 20 30 400 235 23 
+need packets: 37
+499 8 1 47 26 117 78 284 
+need packets: 37
+500 93 0 139 15 46 386 1 
+need packets: 37
+501 94 1 404 63 0 59 26 
+need packets: 36
+502 95 43 28 2 253 25 624 
+need packets: 38
+503 88 20 189 22 26 57 91 
+need packets: 38
+504 121 340 34 221 3 215 14 
+need packets: 38
+505 341 64 51 218 30 60 111 
+need packets: 36
+506 97 24 6 13 44 123 207 
+need packets: 38
+507 70 28 7 45 202 312 1 
+need packets: 38
+508 103 8 301 118 58 1 259 
+need packets: 36
+509 96 9 302 107 34 119 28 
+need packets: 37
+510 97 82 195 173 223 136 420 
+need packets: 36
+511 120 25 42 246 549 356 475 
+need packets: 37
+512 105 18 195 197 239 332 166 
+need packets: 36
+513 159 98 414 69 28 251 496 
+need packets: 38
+514 15 0 46 133 307 420 409 
+need packets: 36
+515 39 54 196 293 297 280 282 
+need packets: 36
+516 17 34 533 40 107 598 119 
+need packets: 36
+517 104 17 167 606 307 130 356 
+need packets: 35
+518 105 18 111 16 3 37 108 
+need packets: 36
+519 104 17 106 157 124 278 51 
+need packets: 36
+520 59 37 34 9 326 28 23 
+need packets: 39
+521 91 160 438 151 114 188 109 
+need packets: 36
+522 321 284 8 118 151 77 419 
+need packets: 37
+523 87 126 45 98 260 624 401 
+need packets: 37
+524 41 178 163 358 184 191 565 
+need packets: 34
+525 166 436 23 475 26 561 464 
+need packets: 36
+526 130 41 24 247 395 524 461 
+need packets: 37
+527 154 334 17 232 213 124 195 
+need packets: 36
+528 11 63 20 133 74 1 46 
+need packets: 38
+529 330 13 6 44 123 328 535 
+need packets: 37
+530 14 7 45 203 44 289 472 
+need packets: 36
+531 113 546 95 56 30 205 84 
+need packets: 35
+532 16 3 111 166 69 362 265 
+need packets: 36
+533 17 34 516 40 107 598 119 
+need packets: 36
+534 105 18 195 605 16 111 156 
+need packets: 36
+535 162 72 148 190 349 145 131 
+need packets: 35
+536 84 57 107 286 639 26 365 
+need packets: 37
+537 83 338 632 5 335 236 318 
+need packets: 35
+538 7 14 45 203 44 472 17 
+need packets: 36
+539 8 1 47 364 117 78 138 
+need packets: 36
+540 64 15 30 2 117 291 1 
+need packets: 37
+541 65 8 31 118 284 58 283 
+need packets: 36
+542 151 17 317 66 595 344 364 
+need packets: 36
+543 144 75 20 45 126 265 538 
+need packets: 38
+544 111 523 277 129 238 516 418 
+need packets: 33
+545 104 516 278 239 517 2 3 
+need packets: 35
+546 531 113 95 56 30 205 84 
+need packets: 35
+547 8 1 47 5 162 188 46 
+need packets: 37
+548 55 67 594 78 189 0 329 
+need packets: 35
+549 48 79 188 505 610 139 86 
+need packets: 35
+550 49 72 189 20 75 87 114 
+need packets: 37
+551 110 410 276 128 121 235 237 
+need packets: 34
+552 69 108 81 599 146 206 467 
+need packets: 36
+553 70 109 164 355 368 479 490 
+need packets: 34
+554 11 54 28 7 77 33 176 
+need packets: 37
+555 6 13 44 2 297 95 192 
+need packets: 37
+556 24 19 373 207 610 193 558 
+need packets: 36
+557 25 42 416 276 422 63 331 
+need packets: 36
+558 81 418 296 531 559 213 76 
+need packets: 34
+559 68 80 598 82 401 53 515 
+need packets: 37
+560 22 107 57 84 109 639 138 
+need packets: 36
+561 23 10 43 220 365 8 102 
+need packets: 38
+562 623 59 0 244 29 46 81 
+need packets: 35
+563 16 87 100 13 249 410 470 
+need packets: 37
+564 49 58 61 142 499 103 168 
+need packets: 37
+565 73 451 191 40 90 190 148 
+need packets: 33
+566 20 32 57 125 135 26 571 
+need packets: 36
+567 21 33 154 334 128 51 84 
+need packets: 38
+568 49 82 491 181 39 190 300 
+need packets: 36
+569 218 192 147 37 366 191 476 
+need packets: 36
+570 23 104 17 110 36 27 149 
+need packets: 36
+571 135 57 294 109 120 50 108 
+need packets: 35
+572 53 128 406 119 57 26 235 
+need packets: 35
+573 54 129 407 112 468 218 523 
+need packets: 35
+574 55 67 594 329 48 188 189 
+need packets: 36
+575 48 139 20 189 114 105 182 
+need packets: 37
+576 108 21 217 107 90 190 263 
+need packets: 36
+577 109 22 164 187 664 378 367 
+need packets: 34
+578 70 28 45 0 539 7 145 
+need packets: 38
+579 143 309 88 270 388 362 57 
+need packets: 35
+580 133 0 203 9 46 95 2 
+need packets: 35
+581 134 404 419 1 26 8 47 
+need packets: 37
+582 135 405 40 3 100 362 9 
+need packets: 37
+583 128 406 2 41 20 101 139 
+need packets: 38
+584 185 90 21 567 196 595 254 
+need packets: 36
+585 386 184 23 587 78 316 117 
+need packets: 37
+586 3 16 100 13 121 558 399 
+need packets: 37
+587 23 10 62 1 56 21 236 
+need packets: 37
+588 48 79 1 114 29 19 46 
+need packets: 37
+589 49 59 520 26 14 204 319 
+need packets: 37
+590 73 451 149 191 40 90 148 
+need packets: 35
+591 184 81 178 163 358 316 365 
+need packets: 35
+592 153 221 660 142 103 499 354 
+need packets: 36
+593 431 72 20 75 189 26 6 
+need packets: 37
+594 329 55 67 78 48 188 117 
+need packets: 34
+595 16 100 13 506 103 62 137 
+need packets: 36
+596 46 0 15 1 117 58 3 
+need packets: 37
+597 47 1 8 19 602 358 532 
+need packets: 36
+598 40 9 34 107 36 31 29 
+need packets: 35
+599 41 178 163 358 184 20 565 
+need packets: 36
+600 27 4 6 31 146 161 437 
+need packets: 36
+601 48 79 188 270 389 610 139 
+need packets: 35
+602 1 8 47 19 117 78 228 
+need packets: 35
+603 74 133 0 15 46 225 620 
+need packets: 37
+604 89 6 13 123 282 343 472 
+need packets: 37
+605 52 95 43 336 161 142 610 
+need packets: 36
+606 53 76 9 632 331 346 463 
+need packets: 36
+607 54 77 33 11 554 148 168 
+need packets: 38
+608 169 6 13 44 123 143 402 
+need packets: 36
+609 251 7 18 6 28 29 0 
+need packets: 36
+610 55 469 41 188 67 126 288 
+need packets: 36
+611 24 41 178 247 358 213 220 
+need packets: 36
+612 97 102 223 136 285 315 114 
+need packets: 37
+613 103 8 292 1 246 58 107 
+need packets: 37
+614 96 9 293 15 362 196 299 
+need packets: 37
+615 10 70 28 168 315 5 1 
+need packets: 38
+616 35 53 657 6 76 226 47 
+need packets: 37
+617 124 29 0 6 146 51 599 
+need packets: 36
+618 105 126 279 517 232 483 292 
+need packets: 35
+619 24 4 9 119 285 34 246 
+need packets: 36
+620 7 14 45 66 203 488 9 
+need packets: 36
+621 0 116 62 7 19 1 354 
+need packets: 37
+622 1 117 63 404 0 419 538 
+need packets: 34
+623 562 59 0 244 29 46 81 
+need packets: 35
+624 43 95 69 81 470 82 268 
+need packets: 35
+625 116 0 621 62 7 618 651 
+need packets: 35
+626 56 1 95 67 78 253 76 
+need packets: 35
+627 4 650 1 8 15 46 285 
+need packets: 36
+628 89 262 589 19 18 279 232 
+need packets: 37
+629 166 436 17 18 208 11 343 
+need packets: 37
+630 167 437 64 251 12 394 465 
+need packets: 37
+631 11 160 438 210 33 252 21 
+need packets: 37
+632 85 89 27 124 79 118 90 
+need packets: 38
+633 86 125 546 531 400 452 495 
+need packets: 36
+634 54 77 600 7 260 41 91 
+need packets: 37
+635 193 34 40 356 295 549 6 
+need packets: 34
+636 32 123 335 349 198 42 665 
+need packets: 36
+637 33 90 72 107 190 263 356 
+need packets: 35
+638 169 44 125 7 66 499 440 
+need packets: 37
+639 84 57 107 88 286 373 82 
+need packets: 35
+640 19 439 161 117 298 30 212 
+need packets: 35
+641 3 320 47 30 245 404 162 
+need packets: 37
+642 113 531 60 5 200 6 599 
+need packets: 38
+643 40 9 34 36 31 246 173 
+need packets: 36
+644 70 74 67 1 8 47 413 
+need packets: 37
+645 20 32 43 6 58 31 57 
+need packets: 38
+646 21 33 195 183 108 176 442 
+need packets: 36
+647 22 65 659 490 109 164 176 
+need packets: 34
+648 90 21 33 3 318 239 188 
+need packets: 38
+649 149 202 451 12 191 176 366 
+need packets: 35
+650 15 0 46 67 65 52 253 
+need packets: 36
+651 132 426 7 14 45 473 640 
+need packets: 37
+652 189 24 9 119 90 107 302 
+need packets: 36
+653 190 25 42 135 324 107 112 
+need packets: 37
+654 191 73 451 40 90 357 148 
+need packets: 34
+655 184 92 30 643 177 194 61 
+need packets: 37
+656 34 9 107 286 359 5 52 
+need packets: 37
+657 173 176 510 26 199 228 3 
+need packets: 38
+658 51 32 20 566 9 39 181 
+need packets: 38
+659 65 647 490 166 64 437 332 
+need packets: 33
+660 125 30 1 216 210 47 43 
+need packets: 37
+661 126 31 2 192 140 217 643 
+need packets: 37
+662 127 24 19 193 141 10 132 
+need packets: 38
+663 120 25 27 14 242 357 484 
+need packets: 38
+664 164 42 25 147 191 494 109 
+need packets: 36
+665 68 80 19 10 85 214 23 
+need packets: 37
+666 12 5 25 72 207 371 14 
+need packets: 38
+667 136 49 34 55 142 188 29 
+need packets: 36
+668 6 13 123 495 632 2 41 
+need packets: 37
+669 7 14 488 620 249 451 410 
+need packets: 36
+670 0 15 489 621 116 450 411 
+need packets: 36
+671 1 8 18 539 54 189 348 
+need packets: 37
+SGGH Time: 2176.5 ms
+ranks: 0 3 4 4 4 5 2 5 3 3 
+origin packets: 48
+need packets: 33
+duration: 2178.05 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^6,4,8
+GenerateAllDecodeMatrix and matrix2Bitmatrix Time: 3.62834 ms
+0 12 387 5 7 62 1 426 
+need packets: 48
+1 8 19 63 882 884 261 622 
+need packets: 49
+2 141 491 153 15 680 14 468 
+need packets: 47
+3 666 292 479 88 253 41 958 
+need packets: 49
+4 205 1 83 518 218 447 80 
+need packets: 47
+5 12 506 720 51 145 279 398 
+need packets: 48
+6 13 60 171 48 9 50 151 
+need packets: 49
+7 14 61 427 90 252 0 833 
+need packets: 48
+8 1 19 63 882 884 261 622 
+need packets: 49
+9 34 383 100 104 269 174 1179 
+need packets: 46
+10 19 40 142 23 516 217 229 
+need packets: 48
+11 29 340 391 82 150 817 400 
+need packets: 49
+12 0 387 5 7 62 1 426 
+need packets: 48
+13 1 6 60 171 847 128 850 
+need packets: 49
+14 7 61 427 90 252 0 833 
+need packets: 48
+15 0 34 62 395 81 445 468 
+need packets: 47
+16 3 666 292 479 433 54 133 
+need packets: 49
+17 133 14 844 146 15 1003 488 
+need packets: 49
+18 36 1075 560 239 405 89 270 
+need packets: 48
+19 1 8 63 882 884 261 622 
+need packets: 49
+20 3 666 417 550 479 1013 48 
+need packets: 48
+21 33 278 1083 106 144 271 76 
+need packets: 49
+22 113 402 352 116 643 391 5 
+need packets: 48
+23 10 19 40 142 516 217 229 
+need packets: 48
+24 47 371 29 73 148 930 62 
+need packets: 48
+25 40 451 84 111 722 885 670 
+need packets: 47
+26 39 27 276 161 136 117 1094 
+need packets: 50
+27 39 276 161 306 536 21 910 
+need packets: 48
+28 64 747 551 469 1026 489 958 
+need packets: 48
+29 11 340 391 82 150 817 400 
+need packets: 49
+30 45 1306 1084 67 0 17 135 
+need packets: 50
+31 2 141 491 62 881 184 492 
+need packets: 47
+32 715 391 185 98 286 85 572 
+need packets: 46
+33 21 278 1083 106 144 271 76 
+need packets: 49
+34 383 184 1110 153 83 148 589 
+need packets: 48
+35 7 370 4 6 665 77 464 
+need packets: 48
+36 18 1075 560 239 405 89 270 
+need packets: 48
+37 144 950 377 922 39 380 379 
+need packets: 47
+38 144 1217 195 271 309 242 708 
+need packets: 47
+39 922 390 184 227 1012 165 921 
+need packets: 48
+40 723 57 314 614 1119 53 44 
+need packets: 48
+41 58 415 694 51 1269 256 684 
+need packets: 48
+42 1 8 19 63 141 196 462 
+need packets: 49
+43 962 95 201 110 277 76 104 
+need packets: 49
+44 7 722 75 0 1157 78 1113 
+need packets: 49
+45 0 6 12 210 87 427 1 
+need packets: 49
+46 1 2 63 8 19 1260 501 
+need packets: 49
+47 930 56 739 105 213 398 52 
+need packets: 47
+48 731 89 630 351 428 778 1317 
+need packets: 47
+49 14 319 122 104 197 212 331 
+need packets: 47
+50 9 56 52 139 454 399 5 
+need packets: 45
+51 970 980 589 961 112 127 166 
+need packets: 49
+52 5 8 659 135 746 985 206 
+need packets: 48
+53 6 108 139 56 9 1250 295 
+need packets: 48
+54 7 109 579 48 60 721 42 
+need packets: 49
+55 938 88 629 123 84 121 806 
+need packets: 49
+56 739 105 327 13 622 612 386 
+need packets: 46
+57 314 219 180 176 78 677 1023 
+need packets: 47
+58 41 415 694 51 1269 256 684 
+need packets: 48
+59 978 216 81 78 7 164 181 
+need packets: 48
+60 6 13 171 48 9 50 151 
+need packets: 49
+61 0 7 14 427 252 362 1049 
+need packets: 48
+62 0 15 34 395 81 445 468 
+need packets: 47
+63 946 104 326 9 196 13 171 
+need packets: 47
+64 747 775 290 468 238 37 169 
+need packets: 49
+65 29 11 340 168 930 127 1142 
+need packets: 48
+66 185 256 606 21 1183 36 219 
+need packets: 47
+67 986 920 286 297 293 199 28 
+need packets: 50
+68 30 315 685 273 32 23 50 
+need packets: 50
+69 31 643 460 56 166 265 154 
+need packets: 49
+70 24 987 177 236 962 189 191 
+need packets: 49
+71 954 774 829 561 84 984 259 
+need packets: 48
+72 1 83 74 127 76 61 190 
+need packets: 47
+73 371 20 279 22 141 218 784 
+need packets: 47
+74 1 83 72 127 76 61 190 
+need packets: 47
+75 0 4 309 6 210 383 457 
+need packets: 50
+76 5 6 243 87 193 282 488 
+need packets: 49
+77 6 124 808 25 23 123 10 
+need packets: 49
+78 7 125 82 420 809 27 120 
+need packets: 48
+79 0 98 73 126 75 60 189 
+need packets: 47
+80 46 213 225 67 23 268 986 
+need packets: 47
+81 2 47 51 141 280 22 164 
+need packets: 48
+82 7 3 308 5 264 118 297 
+need packets: 50
+83 930 1 47 398 493 56 68 
+need packets: 46
+84 25 667 71 362 509 94 488 
+need packets: 49
+85 56 230 711 491 2 36 521 
+need packets: 50
+86 27 725 231 52 57 808 1026 
+need packets: 49
+87 45 212 224 1235 137 214 306 
+need packets: 48
+88 55 938 629 123 84 121 806 
+need packets: 49
+89 20 3 237 111 34 504 846 
+need packets: 47
+90 7 14 61 427 252 0 833 
+need packets: 48
+91 13 361 463 56 470 170 708 
+need packets: 48
+92 3 666 199 176 89 182 1005 
+need packets: 48
+93 9 34 383 67 36 24 270 
+need packets: 47
+94 53 401 232 171 415 266 444 
+need packets: 49
+95 27 0 110 201 413 324 322 
+need packets: 48
+96 12 703 154 99 257 38 13 
+need packets: 51
+97 13 108 346 646 384 1267 303 
+need packets: 48
+98 11 904 13 380 281 6 79 
+need packets: 51
+99 440 15 146 62 140 281 165 
+need packets: 48
+100 24 187 201 254 1023 90 557 
+need packets: 48
+101 25 559 376 1315 46 124 98 
+need packets: 49
+102 61 114 203 303 48 945 156 
+need packets: 48
+103 35 344 301 580 657 158 194 
+need packets: 47
+104 9 227 68 78 314 319 325 
+need packets: 48
+105 739 56 327 13 622 612 386 
+need packets: 46
+106 1083 153 694 56 164 181 415 
+need packets: 48
+107 448 20 325 550 479 66 105 
+need packets: 49
+108 6 53 139 56 9 1250 295 
+need packets: 48
+109 579 7 54 48 60 721 42 
+need packets: 49
+110 0 55 317 12 387 602 121 
+need packets: 49
+111 1 48 43 196 318 205 1178 
+need packets: 47
+112 21 473 84 683 122 143 1038 
+need packets: 46
+113 22 402 352 116 643 391 5 
+need packets: 48
+114 1091 33 221 142 32 455 980 
+need packets: 49
+115 456 1 390 429 220 39 922 
+need packets: 49
+116 73 120 139 22 423 173 50 
+need packets: 47
+117 91 463 1058 152 873 148 294 
+need packets: 49
+118 27 922 39 84 944 237 129 
+need packets: 48
+119 20 472 177 131 770 70 13 
+need packets: 47
+120 423 20 325 251 934 26 633 
+need packets: 48
+121 416 794 478 47 35 269 244 
+need packets: 49
+122 1099 281 141 380 984 22 1287 
+need packets: 48
+123 464 98 13 380 281 6 871 
+need packets: 48
+124 51 970 169 39 1136 117 158 
+need packets: 50
+125 420 11 58 489 231 54 64 
+need packets: 48
+126 421 27 852 114 177 1175 56 
+need packets: 47
+127 422 45 393 164 738 635 760 
+need packets: 48
+128 1 10 19 13 44 46 7 
+need packets: 49
+129 93 26 439 75 156 926 0 
+need packets: 50
+130 1107 22 28 273 864 141 23 
+need packets: 49
+131 472 177 119 770 364 70 13 
+need packets: 46
+132 3 666 479 672 550 601 549 
+need packets: 46
+133 6 17 146 199 412 411 1072 
+need packets: 48
+134 7 35 370 4 49 277 72 
+need packets: 50
+135 0 1202 315 45 249 454 508 
+need packets: 49
+136 17 231 140 789 75 106 358 
+need packets: 48
+137 10 220 224 19 182 855 749 
+need packets: 48
+138 241 63 182 19 8 453 852 
+need packets: 47
+139 454 1183 256 89 778 52 197 
+need packets: 48
+140 21 177 472 551 491 1006 698 
+need packets: 47
+141 2 491 153 15 680 14 468 
+need packets: 47
+142 23 229 265 524 482 1315 96 
+need packets: 47
+143 16 230 139 788 202 137 357 
+need packets: 47
+144 25 195 271 37 188 38 530 
+need packets: 47
+145 26 166 151 24 211 444 453 
+need packets: 48
+146 6 13 60 171 585 48 127 
+need packets: 50
+147 24 28 87 9 166 946 853 
+need packets: 49
+148 11 734 551 74 29 432 225 
+need packets: 48
+149 30 268 305 335 40 347 610 
+need packets: 49
+150 31 269 2 780 328 41 963 
+need packets: 48
+151 24 242 270 67 36 329 277 
+need packets: 46
+152 25 259 29 71 38 436 98 
+need packets: 49
+153 491 2 141 15 680 14 468 
+need packets: 47
+154 663 417 541 120 20 166 27 
+need packets: 50
+155 8 1 63 34 612 630 277 
+need packets: 48
+156 17 439 490 310 136 243 1197 
+need packets: 48
+157 30 296 290 153 211 300 279 
+need packets: 47
+158 31 297 27 69 306 460 1264 
+need packets: 48
+159 24 593 558 100 451 277 58 
+need packets: 47
+160 38 442 907 95 188 905 69 
+need packets: 48
+161 499 261 190 412 551 402 672 
+need packets: 47
+162 7 501 54 129 16 3 268 
+need packets: 49
+163 270 764 253 95 40 394 1121 
+need packets: 47
+164 0 1141 62 15 34 99 9 
+need packets: 49
+165 571 692 0 414 367 386 929 
+need packets: 46
+166 1 415 34 196 48 413 115 
+need packets: 47
+167 386 56 739 9 52 198 221 
+need packets: 46
+168 17 63 946 414 5 12 875 
+need packets: 48
+169 300 542 195 248 50 13 103 
+need packets: 49
+170 470 8 83 1 13 367 20 
+need packets: 48
+171 9 128 358 188 386 1149 167 
+need packets: 48
+172 555 21 298 121 184 263 462 
+need packets: 50
+173 579 7 54 60 457 1162 96 
+need packets: 49
+174 23 10 507 213 60 80 145 
+need packets: 49
+175 16 3 186 118 61 236 849 
+need packets: 50
+176 479 118 187 20 770 73 173 
+need packets: 48
+177 236 472 39 515 46 173 450 
+need packets: 48
+178 9 439 156 93 75 470 160 
+need packets: 48
+179 252 24 9 70 183 309 354 
+need packets: 49
+180 1299 698 197 183 312 166 729 
+need packets: 47
+181 476 587 0 247 98 406 1225 
+need packets: 48
+182 477 116 1 19 1114 1103 640 
+need packets: 47
+183 478 117 408 1004 691 393 722 
+need packets: 46
+184 227 559 185 614 314 324 85 
+need packets: 46
+185 256 523 606 66 197 1111 1220 
+need packets: 46
+186 7 14 61 427 833 180 272 
+need packets: 49
+187 583 20 64 325 210 1246 129 
+need packets: 49
+188 13 1 128 2 847 171 358 
+need packets: 49
+189 260 129 126 251 79 98 152 
+need packets: 48
+190 261 1036 946 63 17 312 827 
+need packets: 48
+191 258 558 184 613 65 187 564 
+need packets: 47
+192 91 7 130 198 761 1052 13 
+need packets: 49
+193 26 287 251 86 44 320 277 
+need packets: 49
+194 15 353 0 61 180 62 75 
+need packets: 49
+195 542 248 266 559 265 108 909 
+need packets: 47
+196 1 34 415 166 48 413 115 
+need packets: 47
+197 47 233 11 280 10 500 174 
+need packets: 49
+198 338 15 165 228 571 0 577 
+need packets: 48
+199 41 485 1059 66 198 1068 0 
+need packets: 49
+200 7 11 378 22 5 44 73 
+need packets: 49
+201 0 339 181 476 79 106 54 
+need packets: 49
+202 23 0 61 14 492 1 371 
+need packets: 50
+203 574 280 154 33 287 613 628 
+need packets: 47
+204 345 853 190 135 83 704 122 
+need packets: 49
+205 1 4 83 518 218 447 80 
+need packets: 47
+206 5 12 215 360 763 1090 865 
+need packets: 49
+207 6 1146 13 60 467 913 608 
+need packets: 48
+208 36 18 215 1193 67 270 781 
+need packets: 48
+209 37 42 503 196 1040 638 19 
+need packets: 49
+210 6 13 60 115 7 1048 193 
+need packets: 50
+211 41 160 162 199 260 198 285 
+need packets: 48
+212 22 313 59 122 415 613 408 
+need packets: 48
+213 739 56 73 230 20 386 167 
+need packets: 46
+214 16 82 375 209 501 171 900 
+need packets: 48
+215 17 501 16 486 626 1115 500 
+need packets: 47
+216 2 141 491 47 177 86 140 
+need packets: 45
+217 5 232 226 12 63 131 534 
+need packets: 48
+218 518 1237 623 16 83 500 457 
+need packets: 48
+219 271 606 312 105 122 1012 21 
+need packets: 48
+220 85 385 587 56 230 34 47 
+need packets: 49
+221 86 810 740 123 56 457 1103 
+need packets: 49
+222 87 323 373 508 336 121 114 
+need packets: 47
+223 80 509 337 374 724 651 170 
+need packets: 48
+224 527 726 2 81 141 412 491 
+need packets: 49
+225 520 727 1082 324 83 85 566 
+need packets: 49
+226 5 115 220 1136 150 793 295 
+need packets: 48
+227 184 559 185 614 314 324 85 
+need packets: 46
+228 86 141 2 491 464 15 153 
+need packets: 48
+229 524 169 682 351 1286 48 819 
+need packets: 48
+230 525 724 769 856 850 747 615 
+need packets: 47
+231 526 725 19 82 81 136 644 
+need packets: 49
+232 5 217 226 12 63 131 534 
+need packets: 48
+233 6 522 111 269 43 4 256 
+need packets: 50
+234 27 941 532 175 200 657 118 
+need packets: 47
+235 88 12 55 938 150 269 281 
+need packets: 49
+236 177 472 39 515 46 173 450 
+need packets: 48
+237 22 154 9 3 16 4 15 
+need packets: 48
+238 23 10 349 353 1156 128 547 
+need packets: 48
+239 4 193 216 186 533 1062 3 
+need packets: 48
+240 994 603 836 1247 29 206 9 
+need packets: 48
+241 138 63 182 19 8 453 852 
+need packets: 47
+242 20 3 104 389 671 465 598 
+need packets: 49
+243 10 23 821 444 1286 208 193 
+need packets: 49
+244 35 7 138 837 121 854 416 
+need packets: 48
+245 124 51 170 312 270 329 1191 
+need packets: 49
+246 125 420 1255 505 1010 147 984 
+need packets: 49
+247 98 372 573 33 384 286 339 
+need packets: 49
+248 155 30 401 53 103 348 754 
+need packets: 50
+249 1067 1194 431 902 325 48 620 
+need packets: 48
+250 47 24 89 166 195 20 485 
+need packets: 50
+251 8 494 79 164 77 170 361 
+need packets: 48
+252 179 24 9 70 183 309 354 
+need packets: 49
+253 779 460 631 776 430 337 234 
+need packets: 47
+254 24 90 147 175 689 28 429 
+need packets: 49
+255 25 451 40 1076 50 101 206 
+need packets: 49
+256 185 523 606 66 197 1111 1220 
+need packets: 46
+257 1032 986 67 244 142 229 1223 
+need packets: 47
+258 191 558 184 613 65 187 564 
+need packets: 47
+259 16 1238 559 834 393 501 68 
+need packets: 48
+260 189 129 126 251 79 98 152 
+need packets: 48
+261 190 1036 946 63 17 312 827 
+need packets: 48
+262 191 258 392 604 1037 99 377 
+need packets: 49
+263 184 227 314 57 1038 1221 100 
+need packets: 48
+264 308 607 313 739 66 197 462 
+need packets: 49
+265 309 600 767 282 292 1043 198 
+need packets: 47
+266 54 7 109 579 12 48 49 
+need packets: 50
+267 15 174 61 1180 0 34 9 
+need packets: 48
+268 22 323 105 258 760 1245 511 
+need packets: 48
+269 2 31 150 780 328 41 963 
+need packets: 48
+270 163 764 253 95 40 394 1121 
+need packets: 47
+271 219 606 312 105 122 1012 21 
+need packets: 48
+272 21 23 142 140 786 1139 929 
+need packets: 49
+273 16 3 106 525 175 4 406 
+need packets: 51
+274 71 25 1120 829 774 83 84 
+need packets: 50
+275 0 991 1170 60 1190 101 1 
+need packets: 48
+276 27 39 161 306 536 21 910 
+need packets: 48
+277 18 1212 582 59 97 56 535 
+need packets: 50
+278 21 33 1083 106 144 271 76 
+need packets: 49
+279 20 3 38 160 1005 442 473 
+need packets: 49
+280 11 1002 213 198 281 380 463 
+need packets: 50
+281 380 1002 1099 984 1191 494 1061 
+need packets: 45
+282 767 265 248 155 309 108 1022 
+need packets: 47
+283 0 506 889 197 79 108 398 
+need packets: 49
+284 38 279 361 170 56 197 187 
+need packets: 49
+285 811 39 60 272 566 17 194 
+need packets: 49
+286 32 98 391 589 379 20 89 
+need packets: 47
+287 11 250 193 280 76 93 790 
+need packets: 50
+288 115 393 559 13 1034 102 204 
+need packets: 48
+289 126 421 856 84 135 698 27 
+need packets: 48
+290 590 775 491 153 64 61 348 
+need packets: 47
+291 37 388 278 106 255 1088 1305 
+need packets: 49
+292 3 666 479 88 253 41 958 
+need packets: 49
+293 11 74 1 46 167 596 552 
+need packets: 50
+294 107 448 557 31 100 921 658 
+need packets: 48
+295 124 1173 163 270 72 746 817 
+need packets: 49
+296 599 653 306 27 153 220 966 
+need packets: 47
+297 592 654 799 813 138 156 219 
+need packets: 50
+298 783 328 193 429 1011 1238 740 
+need packets: 47
+299 13 778 662 56 188 73 855 
+need packets: 48
+300 169 542 195 248 50 13 103 
+need packets: 49
+301 596 552 142 43 143 673 962 
+need packets: 48
+302 597 553 143 784 410 796 443 
+need packets: 49
+303 598 652 664 113 122 797 1267 
+need packets: 48
+304 19 236 177 117 679 46 962 
+need packets: 48
+305 22 40 107 373 154 212 335 
+need packets: 48
+306 27 17 118 68 71 8 141 
+need packets: 51
+307 58 41 415 605 6 464 564 
+need packets: 50
+308 264 607 313 739 66 197 462 
+need packets: 49
+309 265 600 767 282 292 1043 198 
+need packets: 47
+310 1 7 82 19 8 140 141 
+need packets: 50
+311 2 141 491 153 902 20 200 
+need packets: 48
+312 105 219 606 415 122 1012 21 
+need packets: 46
+313 114 1091 230 724 85 56 319 
+need packets: 48
+314 57 219 180 176 78 677 1023 
+need packets: 47
+315 30 68 685 273 32 23 50 
+need packets: 50
+316 39 310 669 322 27 433 760 
+need packets: 49
+317 851 6 146 207 352 409 60 
+need packets: 48
+318 33 304 671 484 203 82 21 
+need packets: 51
+319 49 14 122 104 197 212 331 
+need packets: 47
+320 623 34 155 76 41 485 206 
+need packets: 49
+321 616 4 899 682 7 237 526 
+need packets: 49
+322 41 515 615 160 21 22 140 
+need packets: 47
+323 22 105 258 760 191 564 613 
+need packets: 48
+324 55 290 414 33 296 123 317 
+need packets: 47
+325 620 27 234 89 190 512 783 
+need packets: 48
+326 621 627 88 87 146 65 532 
+need packets: 48
+327 622 11 276 200 1130 137 85 
+need packets: 50
+328 2 141 491 134 31 41 708 
+need packets: 49
+329 1155 594 776 172 69 1047 782 
+need packets: 47
+330 15 0 62 83 81 468 613 
+need packets: 49
+331 18 137 157 16 519 36 110 
+need packets: 49
+332 24 66 254 123 185 157 135 
+need packets: 48
+333 339 0 62 15 34 57 428 
+need packets: 48
+334 47 685 129 67 24 346 108 
+need packets: 49
+335 40 686 130 19 165 76 65 
+need packets: 50
+336 26 446 351 964 33 173 515 
+need packets: 49
+337 34 215 632 499 278 37 796 
+need packets: 50
+338 198 15 165 228 571 0 577 
+need packets: 48
+339 333 0 62 15 34 57 428 
+need packets: 48
+340 11 29 391 82 150 817 400 
+need packets: 49
+341 46 676 376 63 729 451 962 
+need packets: 47
+342 47 677 377 930 628 56 739 
+need packets: 48
+343 40 678 195 138 13 404 361 
+need packets: 49
+344 49 282 326 167 933 1004 1155 
+need packets: 47
+345 204 853 190 135 83 704 122 
+need packets: 49
+346 4 1 205 83 518 224 231 
+need packets: 49
+347 29 31 150 144 828 25 282 
+need packets: 48
+348 51 970 238 23 169 133 688 
+need packets: 48
+349 54 1084 577 491 2 31 792 
+need packets: 49
+350 35 501 273 1096 623 108 362 
+need packets: 49
+351 48 731 25 20 630 474 461 
+need packets: 48
+352 846 433 135 1042 268 99 773 
+need packets: 48
+353 847 693 946 27 46 104 12 
+need packets: 50
+354 65 429 456 115 783 324 718 
+need packets: 46
+355 14 7 61 90 105 268 352 
+need packets: 49
+356 59 978 216 81 342 127 205 
+need packets: 48
+357 27 956 25 226 1064 86 463 
+need packets: 50
+358 844 439 133 338 49 1027 920 
+need packets: 48
+359 845 432 134 299 1113 970 444 
+need packets: 48
+360 9 471 178 93 156 342 515 
+need packets: 48
+361 13 91 463 56 470 170 708 
+need packets: 48
+362 9 455 128 171 84 229 470 
+need packets: 48
+363 0 309 265 182 428 559 26 
+need packets: 48
+364 13 95 43 201 110 962 568 
+need packets: 48
+365 14 88 468 15 2 691 489 
+need packets: 49
+366 15 89 99 0 469 258 4 
+need packets: 49
+367 8 470 9 5 779 52 170 
+need packets: 48
+368 3 666 292 479 41 493 78 
+need packets: 51
+369 21 854 218 727 224 123 228 
+need packets: 48
+370 7 35 4 6 665 77 464 
+need packets: 48
+371 73 20 279 22 141 218 784 
+need packets: 47
+372 21 131 282 47 49 64 334 
+need packets: 49
+373 22 516 1 74 344 83 167 
+need packets: 48
+374 23 517 500 129 178 320 395 
+need packets: 49
+375 2 141 491 86 1044 624 705 
+need packets: 47
+376 523 185 1111 20 306 581 766 
+need packets: 47
+377 1104 236 21 146 439 547 94 
+need packets: 48
+378 7 308 264 181 558 1281 187 
+need packets: 48
+379 79 712 204 245 746 198 1161 
+need packets: 48
+380 281 1002 1099 984 1191 494 1061 
+need packets: 45
+381 1108 739 56 1001 7 14 202 
+need packets: 47
+382 1109 0 15 34 329 172 3 
+need packets: 48
+383 34 184 1110 153 83 148 589 
+need packets: 48
+384 3 666 292 94 37 1289 47 
+need packets: 49
+385 37 342 31 10 616 19 484 
+need packets: 49
+386 167 56 739 9 52 198 221 
+need packets: 46
+387 0 12 5 7 62 1 426 
+need packets: 48
+388 37 291 278 106 255 1088 1305 
+need packets: 49
+389 1027 119 38 640 473 1018 1268 
+need packets: 48
+390 39 922 184 227 1012 165 921 
+need packets: 48
+391 11 82 214 16 601 317 44 
+need packets: 49
+392 258 191 558 41 1011 452 493 
+need packets: 47
+393 45 0 340 1006 119 275 290 
+need packets: 50
+394 893 41 275 271 472 164 254 
+need packets: 47
+395 18 36 24 61 62 57 167 
+need packets: 50
+396 0 7 45 30 1306 25 323 
+need packets: 50
+397 0 46 31 347 12 465 2 
+need packets: 50
+398 1 34 47 24 708 91 1141 
+need packets: 48
+399 40 723 57 69 338 198 252 
+need packets: 47
+400 29 1092 754 371 65 246 463 
+need packets: 49
+401 30 1093 602 515 160 1303 68 
+need packets: 49
+402 901 22 113 168 607 1211 1068 
+need packets: 48
+403 7 6 44 29 522 233 200 
+need packets: 49
+404 11 29 734 79 312 90 177 
+need packets: 50
+405 31 2 491 153 88 1054 60 
+need packets: 51
+406 24 938 55 67 629 641 12 
+need packets: 49
+407 25 28 14 138 309 64 355 
+need packets: 49
+408 14 57 82 7 3 581 628 
+need packets: 48
+409 826 731 48 102 28 13 351 
+need packets: 48
+410 909 17 32 3 150 116 1103 
+need packets: 49
+411 5 226 232 17 1055 502 180 
+need packets: 49
+412 6 365 722 451 967 1 0 
+need packets: 46
+413 0 110 324 7 658 875 105 
+need packets: 47
+414 0 165 367 386 452 571 217 
+need packets: 46
+415 1 166 34 196 48 413 115 
+need packets: 47
+416 121 794 478 47 35 269 244 
+need packets: 49
+417 20 666 3 550 479 1013 48 
+need packets: 48
+418 917 1060 222 312 105 523 319 
+need packets: 48
+419 20 472 119 177 270 170 1005 
+need packets: 48
+420 125 11 58 489 231 54 64 
+need packets: 48
+421 126 27 852 114 177 1175 56 
+need packets: 47
+422 127 45 393 164 738 635 760 
+need packets: 48
+423 120 20 325 251 934 26 633 
+need packets: 48
+424 11 29 118 338 7 44 369 
+need packets: 50
+425 87 720 45 212 306 1227 638 
+need packets: 48
+426 529 15 190 197 12 136 851 
+need packets: 49
+427 1287 68 162 358 157 840 1 
+need packets: 48
+428 782 675 138 241 184 263 157 
+need packets: 49
+429 783 298 177 72 59 236 198 
+need packets: 47
+430 776 820 49 355 85 119 290 
+need packets: 48
+431 777 821 644 70 554 291 48 
+need packets: 49
+432 35 1250 501 321 215 518 228 
+need packets: 49
+433 39 27 262 1037 202 276 0 
+need packets: 47
+434 65 621 326 88 627 260 31 
+need packets: 49
+435 706 927 886 993 168 1173 292 
+need packets: 48
+436 14 381 7 82 57 408 451 
+need packets: 49
+437 15 382 556 0 34 75 337 
+need packets: 48
+438 8 383 557 1 19 34 548 
+need packets: 47
+439 9 178 156 93 75 470 160 
+need packets: 48
+440 99 15 146 62 140 281 165 
+need packets: 48
+441 59 584 22 5 516 578 687 
+need packets: 46
+442 907 161 7 412 109 78 280 
+need packets: 48
+443 8 1 13 63 514 60 14 
+need packets: 49
+444 53 950 114 57 424 483 631 
+need packets: 47
+445 54 588 433 272 1011 943 666 
+need packets: 47
+446 26 336 351 964 33 173 515 
+need packets: 49
+447 1042 14 341 49 24 1027 116 
+need packets: 48
+448 107 20 325 550 479 66 105 
+need packets: 49
+449 55 938 1008 1123 212 629 806 
+need packets: 47
+450 61 833 143 16 230 356 299 
+need packets: 48
+451 558 258 191 25 40 613 1308 
+need packets: 45
+452 8 166 15 437 1241 74 27 
+need packets: 48
+453 8 470 155 170 367 9 52 
+need packets: 48
+454 139 1183 256 89 778 52 197 
+need packets: 48
+455 1050 1305 59 94 128 132 509 
+need packets: 46
+456 115 1 390 429 220 39 922 
+need packets: 49
+457 588 39 27 53 58 64 358 
+need packets: 49
+458 672 161 237 499 1132 670 1007 
+need packets: 47
+459 730 15 165 468 14 1113 88 
+need packets: 47
+460 29 531 1002 217 464 599 558 
+need packets: 49
+461 24 187 100 175 30 465 34 
+need packets: 48
+462 25 259 116 461 88 367 282 
+need packets: 48
+463 1058 1211 806 64 652 17 13 
+need packets: 49
+464 123 98 13 380 281 6 871 
+need packets: 48
+465 524 229 878 592 1019 802 183 
+need packets: 48
+466 21 49 324 14 7 272 235 
+need packets: 49
+467 540 738 983 104 1293 177 1270 
+need packets: 48
+468 14 365 15 32 347 1105 458 
+need packets: 48
+469 8 166 15 452 73 98 267 
+need packets: 48
+470 170 8 83 1 13 367 20 
+need packets: 48
+471 1066 9 75 8 5 244 94 
+need packets: 49
+472 131 177 119 770 364 70 13 
+need packets: 46
+473 544 22 634 1300 605 915 975 
+need packets: 47
+474 96 185 211 285 327 68 758 
+need packets: 48
+475 746 991 468 169 88 141 150 
+need packets: 49
+476 181 587 0 247 98 406 1225 
+need packets: 48
+477 182 116 1 19 1114 1103 640 
+need packets: 47
+478 183 117 408 1004 691 393 722 
+need packets: 46
+479 176 118 187 20 770 73 173 
+need packets: 48
+480 5 12 523 185 262 327 602 
+need packets: 48
+481 6 867 13 60 23 434 320 
+need packets: 48
+482 9 23 1286 29 4 1219 256 
+need packets: 49
+483 32 670 15 330 36 361 469 
+need packets: 49
+484 9 104 50 139 22 279 661 
+need packets: 47
+485 23 265 835 10 1040 556 38 
+need packets: 49
+486 626 9 15 376 523 453 4 
+need packets: 48
+487 4 17 226 502 208 5 107 
+need packets: 48
+488 15 452 469 146 35 249 310 
+need packets: 48
+489 8 453 470 155 7 28 730 
+need packets: 50
+490 17 136 156 39 789 518 323 
+need packets: 48
+491 2 141 153 15 680 14 468 
+need packets: 47
+492 633 14 543 808 3 1253 354 
+need packets: 49
+493 12 0 15 34 62 395 81 
+need packets: 47
+494 8 251 79 164 77 170 361 
+need packets: 48
+495 9 34 670 589 72 83 508 
+need packets: 49
+496 43 962 551 481 238 461 908 
+need packets: 49
+497 304 19 236 10 61 646 23 
+need packets: 49
+498 14 7 501 180 321 272 187 
+need packets: 48
+499 161 261 190 412 551 402 672 
+need packets: 47
+500 6 273 106 261 1147 16 239 
+need packets: 49
+501 7 162 54 129 16 3 268 
+need packets: 49
+502 0 519 17 611 45 1204 554 
+need packets: 48
+503 1 512 42 372 467 13 414 
+need packets: 48
+504 3 554 1289 421 126 92 63 
+need packets: 49
+505 125 420 10 328 67 295 182 
+need packets: 51
+506 720 209 790 279 1299 285 796 
+need packets: 47
+507 559 300 141 2 16 286 481 
+need packets: 48
+508 58 230 157 75 87 129 304 
+need packets: 49
+509 80 223 337 374 724 651 170 
+need packets: 48
+510 58 41 88 475 55 349 964 
+need packets: 49
+511 50 217 357 132 16 83 190 
+need packets: 48
+512 1 503 42 372 467 13 414 
+need packets: 48
+513 1114 71 83 110 164 109 864 
+need packets: 47
+514 13 97 108 48 1102 447 219 
+need packets: 48
+515 177 236 472 39 46 173 450 
+need packets: 48
+516 1241 5 22 59 24 162 455 
+need packets: 50
+517 6 500 23 395 874 25 600 
+need packets: 48
+518 218 1237 623 16 83 500 457 
+need packets: 48
+519 0 502 17 611 45 1204 554 
+need packets: 48
+520 225 727 1082 324 83 85 566 
+need packets: 49
+521 143 485 498 52 1024 859 702 
+need packets: 48
+522 6 233 111 269 43 4 256 
+need packets: 50
+523 185 256 606 66 197 1111 1220 
+need packets: 46
+524 169 229 682 351 1286 48 819 
+need packets: 48
+525 230 724 769 856 850 747 615 
+need packets: 47
+526 231 725 19 82 81 136 644 
+need packets: 49
+527 224 726 2 81 141 412 491 
+need packets: 49
+528 19 196 719 134 114 189 617 
+need packets: 50
+529 426 15 190 197 12 136 851 
+need packets: 49
+530 25 144 37 950 439 84 107 
+need packets: 49
+531 24 383 34 558 25 244 621 
+need packets: 47
+532 38 554 749 577 872 51 463 
+need packets: 49
+533 39 750 922 0 75 4 177 
+need packets: 49
+534 32 715 71 73 818 20 85 
+need packets: 48
+535 2 141 491 46 49 800 300 
+need packets: 47
+536 3 618 1052 689 495 37 254 
+need packets: 50
+537 20 176 479 550 107 2 133 
+need packets: 50
+538 47 24 110 89 325 620 67 
+need packets: 48
+539 74 161 15 62 0 813 164 
+need packets: 50
+540 467 738 983 104 1293 177 1270 
+need packets: 48
+541 24 558 100 258 191 451 1313 
+need packets: 47
+542 195 248 266 559 265 108 909 
+need packets: 47
+543 10 19 40 142 873 301 564 
+need packets: 48
+544 473 22 634 1300 605 915 975 
+need packets: 47
+545 23 693 1094 147 72 714 652 
+need packets: 49
+546 479 176 38 3 20 113 1077 
+need packets: 48
+547 31 253 556 1 254 128 754 
+need packets: 47
+548 477 54 191 120 754 417 651 
+need packets: 47
+549 478 55 67 546 12 1025 184 
+need packets: 47
+550 479 20 48 459 986 325 65 
+need packets: 47
+551 472 21 49 131 970 30 252 
+need packets: 48
+552 596 301 142 43 143 673 962 
+need packets: 48
+553 597 302 143 784 410 796 443 
+need packets: 49
+554 48 291 393 119 20 1085 766 
+need packets: 49
+555 172 21 298 121 184 263 462 
+need packets: 50
+556 1 787 94 53 74 432 383 
+need packets: 49
+557 24 254 90 255 707 329 1316 
+need packets: 46
+558 258 191 184 613 65 187 564 
+need packets: 47
+559 507 300 141 2 16 286 481 
+need packets: 48
+560 103 158 301 657 580 883 26 
+need packets: 48
+561 96 159 302 101 588 43 106 
+need packets: 48
+562 54 7 109 579 12 641 1016 
+need packets: 48
+563 8 191 258 558 732 1 477 
+need packets: 47
+564 19 528 719 154 598 469 209 
+need packets: 48
+565 88 151 100 134 75 562 41 
+need packets: 49
+566 89 144 101 135 899 770 156 
+need packets: 48
+567 102 157 300 656 915 809 226 
+need packets: 48
+568 43 257 962 996 447 181 518 
+need packets: 48
+569 142 87 276 67 24 378 709 
+need packets: 48
+570 1123 1008 393 974 796 853 247 
+need packets: 47
+571 165 692 0 414 367 386 929 
+need packets: 46
+572 32 110 715 39 317 113 290 
+need packets: 48
+573 26 32 159 1 787 196 262 
+need packets: 49
+574 203 280 154 33 287 613 628 
+need packets: 47
+575 74 883 974 84 5 80 169 
+need packets: 51
+576 51 413 673 692 7 78 410 
+need packets: 48
+577 148 1272 319 93 126 1210 419 
+need packets: 49
+578 792 281 222 380 399 427 581 
+need packets: 48
+579 109 7 54 48 60 721 42 
+need packets: 49
+580 69 31 182 194 880 75 449 
+need packets: 50
+581 70 891 24 183 68 34 881 
+need packets: 50
+582 18 1 71 83 860 845 624 
+need packets: 49
+583 187 20 64 325 210 1246 129 
+need packets: 49
+584 5 115 12 226 49 63 342 
+need packets: 49
+585 1242 1099 616 6 581 143 92 
+need packets: 49
+586 55 0 110 172 45 313 3 
+need packets: 49
+587 181 0 273 132 506 94 1319 
+need packets: 48
+588 457 39 27 53 58 64 358 
+need packets: 49
+589 32 273 222 531 391 98 292 
+need packets: 48
+590 290 775 491 153 64 61 348 
+need packets: 47
+591 4 1147 768 297 58 829 318 
+need packets: 48
+592 297 654 799 813 138 156 219 
+need packets: 50
+593 655 136 910 69 74 108 211 
+need packets: 50
+594 1155 776 172 329 69 1047 782 
+need packets: 47
+595 189 260 129 126 64 7 162 
+need packets: 48
+596 301 552 142 43 143 673 962 
+need packets: 48
+597 302 553 143 784 410 796 443 
+need packets: 49
+598 303 652 664 113 122 797 1267 
+need packets: 48
+599 296 653 306 27 153 220 966 
+need packets: 47
+600 23 213 393 507 458 1052 22 
+need packets: 47
+601 16 214 1307 500 1223 82 485 
+need packets: 46
+602 515 177 236 679 160 30 381 
+need packets: 48
+603 108 362 125 208 193 55 350 
+need packets: 49
+604 55 333 339 0 62 281 450 
+need packets: 49
+605 20 120 58 179 209 14 279 
+need packets: 48
+606 219 271 312 105 122 1012 21 
+need packets: 48
+607 22 212 257 402 392 21 331 
+need packets: 48
+608 52 5 9 123 14 191 154 
+need packets: 50
+609 53 6 108 139 56 463 50 
+need packets: 50
+610 28 64 307 302 159 345 525 
+need packets: 49
+611 26 39 45 308 32 110 41 
+need packets: 51
+612 46 63 376 418 797 3 841 
+need packets: 48
+613 40 674 651 161 276 799 150 
+need packets: 49
+614 227 184 559 185 314 324 85 
+need packets: 46
+615 41 322 515 160 21 22 140 
+need packets: 47
+616 321 4 899 682 7 237 526 
+need packets: 49
+617 120 423 638 716 125 811 314 
+need packets: 49
+618 3 536 1052 689 495 37 254 
+need packets: 50
+619 23 1010 832 60 13 6 9 
+need packets: 49
+620 325 27 234 89 190 512 783 
+need packets: 48
+621 326 627 88 87 146 65 532 
+need packets: 48
+622 327 11 276 200 1130 137 85 
+need packets: 50
+623 320 34 155 76 41 485 206 
+need packets: 49
+624 15 235 330 129 182 165 468 
+need packets: 48
+625 8 19 63 154 358 236 349 
+need packets: 49
+626 486 9 15 376 523 453 4 
+need packets: 48
+627 621 326 88 87 146 65 532 
+need packets: 48
+628 2 141 491 153 7 1208 286 
+need packets: 48
+629 0 462 31 204 258 67 249 
+need packets: 50
+630 1 463 24 122 1099 1220 477 
+need packets: 48
+631 14 34 329 61 99 1008 140 
+need packets: 50
+632 111 1292 1001 141 166 2 467 
+need packets: 49
+633 492 14 543 808 3 1253 354 
+need packets: 49
+634 840 694 21 73 163 172 183 
+need packets: 49
+635 71 324 333 954 1248 25 1190 
+need packets: 47
+636 162 949 431 771 30 57 656 
+need packets: 50
+637 108 6 139 47 56 930 361 
+need packets: 50
+638 109 579 343 146 1300 1089 248 
+need packets: 48
+639 110 0 258 324 413 169 995 
+need packets: 48
+640 30 45 275 436 63 553 394 
+need packets: 49
+641 31 2 134 99 204 392 269 
+need packets: 49
+642 15 0 62 275 257 357 1308 
+need packets: 49
+643 22 352 391 268 57 762 133 
+need packets: 49
+644 70 477 72 83 127 634 153 
+need packets: 46
+645 64 334 71 954 59 476 1265 
+need packets: 48
+646 28 9 104 227 93 319 26 
+need packets: 50
+647 29 11 340 622 1264 57 106 
+need packets: 48
+648 75 39 140 161 261 618 62 
+need packets: 48
+649 2 141 491 1142 884 63 48 
+need packets: 48
+650 753 640 636 374 839 749 27 
+need packets: 47
+651 8 367 470 9 58 36 29 
+need packets: 48
+652 598 303 664 113 122 797 1267 
+need packets: 48
+653 599 296 306 27 153 220 966 
+need packets: 47
+654 592 297 799 813 138 156 219 
+need packets: 50
+655 593 136 910 69 74 108 211 
+need packets: 50
+656 915 542 121 68 183 298 613 
+need packets: 47
+657 85 552 188 530 950 483 583 
+need packets: 47
+658 7 262 1037 100 739 24 225 
+need packets: 47
+659 8 52 5 135 746 985 206 
+need packets: 48
+660 1101 30 147 1063 80 50 305 
+need packets: 50
+661 1102 31 2 460 641 112 491 
+need packets: 49
+662 1103 12 24 67 546 629 57 
+need packets: 49
+663 154 417 541 120 20 166 27 
+need packets: 50
+664 9 471 178 75 244 357 438 
+need packets: 47
+665 77 492 206 802 1247 296 867 
+need packets: 47
+666 3 292 479 88 253 41 958 
+need packets: 49
+667 12 0 351 682 61 425 102 
+need packets: 49
+668 13 1 195 430 128 1098 15 
+need packets: 51
+669 14 468 7 33 82 240 771 
+need packets: 50
+670 15 469 452 146 27 1 40 
+need packets: 47
+671 8 470 170 83 180 197 849 
+need packets: 48
+672 458 161 237 499 1132 670 1007 
+need packets: 47
+673 119 588 5 38 226 51 576 
+need packets: 48
+674 36 39 166 136 81 891 605 
+need packets: 50
+675 782 138 241 184 263 148 605 
+need packets: 48
+676 182 165 79 0 1290 89 11 
+need packets: 48
+677 183 166 72 1 34 556 371 
+need packets: 47
+678 176 167 73 371 386 20 933 
+need packets: 47
+679 177 160 236 962 43 821 70 
+need packets: 47
+680 10 390 68 393 783 611 301 
+need packets: 48
+681 812 552 602 99 150 61 7 
+need packets: 48
+682 0 692 629 159 118 113 363 
+need packets: 48
+683 25 40 84 198 237 335 146 
+need packets: 50
+684 93 755 606 129 992 95 234 
+need packets: 49
+685 88 1022 17 219 87 380 618 
+need packets: 49
+686 50 1029 955 9 1223 536 12 
+need packets: 48
+687 88 28 66 461 62 275 145 
+need packets: 49
+688 36 74 83 1 167 477 182 
+need packets: 48
+689 748 32 647 18 22 237 443 
+need packets: 49
+690 13 1142 1 63 8 19 12 
+need packets: 50
+691 165 1 79 676 182 856 914 
+need packets: 46
+692 0 682 629 159 118 113 363 
+need packets: 48
+693 1 1122 268 46 959 80 907 
+need packets: 48
+694 16 107 58 25 20 853 655 
+need packets: 49
+695 17 370 136 789 547 1228 86 
+need packets: 47
+696 739 105 213 84 122 230 199 
+need packets: 47
+697 768 86 85 386 111 220 123 
+need packets: 48
+698 49 14 319 164 165 512 571 
+need packets: 47
+699 1 978 380 6 13 416 351 
+need packets: 47
+700 50 1214 909 103 1017 552 883 
+need packets: 48
+701 772 118 176 479 186 417 27 
+need packets: 47
+702 773 119 177 92 472 3 26 
+need packets: 47
+703 770 104 212 163 6 565 89 
+need packets: 48
+704 137 746 475 492 703 30 301 
+need packets: 47
+705 99 440 378 68 1125 966 183 
+need packets: 48
+706 435 927 886 993 168 1173 292 
+need packets: 48
+707 24 383 34 254 229 1 84 
+need packets: 48
+708 9 56 50 139 5 438 63 
+need packets: 49
+709 40 674 651 161 124 254 431 
+need packets: 49
+710 850 41 792 107 1199 133 1228 
+need packets: 46
+711 81 136 526 75 178 69 108 
+need packets: 50
+712 79 379 204 245 746 198 1161 
+need packets: 48
+713 26 59 127 22 652 544 1093 
+need packets: 48
+714 0 201 339 212 55 158 229 
+need packets: 48
+715 32 391 185 98 286 85 572 
+need packets: 46
+716 857 480 278 21 359 1178 291 
+need packets: 48
+717 76 16 977 466 591 126 59 
+need packets: 49
+718 77 17 210 60 79 275 408 
+need packets: 50
+719 26 662 145 160 28 379 85 
+need packets: 50
+720 506 209 790 279 1299 285 796 
+need packets: 47
+721 21 738 219 54 168 271 316 
+need packets: 49
+722 451 558 837 372 128 353 191 
+need packets: 48
+723 40 57 314 614 1119 53 44 
+need packets: 48
+724 230 213 537 159 24 506 67 
+need packets: 48
+725 231 214 704 193 178 1052 563 
+need packets: 48
+726 224 215 635 132 137 202 1125 
+need packets: 48
+727 225 208 789 202 67 28 198 
+need packets: 49
+728 18 36 1075 742 57 133 575 
+need packets: 51
+729 37 996 71 234 83 278 664 
+need packets: 50
+730 459 15 165 468 14 1113 88 
+need packets: 47
+731 48 89 630 351 428 778 1317 
+need packets: 47
+732 122 713 575 808 38 677 91 
+need packets: 49
+733 186 7 0 579 110 164 1121 
+need packets: 49
+734 11 148 551 74 29 432 225 
+need packets: 48
+735 58 905 651 276 528 1254 605 
+need packets: 48
+736 3 666 292 269 23 246 825 
+need packets: 48
+737 76 5 184 6 315 178 911 
+need packets: 49
+738 467 540 983 104 1293 177 1270 
+need packets: 48
+739 56 105 327 13 622 612 386 
+need packets: 46
+740 86 599 109 195 8 25 82 
+need packets: 50
+741 80 195 327 89 122 622 1164 
+need packets: 47
+742 80 525 68 143 1282 1275 337 
+need packets: 48
+743 2 141 491 153 164 672 694 
+need packets: 47
+744 21 699 122 916 33 143 230 
+need packets: 49
+745 22 0 15 34 20 309 35 
+need packets: 49
+746 475 991 468 169 88 141 150 
+need packets: 49
+747 64 775 290 468 238 37 169 
+need packets: 49
+748 689 32 647 18 22 237 443 
+need packets: 49
+749 38 532 554 577 872 51 463 
+need packets: 49
+750 39 533 922 0 75 4 177 
+need packets: 49
+751 3 666 132 184 22 393 117 
+need packets: 49
+752 25 71 83 58 53 236 78 
+need packets: 50
+753 650 640 636 374 839 749 27 
+need packets: 47
+754 31 253 88 691 46 321 556 
+need packets: 47
+755 9 360 471 52 178 958 93 
+need packets: 48
+756 29 3 666 97 384 190 751 
+need packets: 49
+757 30 2 491 153 32 212 383 
+need packets: 50
+758 31 499 161 261 312 460 1050 
+need packets: 49
+759 24 1195 305 198 285 988 282 
+need packets: 48
+760 546 249 1131 310 109 4 7 
+need packets: 49
+761 20 311 459 48 29 62 34 
+need packets: 47
+762 99 440 102 473 501 4 103 
+need packets: 49
+763 9 34 119 336 196 270 85 
+need packets: 49
+764 270 163 253 95 40 394 1121 
+need packets: 47
+765 271 219 254 41 476 168 346 
+need packets: 48
+766 264 255 89 707 146 477 308 
+need packets: 48
+767 265 248 282 155 309 108 1022 
+need packets: 47
+768 697 86 85 386 111 220 123 
+need packets: 48
+769 87 1244 582 288 1245 18 35 
+need packets: 49
+770 703 104 212 163 6 565 89 
+need packets: 48
+771 7 14 61 48 90 57 92 
+need packets: 49
+772 176 479 118 701 186 417 27 
+need packets: 47
+773 177 236 216 130 131 278 135 
+need packets: 48
+774 703 84 112 683 65 1154 93 
+need packets: 47
+775 290 590 491 153 64 61 348 
+need packets: 47
+776 430 820 49 355 85 119 290 
+need packets: 48
+777 431 821 644 70 554 291 48 
+need packets: 49
+778 1 429 259 8 1052 135 846 
+need packets: 48
+779 253 460 631 776 430 337 234 
+need packets: 47
+780 43 962 1102 119 177 472 181 
+need packets: 49
+781 66 856 251 287 233 286 892 
+need packets: 49
+782 428 675 138 241 184 263 157 
+need packets: 49
+783 298 328 193 429 1011 1238 740 
+need packets: 47
+784 143 67 377 514 517 300 718 
+need packets: 51
+785 34 383 184 1110 83 556 765 
+need packets: 48
+786 118 19 693 49 260 344 271 
+need packets: 49
+787 1 556 94 53 74 432 383 
+need packets: 49
+788 83 143 1 138 72 414 429 
+need packets: 47
+789 136 17 695 370 547 1228 86 
+need packets: 47
+790 43 252 241 400 434 647 141 
+need packets: 47
+791 142 225 277 736 107 18 220 
+need packets: 49
+792 578 281 222 380 399 427 581 
+need packets: 48
+793 37 308 150 82 275 1032 895 
+need packets: 48
+794 47 320 659 460 174 61 81 
+need packets: 50
+795 44 7 54 109 1 1208 2 
+need packets: 51
+796 302 285 103 32 443 513 1114 
+need packets: 48
+797 303 286 96 33 83 324 546 
+need packets: 48
+798 296 287 97 220 85 355 234 
+need packets: 48
+799 297 280 221 420 66 382 1163 
+need packets: 48
+800 34 383 227 614 117 1292 577 
+need packets: 49
+801 117 1140 1214 272 475 463 746 
+need packets: 48
+802 55 317 12 206 67 137 224 
+need packets: 49
+803 52 949 362 144 633 438 135 
+need packets: 48
+804 53 6 27 401 298 783 496 
+need packets: 49
+805 54 628 471 992 2 441 1155 
+need packets: 49
+806 55 629 938 368 91 428 89 
+need packets: 47
+807 48 630 731 369 2 901 148 
+need packets: 48
+808 53 6 108 114 1175 1235 601 
+need packets: 49
+809 12 0 387 5 746 423 350 
+need packets: 49
+810 37 291 388 182 63 176 241 
+need packets: 48
+811 285 39 60 272 566 17 194 
+need packets: 49
+812 681 552 602 99 150 61 7 
+need packets: 48
+813 62 0 15 34 395 1 124 
+need packets: 48
+814 63 946 33 1037 104 12 99 
+need packets: 48
+815 52 362 179 649 205 416 950 
+need packets: 49
+816 37 25 282 892 551 683 110 
+need packets: 47
+817 38 260 189 39 922 3 232 
+need packets: 49
+818 14 7 61 427 252 864 465 
+need packets: 48
+819 48 1 111 36 13 318 386 
+need packets: 49
+820 776 49 326 282 1155 631 325 
+need packets: 46
+821 777 431 644 70 554 291 48 
+need packets: 49
+822 71 645 98 120 372 667 9 
+need packets: 48
+823 36 18 24 61 382 131 481 
+need packets: 48
+824 52 1222 755 319 9 618 5 
+need packets: 50
+825 53 348 150 250 51 31 624 
+need packets: 48
+826 409 731 48 102 28 13 351 
+need packets: 48
+827 0 258 191 558 428 25 333 
+need packets: 49
+828 24 951 406 425 899 1170 429 
+need packets: 48
+829 25 84 282 144 491 111 118 
+need packets: 49
+830 64 290 357 215 508 265 315 
+need packets: 49
+831 65 768 661 354 259 334 1060 
+need packets: 50
+832 60 6 13 171 415 738 161 
+need packets: 48
+833 61 356 450 143 16 214 899 
+need packets: 48
+834 3 16 1238 52 143 681 301 
+need packets: 49
+835 23 10 829 600 108 870 1097 
+need packets: 50
+836 64 407 209 290 830 829 187 
+need packets: 48
+837 65 400 52 138 311 38 139 
+need packets: 49
+838 104 298 121 783 21 27 68 
+need packets: 48
+839 105 120 122 77 182 1099 452 
+need packets: 46
+840 634 694 21 73 163 172 183 
+need packets: 49
+841 22 264 308 295 18 69 395 
+need packets: 48
+842 491 141 153 164 615 672 1014 
+need packets: 48
+843 87 142 229 524 169 1018 136 
+need packets: 47
+844 358 439 133 338 49 1027 920 
+need packets: 48
+845 359 432 134 299 1113 970 444 
+need packets: 48
+846 352 433 135 1042 268 99 773 
+need packets: 48
+847 353 693 946 27 46 104 12 
+need packets: 50
+848 23 10 516 653 203 214 689 
+need packets: 50
+849 16 3 517 58 636 471 1054 
+need packets: 49
+850 710 41 792 107 1199 133 1228 
+need packets: 46
+851 317 6 146 207 352 409 60 
+need packets: 48
+852 27 32 397 95 33 466 230 
+need packets: 50
+853 20 368 510 419 58 537 119 
+need packets: 48
+854 21 369 218 727 224 123 228 
+need packets: 48
+855 10 173 579 48 681 14 164 
+need packets: 48
+856 53 211 84 457 58 694 183 
+need packets: 48
+857 716 480 278 21 359 1178 291 
+need packets: 48
+858 27 39 276 161 416 141 1230 
+need packets: 49
+859 8 1 135 13 68 106 686 
+need packets: 49
+860 125 0 187 201 66 78 7 
+need packets: 50
+861 126 42 676 993 79 136 1115 
+need packets: 47
+862 127 677 72 83 930 1 76 
+need packets: 47
+863 52 5 584 115 9 226 54 
+need packets: 50
+864 26 487 1166 193 1053 4 435 
+need packets: 48
+865 62 578 731 45 7 396 256 
+need packets: 49
+866 5 12 643 79 854 408 1217 
+need packets: 49
+867 6 13 60 201 218 0 7 
+need packets: 50
+868 134 562 71 701 88 1179 145 
+need packets: 48
+869 128 1 323 6 903 1316 258 
+need packets: 49
+870 92 3 359 10 0 221 361 
+need packets: 49
+871 50 708 56 9 139 5 206 
+need packets: 49
+872 77 6 124 297 290 339 631 
+need packets: 48
+873 78 434 164 0 7 125 35 
+need packets: 48
+874 6 13 60 23 969 56 179 
+need packets: 49
+875 5 540 1175 577 450 48 206 
+need packets: 49
+876 96 63 254 1 10 667 557 
+need packets: 50
+877 66 748 689 230 1287 107 280 
+need packets: 48
+878 1018 23 28 473 1027 344 1069 
+need packets: 48
+879 76 1 59 926 0 181 682 
+need packets: 49
+880 26 662 145 111 740 445 483 
+need packets: 47
+881 34 141 491 15 62 0 404 
+need packets: 48
+882 8 19 63 1 884 261 622 
+need packets: 49
+883 40 25 674 101 167 966 172 
+need packets: 50
+884 1025 63 690 96 302 597 659 
+need packets: 49
+885 56 739 105 327 14 164 122 
+need packets: 48
+886 57 314 219 180 176 677 423 
+need packets: 47
+887 10 19 40 1 37 556 598 
+need packets: 50
+888 137 10 163 220 399 13 206 
+need packets: 50
+889 42 47 88 30 269 252 179 
+need packets: 49
+890 1161 272 516 438 187 583 829 
+need packets: 48
+891 24 558 100 151 242 437 17 
+need packets: 49
+892 17 1214 138 680 837 103 171 
+need packets: 49
+893 394 41 275 271 472 164 254 
+need packets: 47
+894 137 911 648 218 373 59 428 
+need packets: 50
+895 136 619 506 357 44 545 54 
+need packets: 48
+896 26 662 100 719 145 547 277 
+need packets: 48
+897 1100 3 368 666 1231 718 221 
+need packets: 49
+898 1169 72 182 60 77 507 535 
+need packets: 47
+899 951 1286 425 216 301 250 1180 
+need packets: 48
+900 57 314 219 189 695 976 526 
+need packets: 48
+901 402 22 113 168 607 1211 1068 
+need packets: 48
+902 178 9 439 156 93 75 136 
+need packets: 50
+903 192 547 57 178 29 30 148 
+need packets: 48
+904 11 98 13 380 281 6 79 
+need packets: 51
+905 58 735 651 276 528 1254 605 
+need packets: 48
+906 14 495 57 133 651 76 88 
+need packets: 49
+907 161 442 7 412 109 78 280 
+need packets: 48
+908 16 898 505 430 1267 143 365 
+need packets: 47
+909 410 17 32 3 150 116 1103 
+need packets: 49
+910 69 1 815 460 723 1218 680 
+need packets: 48
+911 10 19 40 142 689 37 324 
+need packets: 49
+912 1063 217 258 558 67 316 781 
+need packets: 48
+913 1056 939 386 13 167 1142 508 
+need packets: 48
+914 7 14 61 427 1140 24 609 
+need packets: 48
+915 656 542 121 68 183 298 613 
+need packets: 47
+916 1 383 8 13 115 550 1130 
+need packets: 48
+917 418 1060 222 312 105 523 319 
+need packets: 48
+918 1061 223 872 577 482 627 492 
+need packets: 48
+919 1062 216 873 356 189 595 1066 
+need packets: 47
+920 67 986 286 297 293 199 28 
+need packets: 50
+921 108 530 87 966 104 395 253 
+need packets: 48
+922 39 390 184 227 1012 165 921 
+need packets: 48
+923 17 368 519 428 142 893 394 
+need packets: 47
+924 6 301 111 81 144 2 563 
+need packets: 50
+925 7 302 104 43 82 20 1281 
+need packets: 49
+926 0 303 105 75 21 266 4 
+need packets: 48
+927 1 292 107 205 74 592 182 
+need packets: 49
+928 203 574 122 1 383 20 277 
+need packets: 48
+929 21 140 80 287 251 298 462 
+need packets: 48
+930 47 56 739 105 213 398 52 
+need packets: 47
+931 536 727 225 186 36 165 1206 
+need packets: 50
+932 25 451 40 765 111 558 258 
+need packets: 47
+933 102 144 439 145 52 803 146 
+need packets: 48
+934 58 327 211 41 160 164 957 
+need packets: 46
+935 96 433 62 83 148 946 325 
+need packets: 49
+936 142 23 130 229 265 524 563 
+need packets: 48
+937 130 1107 648 1262 85 220 583 
+need packets: 48
+938 55 88 629 123 84 121 806 
+need packets: 49
+939 15 437 134 233 1106 288 196 
+need packets: 48
+940 174 269 47 738 1177 848 467 
+need packets: 46
+941 175 270 40 996 25 683 130 
+need packets: 49
+942 140 21 33 80 1251 271 282 
+need packets: 49
+943 141 2 491 22 680 425 452 
+need packets: 47
+944 988 1186 695 411 445 54 937 
+need packets: 48
+945 715 32 286 589 287 98 628 
+need packets: 46
+946 63 104 326 9 196 13 171 
+need packets: 47
+947 2 141 39 81 1190 568 500 
+need packets: 47
+948 24 47 73 371 29 70 146 
+need packets: 49
+949 25 836 282 551 144 950 107 
+need packets: 48
+950 53 444 114 57 424 483 631 
+need packets: 47
+951 899 1286 425 216 301 250 1180 
+need packets: 48
+952 34 259 13 1 132 6 359 
+need packets: 48
+953 125 420 530 707 56 87 174 
+need packets: 50
+954 71 774 829 561 84 984 259 
+need packets: 48
+955 9 943 862 482 12 376 581 
+need packets: 49
+956 88 55 938 782 675 445 241 
+need packets: 47
+957 89 20 147 358 32 31 1050 
+need packets: 48
+958 218 228 331 192 191 165 305 
+need packets: 50
+959 243 9 610 252 1286 821 736 
+need packets: 49
+960 19 1215 890 366 676 461 1105 
+need packets: 48
+961 165 552 182 676 691 778 63 
+need packets: 47
+962 43 95 201 110 277 76 104 
+need packets: 49
+963 1182 1 165 50 312 15 212 
+need packets: 49
+964 33 499 450 213 230 456 79 
+need packets: 48
+965 48 591 86 115 746 68 33 
+need packets: 50
+966 10 989 927 65 124 128 59 
+need packets: 50
+967 3 666 153 292 141 216 982 
+need packets: 49
+968 86 591 803 141 1097 2 228 
+need packets: 49
+969 58 1104 439 93 75 1318 236 
+need packets: 49
+970 51 980 589 961 112 127 166 
+need packets: 49
+971 65 456 287 428 613 70 434 
+need packets: 49
+972 189 344 595 583 921 294 658 
+need packets: 48
+973 82 1140 427 7 14 848 209 
+need packets: 49
+974 84 589 616 321 1143 202 683 
+need packets: 46
+975 85 290 590 617 120 140 1219 
+need packets: 48
+976 50 167 169 180 1059 1061 78 
+need packets: 48
+977 1108 190 181 399 2 587 56 
+need packets: 48
+978 59 216 81 78 7 164 181 
+need packets: 48
+979 69 31 658 158 584 297 60 
+need packets: 49
+980 32 114 273 22 1091 87 517 
+need packets: 47
+981 33 51 114 312 23 238 20 
+need packets: 50
+982 153 491 2 141 672 164 175 
+need packets: 46
+983 76 730 459 136 465 318 765 
+need packets: 47
+984 1099 122 281 141 380 22 1287 
+need packets: 48
+985 4 1280 355 205 79 18 326 
+need packets: 49
+986 67 920 286 297 293 199 28 
+need packets: 50
+987 21 24 70 1 122 484 271 
+need packets: 49
+988 944 1186 695 411 445 54 937 
+need packets: 48
+989 945 715 32 84 286 346 279 
+need packets: 47
+990 7 35 370 9 764 53 488 
+need packets: 49
+991 1170 280 929 203 574 45 1044 
+need packets: 47
+992 97 346 4 205 598 523 543 
+need packets: 49
+993 1252 43 301 158 1202 39 248 
+need packets: 48
+994 240 603 836 1247 29 206 9 
+need packets: 48
+995 8 671 470 170 692 509 849 
+need packets: 48
+996 25 101 559 86 8 3 354 
+need packets: 49
+997 64 747 660 775 1066 193 1094 
+need packets: 48
+998 65 1205 327 164 104 50 795 
+need packets: 49
+999 96 227 314 324 110 297 397 
+need packets: 47
+1000 85 140 75 690 177 39 70 
+need packets: 47
+1001 86 141 2 491 708 0 47 
+need packets: 48
+1002 11 280 213 198 281 380 463 
+need packets: 50
+1003 6 13 60 832 794 47 81 
+need packets: 49
+1004 40 723 57 1218 14 623 405 
+need packets: 48
+1005 41 950 308 35 688 34 15 
+need packets: 50
+1006 113 690 85 672 855 684 907 
+need packets: 47
+1007 84 25 146 256 102 61 115 
+need packets: 50
+1008 1123 570 393 974 796 853 247 
+need packets: 47
+1009 23 482 360 371 86 692 677 
+need packets: 49
+1010 1143 75 928 140 1053 145 1014 
+need packets: 48
+1011 1238 143 834 16 308 13 1233 
+need packets: 48
+1012 65 29 344 478 183 259 66 
+need packets: 50
+1013 105 739 56 327 122 326 212 
+need packets: 46
+1014 20 472 65 186 117 647 235 
+need packets: 46
+1015 1194 553 597 302 331 960 260 
+need packets: 47
+1016 65 29 503 851 114 956 254 
+need packets: 51
+1017 1148 139 197 170 1183 454 624 
+need packets: 48
+1018 878 23 28 473 1027 344 1069 
+need packets: 48
+1019 173 118 183 770 73 928 1148 
+need packets: 48
+1020 23 10 680 390 193 1211 1005 
+need packets: 49
+1021 16 3 666 292 694 783 297 
+need packets: 49
+1022 17 219 138 172 21 176 71 
+need packets: 49
+1023 64 747 436 1234 1278 465 1109 
+need packets: 48
+1024 140 697 231 85 51 526 586 
+need packets: 49
+1025 884 63 690 96 302 597 659 
+need packets: 49
+1026 27 28 38 41 45 615 48 
+need packets: 51
+1027 389 119 38 640 473 1018 1268 
+need packets: 48
+1028 181 275 0 258 273 1303 558 
+need packets: 47
+1029 182 676 691 154 1 8 191 
+need packets: 49
+1030 183 677 26 268 56 169 587 
+need packets: 50
+1031 115 456 586 213 337 116 182 
+need packets: 50
+1032 257 986 67 244 142 229 1223 
+need packets: 47
+1033 1216 230 525 724 1139 735 730 
+need packets: 47
+1034 1 1159 365 182 116 643 8 
+need packets: 48
+1035 1040 1212 101 25 106 142 183 
+need packets: 48
+1036 261 190 946 63 17 312 827 
+need packets: 48
+1037 262 191 258 56 739 105 52 
+need packets: 49
+1038 263 184 75 105 804 1186 1221 
+need packets: 47
+1039 256 185 523 805 130 462 700 
+need packets: 48
+1040 1035 1212 101 25 106 142 183 
+need packets: 48
+1041 3 284 666 405 38 31 368 
+need packets: 50
+1042 447 14 341 49 24 1027 116 
+need packets: 48
+1043 90 213 97 56 55 132 494 
+need packets: 50
+1044 1225 48 591 115 86 965 474 
+need packets: 49
+1045 148 11 511 704 1090 249 214 
+need packets: 50
+1046 1266 636 387 976 73 663 949 
+need packets: 47
+1047 26 100 145 45 80 230 899 
+need packets: 49
+1048 19 204 313 215 86 818 293 
+need packets: 49
+1049 98 11 364 511 765 280 782 
+need packets: 49
+1050 455 1305 59 94 128 132 509 
+need packets: 46
+1051 280 138 241 311 156 1038 29 
+need packets: 49
+1052 907 161 442 7 269 38 160 
+need packets: 48
+1053 95 27 276 0 161 270 242 
+need packets: 48
+1054 88 55 938 629 123 84 121 
+need packets: 50
+1055 35 73 678 20 176 42 141 
+need packets: 49
+1056 913 939 386 13 167 1142 508 
+need packets: 48
+1057 67 276 175 270 37 40 1274 
+need packets: 48
+1058 463 1211 806 64 652 17 13 
+need packets: 49
+1059 23 485 66 142 528 361 276 
+need packets: 48
+1060 917 222 418 312 105 523 319 
+need packets: 48
+1061 918 223 872 577 482 627 492 
+need packets: 48
+1062 919 216 873 356 189 595 1066 
+need packets: 47
+1063 912 217 258 558 67 316 781 
+need packets: 48
+1064 3 666 292 29 927 302 345 
+need packets: 48
+1065 43 962 429 175 916 16 630 
+need packets: 48
+1066 471 9 75 8 5 244 94 
+need packets: 49
+1067 249 1194 431 902 325 48 620 
+need packets: 48
+1068 41 58 415 307 46 181 72 
+need packets: 50
+1069 100 171 128 9 151 174 386 
+need packets: 49
+1070 76 720 209 506 5 719 51 
+need packets: 49
+1071 26 446 193 44 88 821 91 
+need packets: 50
+1072 14 7 61 427 657 538 428 
+need packets: 48
+1073 15 0 34 62 395 45 396 
+need packets: 49
+1074 479 176 118 187 20 73 93 
+need packets: 48
+1075 17 1149 230 180 42 439 1216 
+need packets: 48
+1076 32 715 945 46 106 397 167 
+need packets: 48
+1077 33 47 114 1091 172 174 1136 
+need packets: 49
+1078 12 0 387 5 7 482 641 
+need packets: 50
+1079 13 1 3 92 102 656 274 
+need packets: 50
+1080 3 666 292 479 846 1301 1017 
+need packets: 48
+1081 4 0 714 75 39 21 502 
+need packets: 50
+1082 39 396 209 723 40 5 142 
+need packets: 49
+1083 106 153 694 56 164 181 415 
+need packets: 48
+1084 30 149 531 847 353 848 994 
+need packets: 47
+1085 31 150 332 891 24 577 1282 
+need packets: 48
+1086 24 151 242 69 108 9 475 
+need packets: 49
+1087 25 144 195 70 109 890 68 
+need packets: 50
+1088 25 71 462 234 1284 83 1253 
+need packets: 48
+1089 64 747 775 290 1028 846 261 
+need packets: 47
+1090 48 731 89 46 196 87 37 
+need packets: 50
+1091 114 33 221 142 32 455 980 
+need packets: 49
+1092 29 400 754 371 65 246 463 
+need packets: 49
+1093 30 401 602 515 160 1303 68 
+need packets: 49
+1094 31 1315 1050 304 301 1300 1121 
+need packets: 49
+1095 24 50 67 142 581 217 668 
+need packets: 49
+1096 663 154 417 388 69 859 118 
+need packets: 48
+1097 656 915 542 26 933 39 1100 
+need packets: 49
+1098 9 104 167 227 38 68 53 
+need packets: 50
+1099 122 281 141 380 984 22 1287 
+need packets: 48
+1100 897 3 368 666 1231 718 221 
+need packets: 49
+1101 660 30 147 1063 80 50 305 
+need packets: 50
+1102 661 31 2 460 641 112 491 
+need packets: 49
+1103 662 12 24 67 546 629 57 
+need packets: 49
+1104 377 236 21 146 439 547 94 
+need packets: 48
+1105 184 227 559 84 850 710 509 
+need packets: 47
+1106 64 747 775 85 97 412 758 
+need packets: 49
+1107 130 22 28 273 864 141 23 
+need packets: 49
+1108 381 739 56 1001 7 14 202 
+need packets: 47
+1109 382 0 15 34 329 172 3 
+need packets: 48
+1110 383 34 184 153 83 148 589 
+need packets: 48
+1111 376 362 9 171 1228 557 638 
+need packets: 47
+1112 217 5 367 30 611 1084 266 
+need packets: 49
+1113 274 70 581 147 72 1276 231 
+need packets: 49
+1114 513 71 83 110 164 109 864 
+need packets: 47
+1115 1207 424 33 84 114 958 1077 
+need packets: 48
+1116 62 0 15 34 395 81 445 
+need packets: 48
+1117 63 859 226 72 84 118 1225 
+need packets: 50
+1118 56 739 105 327 122 213 52 
+need packets: 48
+1119 57 314 40 723 614 53 44 
+need packets: 48
+1120 43 962 588 105 606 21 391 
+need packets: 48
+1121 64 747 335 126 18 621 100 
+need packets: 50
+1122 1 693 268 46 959 80 907 
+need packets: 48
+1123 570 1008 393 974 796 853 247 
+need packets: 47
+1124 109 126 579 625 8 202 39 
+need packets: 49
+1125 68 9 104 227 178 934 39 
+need packets: 47
+1126 69 31 306 27 185 228 680 
+need packets: 49
+1127 27 1202 21 606 104 89 380 
+need packets: 49
+1128 233 1058 463 774 244 35 565 
+need packets: 50
+1129 403 7 18 36 1190 277 504 
+need packets: 49
+1130 71 187 324 45 64 166 321 
+need packets: 48
+1131 760 546 249 310 109 4 7 
+need packets: 49
+1132 129 54 7 93 299 80 90 
+need packets: 50
+1133 1139 578 792 135 401 868 350 
+need packets: 46
+1134 128 1159 66 9 461 52 11 
+need packets: 49
+1135 10 19 40 142 129 181 516 
+need packets: 49
+1136 51 410 393 68 79 678 909 
+need packets: 49
+1137 136 1018 726 527 317 59 92 
+need packets: 50
+1138 120 423 492 51 137 1182 1189 
+need packets: 49
+1139 578 792 135 401 868 350 485 
+need packets: 46
+1140 7 61 14 427 74 169 16 
+need packets: 49
+1141 0 62 15 34 99 164 9 
+need packets: 49
+1142 1 63 8 19 930 5 12 
+need packets: 49
+1143 1010 75 928 140 1053 145 1014 
+need packets: 48
+1144 59 978 1159 356 153 350 213 
+need packets: 50
+1145 28 31 131 634 21 368 126 
+need packets: 49
+1146 6 207 13 60 467 913 608 
+need packets: 48
+1147 768 591 4 297 58 829 318 
+need packets: 48
+1148 1017 139 197 170 1183 454 624 
+need packets: 48
+1149 230 724 535 386 299 713 72 
+need packets: 49
+1150 231 725 528 140 859 697 1274 
+need packets: 47
+1151 11 29 218 224 518 52 721 
+need packets: 48
+1152 91 13 60 1010 1143 6 201 
+need packets: 50
+1153 92 3 199 485 666 160 198 
+need packets: 48
+1154 21 259 214 128 25 143 236 
+need packets: 48
+1155 329 594 776 172 69 1047 782 
+need packets: 47
+1156 6 3 247 533 458 161 32 
+need packets: 49
+1157 7 14 49 90 492 219 192 
+need packets: 49
+1158 0 364 13 415 1155 594 945 
+need packets: 48
+1159 1 365 1034 182 116 643 8 
+need packets: 48
+1160 35 550 73 20 479 874 677 
+need packets: 48
+1161 890 272 516 438 187 583 829 
+need packets: 48
+1162 7 60 579 54 109 832 793 
+need packets: 47
+1163 8 1 63 2 46 676 341 
+need packets: 50
+1164 98 11 904 625 446 1261 247 
+need packets: 50
+1165 127 422 628 187 290 72 169 
+need packets: 50
+1166 26 32 367 20 677 73 35 
+need packets: 50
+1167 121 373 154 240 78 12 147 
+need packets: 50
+1168 106 1083 985 206 100 149 551 
+need packets: 50
+1169 898 72 182 60 77 507 535 
+need packets: 47
+1170 991 280 929 203 574 45 1044 
+need packets: 47
+1171 39 533 462 538 116 616 641 
+need packets: 47
+1172 277 187 201 446 583 634 192 
+need packets: 48
+1173 124 295 163 270 72 746 817 
+need packets: 49
+1174 125 288 420 35 66 527 73 
+need packets: 49
+1175 114 203 16 574 253 4 25 
+need packets: 50
+1176 222 28 491 2 141 113 551 
+need packets: 48
+1177 92 8 547 238 191 26 277 
+need packets: 49
+1178 135 582 148 357 707 704 1065 
+need packets: 48
+1179 55 296 25 84 938 182 693 
+need packets: 48
+1180 7 366 413 658 105 0 587 
+need packets: 49
+1181 0 367 414 386 452 739 105 
+need packets: 45
+1182 963 1 165 50 312 15 212 
+need packets: 49
+1183 122 1099 281 109 1248 380 326 
+need packets: 47
+1184 41 42 485 103 227 614 148 
+need packets: 51
+1185 277 18 1212 312 187 775 246 
+need packets: 49
+1186 136 892 430 375 137 235 1245 
+need packets: 48
+1187 20 270 472 33 629 199 114 
+need packets: 48
+1188 45 0 283 506 94 519 17 
+need packets: 51
+1189 46 1 2 491 63 48 20 
+need packets: 50
+1190 10 19 40 47 1 613 108 
+need packets: 49
+1191 40 378 35 161 52 533 38 
+need packets: 50
+1192 51 613 124 167 1258 214 705 
+need packets: 48
+1193 58 1104 319 331 478 549 1100 
+need packets: 49
+1194 553 597 302 143 176 291 116 
+need packets: 48
+1195 24 759 305 198 285 988 282 
+need packets: 48
+1196 33 1019 21 55 414 258 392 
+need packets: 48
+1197 196 1131 551 257 88 1318 706 
+need packets: 48
+1198 66 197 415 49 40 67 1012 
+need packets: 49
+1199 170 36 470 19 245 848 9 
+need packets: 49
+1200 1260 370 425 123 150 261 1031 
+need packets: 48
+1201 1261 151 934 284 339 1298 1192 
+need packets: 49
+1202 27 1127 21 606 104 89 380 
+need packets: 49
+1203 213 90 249 47 398 1008 1236 
+need packets: 48
+1204 21 18 131 304 119 478 121 
+need packets: 49
+1205 22 32 9 171 100 1050 23 
+need packets: 50
+1206 23 619 425 314 320 324 485 
+need packets: 48
+1207 1115 424 33 84 114 958 1077 
+need packets: 48
+1208 2 141 491 97 391 1190 284 
+need packets: 48
+1209 0 3 142 130 311 428 1005 
+need packets: 49
+1210 13 1 1135 132 443 56 750 
+need packets: 49
+1211 17 391 32 1058 317 1068 310 
+need packets: 49
+1212 1035 101 25 559 86 672 458 
+need packets: 48
+1213 1219 102 672 116 73 146 199 
+need packets: 47
+1214 5 655 593 147 52 240 322 
+need packets: 49
+1215 6 648 140 281 189 402 19 
+need packets: 50
+1216 1033 230 525 724 1139 735 730 
+need packets: 47
+1217 34 383 184 1110 100 1069 627 
+need packets: 48
+1218 723 40 57 14 623 405 4 
+need packets: 48
+1219 1213 102 672 116 73 146 199 
+need packets: 47
+1220 1037 262 191 258 56 739 313 
+need packets: 48
+1221 1038 263 184 75 105 258 244 
+need packets: 48
+1222 1039 228 256 185 141 290 187 
+need packets: 47
+1223 1032 229 257 212 1294 107 970 
+need packets: 48
+1224 33 338 198 203 236 213 815 
+need packets: 49
+1225 1044 48 591 115 86 965 474 
+need packets: 49
+1226 197 212 321 299 1015 56 1174 
+need packets: 48
+1227 38 1098 64 28 1233 263 309 
+need packets: 48
+1228 37 587 0 23 202 686 441 
+need packets: 50
+1229 38 1227 490 640 956 105 807 
+need packets: 48
+1230 39 922 531 328 940 433 45 
+need packets: 48
+1231 19 532 482 1048 166 1 949 
+need packets: 49
+1232 137 650 269 179 47 174 252 
+need packets: 49
+1233 288 503 555 122 21 1044 254 
+need packets: 49
+1234 12 0 245 387 7 62 105 
+need packets: 50
+1235 40 601 871 109 164 126 114 
+need packets: 49
+1236 22 473 544 35 103 194 141 
+need packets: 49
+1237 23 545 1094 292 1218 723 968 
+need packets: 48
+1238 1011 143 834 16 308 13 1233 
+need packets: 48
+1239 17 42 661 248 294 980 331 
+need packets: 49
+1240 207 1091 493 297 92 110 58 
+need packets: 48
+1241 516 5 22 59 24 162 455 
+need packets: 50
+1242 585 1099 616 6 581 143 92 
+need packets: 49
+1243 1 196 34 415 166 400 629 
+need packets: 46
+1244 18 1205 431 72 518 427 1 
+need packets: 49
+1245 187 294 391 690 305 140 72 
+need packets: 49
+1246 50 811 285 236 25 1056 423 
+need packets: 48
+1247 59 978 216 81 429 78 516 
+need packets: 48
+1248 109 579 922 39 38 145 300 
+need packets: 48
+1249 108 6 5 10 1003 1216 15 
+need packets: 50
+1250 35 432 501 321 215 518 228 
+need packets: 49
+1251 20 32 277 159 138 153 1166 
+need packets: 49
+1252 993 43 301 158 1202 39 248 
+need packets: 48
+1253 137 10 220 224 19 63 502 
+need packets: 50
+1254 58 605 543 249 19 20 120 
+need packets: 50
+1255 108 810 280 139 6 197 233 
+need packets: 49
+1256 18 36 166 27 39 329 501 
+need packets: 49
+1257 26 336 119 43 4 333 46 
+need packets: 49
+1258 99 440 92 233 487 942 37 
+need packets: 50
+1259 166 151 490 201 88 148 101 
+need packets: 49
+1260 1200 370 425 123 150 261 1031 
+need packets: 48
+1261 1201 151 934 284 339 1298 1192 
+need packets: 49
+1262 66 36 144 167 197 243 185 
+need packets: 50
+1263 26 73 371 5 232 76 6 
+need packets: 51
+1264 87 340 353 50 142 349 1155 
+need packets: 48
+1265 80 341 350 178 15 283 916 
+need packets: 48
+1266 1046 636 387 976 73 663 949 
+need packets: 47
+1267 84 336 121 101 6 751 634 
+need packets: 48
+1268 26 864 487 1166 21 49 451 
+need packets: 49
+1269 83 296 55 218 518 12 137 
+need packets: 49
+1270 85 359 620 130 129 1315 1208 
+need packets: 49
+1271 26 896 446 75 497 700 1013 
+need packets: 48
+1272 23 10 19 269 324 846 89 
+need packets: 51
+1273 16 3 378 270 1207 517 572 
+need packets: 49
+1274 4 1099 205 153 128 182 199 
+need packets: 50
+1275 2 141 190 81 47 164 280 
+need packets: 48
+1276 72 679 90 177 51 117 582 
+need packets: 49
+1277 20 3 666 104 465 431 598 
+need packets: 49
+1278 21 33 106 1083 304 132 359 
+need packets: 49
+1279 22 64 187 20 37 305 634 
+need packets: 49
+1280 6 13 867 60 201 218 207 
+need packets: 50
+1281 7 1308 579 448 109 54 162 
+need packets: 48
+1282 159 24 332 46 603 693 41 
+need packets: 49
+1283 38 105 34 21 15 0 644 
+need packets: 51
+1284 214 16 82 129 989 755 39 
+need packets: 49
+1285 162 7 350 20 35 48 417 
+need packets: 51
+1286 4 1032 257 823 219 18 917 
+need packets: 49
+1287 427 68 162 358 157 840 1 
+need packets: 48
+1288 19 727 225 1122 165 1292 150 
+need packets: 47
+1289 3 504 554 421 126 92 63 
+need packets: 49
+1290 161 499 261 190 127 904 76 
+need packets: 49
+1291 34 383 24 65 556 461 662 
+need packets: 48
+1292 86 27 39 285 272 33 922 
+need packets: 51
+1293 20 104 107 321 38 234 223 
+need packets: 49
+1294 21 105 122 1099 696 84 671 
+need packets: 46
+1295 22 555 1236 245 170 49 176 
+need packets: 49
+1296 92 3 666 199 57 709 510 
+need packets: 50
+1297 93 52 106 255 459 766 264 
+need packets: 49
+1298 15 0 62 83 81 396 405 
+need packets: 48
+1299 180 698 197 183 312 166 729 
+need packets: 47
+1300 15 190 165 691 0 185 818 
+need packets: 47
+1301 8 191 166 74 779 1 28 
+need packets: 50
+1302 9 184 167 139 386 44 453 
+need packets: 49
+1303 27 200 5 234 44 633 62 
+need packets: 50
+1304 36 18 463 131 825 53 142 
+need packets: 51
+1305 37 96 358 191 306 187 20 
+need packets: 50
+1306 45 30 1084 67 0 17 135 
+need packets: 50
+1307 46 1 341 112 60 162 7 
+need packets: 50
+1308 173 280 579 262 39 433 1162 
+need packets: 49
+1309 174 281 84 832 375 706 203 
+need packets: 49
+1310 175 16 220 1141 161 659 794 
+need packets: 49
+1311 168 17 221 1142 195 428 186 
+need packets: 48
+1312 95 27 110 188 413 690 65 
+need packets: 49
+1313 84 63 229 1152 430 90 419 
+need packets: 47
+1314 6 12 343 185 629 355 280 
+need packets: 49
+1315 24 557 254 90 255 1316 417 
+need packets: 46
+1316 6 13 627 2 8 1 63 
+need packets: 49
+1317 7 14 90 412 225 579 736 
+need packets: 49
+1318 0 587 181 273 132 506 567 
+need packets: 48
+1319 1 787 122 24 36 166 557 
+need packets: 49
+SGGH Time: 10342.7 ms
+ranks: 0 2 1 4 5 5 5 5 4 5 5 4 
+origin packets: 64
+need packets: 45
+duration: 10346.4 ms
+^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^8,4,8

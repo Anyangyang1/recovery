@@ -1,19 +1,36 @@
 #include "sggh.h"
-
+#include "utils.h"
 #include <algorithm>
 #include <cassert>
-
-#include "utils.h"
+#include <chrono>
+#include <unordered_set>
 using namespace ECProject;
 vector<vector<int>>
 SimilarityGreedy::generateOptDecodeBitMatrix(int failedBlock, int mode,
                                              unsigned int seed) {
+    auto start = std::chrono::high_resolution_clock::now();
     auto bigMatrix = generateAllDecodingMatrix(failedBlock);
+    // auto end = std::chrono::high_resolution_clock::now();
+    // auto duration =
+    //     std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+    // auto time = duration.count() / 1e6;
+    // std::cout << "GenerateAllDecodeMatrix Time: " << time << " ms\n";
+
+    // start = std::chrono::high_resolution_clock::now();
     auto bitMatrix = matrix2Bitmatrix(bigMatrix, W);
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
+    auto time = duration.count() / 1e6;
+    std::cout << "GenerateAllDecodeMatrix and matrix2Bitmatrix Time: " << time
+              << " ms\n";
+
+    // cout << bitMatrix << endl;
+
 #ifdef MY_DEBUG
     cout << "bitMatrix row nums: " << bitMatrix.size() << endl;
 #endif
-    vector<int> firstSelectSet;
+    vector<unsigned int> firstSelectSet;
     if (mode == -1) {
         firstSelectSet = {0};
     } else if (mode == 0) {
@@ -24,11 +41,13 @@ SimilarityGreedy::generateOptDecodeBitMatrix(int failedBlock, int mode,
 
     vector<vector<int>> bestMatrix;
     int bestMatrixRank = INT32_MAX;
+    auto start1 = std::chrono::high_resolution_clock::now();
     for (int r : firstSelectSet) {
         auto optMatrix =
             generateOptDecodeBitMatrixWithFirstSelect(bitMatrix, r);
         auto optMatrixRank = computeBinaryMatrixRank(optMatrix, W);
         int ranks = getSum(optMatrixRank);
+        cout << "need packets: " << ranks << endl;
 #ifdef MY_DEBUG
         cout << "need packets: " << ranks << endl;
 #endif
@@ -38,6 +57,11 @@ SimilarityGreedy::generateOptDecodeBitMatrix(int failedBlock, int mode,
             bestMatrixRank = ranks;
         }
     }
+    auto end1 = std::chrono::high_resolution_clock::now();
+    auto duration1 =
+        std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1);
+    auto time1 = duration1.count() / 1e6;
+    std::cout << "SGGH Time: " << time1 << " ms\n";
     return bestMatrix;
 }
 
@@ -45,7 +69,7 @@ vector<vector<vector<int>>>
 SimilarityGreedy::generateAllOptDecodeBitMatrix(int failedBlock) {
     auto bigMatrix = generateAllDecodingMatrix(failedBlock);
     auto bitMatrix = matrix2Bitmatrix(bigMatrix, W);
-    vector<int> firstSelectSet = generateAllRangeN(bitMatrix.size());
+    vector<unsigned int> firstSelectSet = generateAllRangeN(bitMatrix.size());
     vector<vector<vector<int>>> bestMatrices;
     int minRank = INT32_MAX;
     for (int r : firstSelectSet) {
@@ -186,6 +210,108 @@ SimilarityGreedy::generateAllDecodingMatrix(int failedBlock) {
     return bigMatrix;
 }
 
+vector<vector<vector<int>>>
+SimilarityGreedy::generateAllDecodingMatrices(const vector<int> &failedBlocks) {
+
+    int F = failedBlocks.size();
+    assert(F > 0 && F <= M && F <= N);
+    for (int b : failedBlocks) {
+        assert(b >= 0 && b < N);
+    }
+
+    // Step 1: flatten codingMatrix (M x K)
+    vector<int> codingFlat(M * K);
+    for (int i = 0; i < M; ++i)
+        for (int j = 0; j < K; ++j)
+            codingFlat[i * K + j] = codingMatrix[i][j];
+
+    // Step 2: candidate blocks = all except failedBlocks
+    vector<int> candidates;
+    unordered_set<int> failedSet(failedBlocks.begin(), failedBlocks.end());
+    for (int i = 0; i < N; ++i)
+        if (!failedSet.count(i))
+            candidates.push_back(i);
+
+    int need = M - F; // 需额外擦除的块数（凑足 M）
+    assert(static_cast<int>(candidates.size()) >= need);
+
+    // Step 3: generate combinations of size `need` from candidates
+    vector<vector<int>> extraEraseCombs;
+    vector<int> cur;
+    function<void(int)> dfs = [&](int start) {
+        if (static_cast<int>(cur.size()) == need) {
+            extraEraseCombs.push_back(cur);
+            return;
+        }
+        for (int i = start; i < static_cast<int>(candidates.size()); ++i) {
+            cur.push_back(candidates[i]);
+            dfs(i + 1);
+            cur.pop_back();
+        }
+    };
+    dfs(0);
+
+    // Step 4: for each erasure pattern, compute recovery rows for all failed
+    // blocks
+    vector<vector<vector<int>>> allRecovery; // [pattern][f_idx][block_id]
+
+    for (const auto &extra : extraEraseCombs) {
+        // Build erased array (size N)
+        vector<int> erased(N, 0);
+        for (int b : failedBlocks)
+            erased[b] = 1;
+        for (int b : extra)
+            erased[b] = 1;
+
+        // Jerasure decoding
+        vector<int> decodeMatrix(K * K);
+        vector<int> dmIds(K);
+        int ret = jerasure_make_decoding_matrix(
+            K, M, W, codingFlat.data(), erased.data(), decodeMatrix.data(),
+            dmIds.data());
+        if (ret != 0)
+            continue; // skip invalid (shouldn't happen for MDS)
+
+        // Precompute coding × decodeMatrix if any failed block is parity
+        int *codingTimesDecode = nullptr;
+        bool hasParity = any_of(failedBlocks.begin(), failedBlocks.end(),
+                                [this](int b) { return b >= K; });
+        if (hasParity) {
+            codingTimesDecode = jerasure_matrix_multiply(
+                codingFlat.data(), decodeMatrix.data(), M, K, K, K, W);
+        }
+
+        // For each failed block, extract its recovery coefficients
+        vector<vector<int>> recoveryForThisPattern; // [f_idx][block_id]
+        for (int f : failedBlocks) {
+            vector<int> coeffs(N, 0); // default 0
+            if (f < K) {
+                // Data block: row f of decodeMatrix, mapped by dmIds
+                for (int j = 0; j < K; ++j) {
+                    int srcBlock = dmIds[j];
+                    int coeff = decodeMatrix[f * K + j];
+                    coeffs[srcBlock] = coeff;
+                }
+            } else {
+                // Parity block: row (f - K) of codingTimesDecode
+                int row = f - K;
+                for (int j = 0; j < K; ++j) {
+                    int srcBlock = dmIds[j];
+                    int coeff = codingTimesDecode[row * K + j];
+                    coeffs[srcBlock] = coeff;
+                }
+            }
+            recoveryForThisPattern.push_back(move(coeffs));
+        }
+
+        allRecovery.push_back(move(recoveryForThisPattern));
+        if (codingTimesDecode)
+            free(codingTimesDecode);
+    }
+
+    return allRecovery;
+}
+
 vector<int>
 SimilarityGreedy::computeBinaryMatrixRank(vector<vector<int>> &bitMatrix,
                                           int W) {
@@ -244,6 +370,7 @@ vector<vector<int>> SimilarityGreedy::generateOptDecodeBitMatrixWithFirstSelect(
     for (int i = 0; i < N; i++) {
         optDecodeMatrix[firstGroup][i] = intMatrix[firstSelect][i];
     }
+    cout << firstSelect << " ";
     // auto mi = ECProject::intMatrixToBitMatrix(optDecodeMatrix, W);
     // std::cout << mi[firstGroup] << endl;
     while (leftRecoveredConut > 0) {
@@ -260,7 +387,7 @@ vector<vector<int>> SimilarityGreedy::generateOptDecodeBitMatrixWithFirstSelect(
                 }
             }
         }
-        // cout << selectIdx << " ";
+        cout << selectIdx << " ";
         int group = selectIdx % W;
         isRecovered[group] = true;
         leftRecoveredConut--;
@@ -269,6 +396,6 @@ vector<vector<int>> SimilarityGreedy::generateOptDecodeBitMatrixWithFirstSelect(
             optDecodeMatrix[group][i] = intMatrix[selectIdx][i];
         }
     }
-    // cout << endl;
+    cout << endl;
     return ECProject::intMatrixToBitMatrix(optDecodeMatrix, W);
 }

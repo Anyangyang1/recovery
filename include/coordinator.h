@@ -20,26 +20,29 @@ class Coordinator {
     RepairResp request_repair(std::string key, unsigned int failed_ids);
 
   private:
-    bool read_from_datanode_with_matrix(const std::string &ip, int port,
-                                        const std::string &key, char *value,
-                                        size_t value_size,
-                                        const vector<vector<int>> &matrix);
-    bool read_from_datanode(const std::string &ip, int port,
-                            const std::string &key, char *value,
-                            size_t value_size);
-
-    void write_to_datanode(const std::string &ip, int port,
-                           const std::string &key, char *value,
-                           size_t value_size);
+    
     void init_cluster_info();
     Stripe &new_stripe(const std::string &key);
 
     void encode_and_store_object(Stripe stripe);
 
-    void de_repair(std::string key, unsigned int failed_id,
+    void do_repair(std::string key, unsigned int failed_id,
                    RepairResp &response);
     std::vector<std::vector<int>>
     get_matrix(const std::vector<std::vector<int>> &decode_matrix, int i);
+    std::vector<std::vector<int>>
+    generate_repair_plan(const std::vector<std::vector<int>> &matrix);
+
+    void decode_xor(const std::vector<char> &original_data,
+                    const std::vector<std::vector<int>> &repair_plan,
+                    std::vector<char> &decode_data, size_t packet_size);
+
+    void decode(const std::unordered_map<unsigned int, std::vector<char>>
+                    &original_datas,
+                const std::vector<std::vector<int>> &decode_matrix,
+                std::vector<char> &decode_data);
+
+    unsigned int select_node(const std::vector<unsigned int> &block2node);
 
   private:
     std::unordered_map<std::string, std::unique_ptr<coro_rpc::coro_rpc_client>>
@@ -60,6 +63,7 @@ class Coordinator {
     std::condition_variable cv_;
     std::vector<unsigned int> free_nodes_;
     ECSchema ec_schema_;
+    std::string xml_path_;
     std::unordered_map<std::string, ObjectInfo> commited_object_table_;
     std::unordered_map<std::string, ObjectInfo> updating_object_table_;
     std::vector<std::vector<std::vector<int>>>
