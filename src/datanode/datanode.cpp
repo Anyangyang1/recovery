@@ -66,10 +66,10 @@ void Datanode::handle_set(const std::string &key, size_t value_size) {
     };
 }
 
-
-std::shared_ptr<coro_rpc::coro_rpc_client> get_rpc_client(const std::string& ip, int port) {
+std::shared_ptr<coro_rpc::coro_rpc_client> get_rpc_client(const std::string &ip,
+                                                          int port) {
     std::string key = ip + ":" + std::to_string(port);
-    
+
     auto it = datanodes_.find(key);
     if (it == datanodes_.end()) {
         auto client = std::make_shared<coro_rpc::coro_rpc_client>();
@@ -80,7 +80,8 @@ std::shared_ptr<coro_rpc::coro_rpc_client> get_rpc_client(const std::string& ip,
     return it->second;
 }
 // 其中 datanodes_ 类型应为：
-// std::unordered_map<std::string, std::shared_ptr<coro_rpc::coro_rpc_client>> datanodes_;
+// std::unordered_map<std::string, std::shared_ptr<coro_rpc::coro_rpc_client>>
+// datanodes_;
 
 void Datanode::handle_get_local_decode(const std::string &key,
                                        size_t value_size,
@@ -300,11 +301,11 @@ bool Datanode::write_to_datanode(const string &ip, int port, const string &key,
         socket_.close(ignore_ec);
 
         // if (!finish) {
-        //     std::cout << "[Coordinator" << self_cluster_id_ << "][SET]"
+        //     std::cout << "[DataNode" << self_cluster_id_ << "][SET]"
         //               << " Set errors in datanodes!" << std::endl;
         // } else {
 #ifdef MY_DEBUG
-        std::cout << "[Coordinator" << self_cluster_id_ << "][SET]"
+        std::cout << "[DataNode" << self_cluster_id_ << "][SET]"
                   << " Set " << key << " success! With length of " << value_size
                   << std::endl;
 #endif
@@ -324,7 +325,7 @@ bool Datanode::read_from_datanode_with_local_decode(
             get_rpc_client(ip, port)->call<&Datanode::handle_get_local_decode>(
                 key, value_size, matrix));
 #ifdef MY_DEBYG
-        std::cout << "[Coordinator" << self_cluster_id_ << "][GET]"
+        std::cout << "[DataNode" << self_cluster_id_ << "][GET]"
                   << "Call datanode to handle get " << key << std::endl;
 #endif
         asio::error_code ec;
@@ -338,7 +339,7 @@ bool Datanode::read_from_datanode_with_local_decode(
 
         asio::read(socket_, asio::buffer(value, value_size), ec);
 #ifdef MY_DEBYG
-        std::cout << "[Coordinator" << self_cluster_id_ << "][GET]"
+        std::cout << "[DataNode" << self_cluster_id_ << "][GET]"
                   << "Read data from socket with length of " << value_size
                   << std::endl;
 #endif
@@ -360,7 +361,7 @@ bool Datanode::read_from_datanode(const string &ip, int port, const string &key,
             datanodes_[node_ip_port]->call<&Datanode::handle_get_original>(
                 key, value_size));
 #ifdef MY_DEBYG
-        std::cout << "[Coordinator" << self_cluster_id_ << "][GET]"
+        std::cout << "[DataNode" << self_cluster_id_ << "][GET]"
                   << "Call datanode to handle get " << key << std::endl;
 #endif
         asio::error_code ec;
@@ -377,7 +378,7 @@ bool Datanode::read_from_datanode(const string &ip, int port, const string &key,
         std::vector<unsigned char> finish = int_to_bytes(1);
         asio::write(socket_, asio::buffer(finish, finish.size()));
 #ifdef MY_DEBYG
-        std::cout << "[Coordinator" << self_cluster_id_ << "][GET]"
+        std::cout << "[DataNode" << self_cluster_id_ << "][GET]"
                   << "Read data from socket with length of " << value_size
                   << std::endl;
 #endif
@@ -388,6 +389,300 @@ bool Datanode::read_from_datanode(const string &ip, int port, const string &key,
         std::cerr << e.what() << '\n';
     }
     return res;
+}
+
+void Datanode::do_repair(std::string key, unsigned int failed_id,
+                         RepairResp &response) {
+    std::vector<std::vector<int>> &decode_matrix =
+        opt_decode_matrix_with_all_failed_mode_[failed_id];
+    ErasureCode *ec = ec_schema_.ec;
+    size_t block_size = ec_schema_.block_size;
+    size_t packet_size = ec_schema_.packet_size;
+    const int k = ec->k, m = ec->m, w = ec->w;
+    const int blocks_num_per_stripe = k + m;
+    std::unordered_map<unsigned int, std::vector<char>> original_datas;
+    std::mutex original_lock;
+    Stripe stripe = stripe_table_[key];
+    std::vector<unsigned int> blocks2nodes = stripe.blocks2nodes;
+
+    auto get_from_node = [this, &original_datas, &original_lock, packet_size,
+                          stripe, key,
+                          decode_matrix](unsigned int block_id) mutable {
+        Node node = node_table_[stripe.blocks2nodes[block_id]];
+        std::vector<std::vector<int>> matrix =
+            get_matrix(decode_matrix, block_id);
+        if (matrix.size() > 0) {
+            std::vector<char> tmp_val(matrix.size() * packet_size);
+            bool res = read_from_datanode_with_matrix(
+                node.node_ip, node.node_port,
+                key + "block_" + std::to_string(block_id), tmp_val.data(),
+                tmp_val.size(), matrix);
+            if (!res) {
+                pthread_exit(NULL);
+            }
+            original_lock.lock();
+            original_datas[block_id] = tmp_val;
+            original_lock.unlock();
+        }
+    };
+
+    auto send_to_datanode = [this, block_size](unsigned int block_id,
+                                               char *data, std::string node_ip,
+                                               int node_port, std::string key) {
+        std::string block_id_str = std::to_string(block_id);
+        write_to_datanode(node_ip, node_port,
+                          key + "block_" + std::to_string(block_id), data,
+                          block_size);
+    };
+
+    std::vector<std::thread> readers;
+    for (int i = 0; i < blocks_num_per_stripe; i++) {
+        readers.push_back(std::thread(get_from_node, i));
+    }
+
+    for (int i = 0; i < blocks_num_per_stripe; i++) {
+        readers[i].join();
+    }
+
+    std::vector<char> decode_data(w * packet_size);
+    std::fill_n(decode_data.data(), packet_size * w, 0);
+    decode(original_datas, decode_matrix, decode_data);
+
+    unsigned int candinate_node_id = select_node(blocks2nodes);
+
+    auto writer = std::thread(send_to_datanode, failed_id, decode_data.data(),
+                              node_table_[candinate_node_id].node_ip,
+                              node_table_[candinate_node_id].node_port, key);
+    writer.join();
+    stripe.blocks2nodes[failed_id] = candinate_node_id;
+}
+
+void Datanode::decode_xor(const std::vector<char> &original_data,
+                          const std::vector<std::vector<int>> &matrix,
+                          std::vector<char> &decode_data, size_t packet_size) {
+    auto repair_plan = generate_repair_plan(matrix);
+    size_t w = repair_plan.size();
+    assert(decode_data.size() == w * packet_size);
+
+    // 每份 packet_size 字节
+    for (size_t i = 0; i < w; ++i) {
+        const auto &deps = repair_plan[i];
+        if (deps.empty())
+            continue; // 不处理：保持 decode_data[i]
+                      // 原值（通常已含原始数据或待修复）
+
+        char *out = decode_data.data() + i * packet_size;
+        // // 初始化为 0，后续异或累积
+        // std::fill_n(out, packet_size, 0);
+
+        for (int idx : deps) {
+            assert(idx >= 0 &&
+                   static_cast<size_t>(idx) * packet_size + packet_size <=
+                       original_data.size());
+            const char *src = original_data.data() + idx * packet_size;
+            for (size_t j = 0; j < packet_size; ++j) {
+                out[j] ^= src[j];
+            }
+        }
+    }
+}
+
+void Datanode::decode(
+    const std::unordered_map<unsigned int, std::vector<char>> &original_datas,
+    const std::vector<std::vector<int>> &decode_matrix,
+    std::vector<char> &decode_data) {
+    ErasureCode *ec = ec_schema_.ec;
+    size_t packet_size = ec_schema_.packet_size;
+    const int k = ec->k, m = ec->m;
+    const int blocks_num_per_stripe = k + m;
+    for (int i = 0; i < blocks_num_per_stripe; i++) {
+        auto matrix = get_matrix(decode_matrix, i);
+        auto original_data = original_datas.find(i);
+        if (original_data != original_datas.end()) {
+            decode_xor(original_data->second, matrix, decode_data, packet_size);
+        }
+    }
+}
+
+void Datanode::do_repair(unsigned int stripe_id,
+                         std::vector<DecodeRequest> helpers, size_t block_size,
+                         unsigned int w) {
+    assert(block_size % w == 0);
+    std::string file_name = "stripe" + std::to_string(stripe_id);
+    size_t packet_size = block_size / w;
+
+    std::vector<std::vector<char>> original_datas(
+        helpers.size(), std::vector<char>(block_size));
+
+    auto get_from_node = [&](int idx, const DecodeRequest &helper) {
+        auto result = compute_basis_gf2_indices(helper.matrix);
+        size_t buf_size = packet_size * result.basis.size();
+        std::vector<char> buf(buf_size);
+
+        bool ok = read_from_datanode_with_local_decode(helper.ip, helper.port,
+                                                       file_name, buf.data(),
+                                                       buf_size, result.basis);
+        if (!ok) {
+            throw std::runtime_error("Read failed from " + helper.ip);
+        }
+
+        compute_original_data(buf.data(), result.reps,
+                              original_datas[idx].data(), packet_size);
+    };
+
+    std::vector<std::thread> readers;
+    std::vector<std::exception_ptr> exceptions(helpers.size());
+
+    for (int i = 0; i < helpers.size(); ++i) {
+        readers.emplace_back([&, i]() {
+            try {
+                get_from_node(i, helpers[i]);
+            } catch (...) {
+                exceptions[i] = std::current_exception();
+            }
+        });
+    }
+
+    for (auto &t : readers)
+        t.join();
+
+    for (auto &e : exceptions) {
+        if (e)
+            std::rethrow_exception(e);
+    }
+
+    auto decode_data = decode_xor(original_datas);
+    assert(decode_data.size() == block_size);
+    store_data(file_name, decode_data.data(), decode_data.size());
+}
+
+
+std::vector<char>
+Datanode::decode_xor(const std::vector<std::vector<char>> &original_datas) {
+    if (original_datas.empty())
+        return {};
+
+    size_t len = original_datas[0].size();
+    for (const auto &d : original_datas) {
+        assert(d.size() == len && "All data blocks must have same length");
+    }
+
+    std::vector<char> result(len, 0);
+    for (const auto &block : original_datas) {
+        for (size_t i = 0; i < len; ++i) {
+            result[i] ^= block[i];
+        }
+    }
+    return result;
+}
+
+void Datanode::compute_original_data(const char *buf,
+                                     const std::vector<std::vector<int>> &reps,
+                                     char *original_data, size_t packet_size) {
+
+    if (reps.empty() || packet_size == 0)
+        return;
+    // 缓存：key = 排序后的索引列表，value = 已计算结果的起始地址（在
+    // original_data 中）
+    std::unordered_map<std::vector<int>, const char *, VecIntHash> cache;
+
+    for (size_t i = 0; i < reps.size(); ++i) {
+        auto indices = reps[i];
+        std::sort(indices.begin(), indices.end()); // 保证 {0,1} ≡ {1,0}
+
+        auto it = cache.find(indices);
+        char *dst = original_data + i * packet_size;
+
+        if (it != cache.end()) {
+            // 命中：直接 memcpy
+            std::memcpy(dst, it->second, packet_size);
+        } else {
+            // 未命中：计算
+            if (indices.empty()) {
+                std::memset(dst, 0, packet_size);
+            } else {
+                // 初始化为第一个块
+                std::memcpy(dst, buf + indices[0] * packet_size, packet_size);
+                // 异或其余块
+                for (size_t k = 1; k < indices.size(); ++k) {
+                    const char *src = buf + indices[k] * packet_size;
+                    for (size_t j = 0; j < packet_size; ++j) {
+                        dst[j] ^= src[j];
+                    }
+                }
+            }
+            cache[indices] = dst; // 缓存当前结果地址（生命周期安全：dst 在
+                                  // original_data 内）
+        }
+    }
+}
+
+GF2BasisResult
+Datanode::compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
+    int w = static_cast<int>(A.size());
+    if (w == 0 || A[0].size() != static_cast<size_t>(w)) {
+        return {};
+    }
+
+    // Step 1: 高斯消元求 RREF 和主元映射
+    auto R = A;
+    std::vector<int> pivot_row_for_col(
+        w, -1); // col c → 哪一行是其主元行（在 R 中的行号）
+    int rank = 0;
+
+    for (int c = 0; c < w && rank < w; ++c) {
+        // 找主元行
+        int pivot = -1;
+        for (int r = rank; r < w; ++r) {
+            if (R[r][c] == 1) {
+                pivot = r;
+                break;
+            }
+        }
+        if (pivot == -1)
+            continue;
+
+        std::swap(R[rank], R[pivot]);
+        pivot_row_for_col[c] = rank;
+
+        // 消去其他所有行的第 c 列
+        for (int r = 0; r < w; ++r) {
+            if (r != rank && R[r][c] == 1) {
+                for (int j = 0; j < w; ++j) {
+                    R[r][j] ^= R[rank][j];
+                }
+            }
+        }
+        ++rank;
+    }
+
+    // 提取基（前 rank 行）
+    std::vector<std::vector<int>> basis(R.begin(), R.begin() + rank);
+
+    // Step 2: 对每个原始行 A[i]，求其由哪些基向量异或而成
+    std::vector<std::vector<int>> reps(w);
+
+    for (int i = 0; i < w; ++i) {
+        auto v = A[i]; // 当前待表出行
+
+        // 遍历所有主元列（按列递增顺序 = 基向量顺序）
+        for (int c = 0; c < w; ++c) {
+            if (v[c] == 1 && pivot_row_for_col[c] != -1) {
+                int basis_idx =
+                    pivot_row_for_col[c]; // 该主元对应的基索引（0 ~ rank-1）
+                reps[i].push_back(basis_idx);
+
+                // v ^= basis[basis_idx]
+                const auto &b = basis[basis_idx];
+                for (int j = 0; j < w; ++j) {
+                    v[j] ^= b[j];
+                }
+            }
+        }
+        // 理论上 v 应全 0；可加 assert 检查
+    }
+
+    return {basis, reps};
 }
 
 } // namespace ECProject

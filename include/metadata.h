@@ -23,7 +23,6 @@ namespace ECProject {
 struct ECSchema {
     ErasureCode *ec = nullptr;
     size_t block_size; // bytes
-    size_t packet_size;
 
     ~ECSchema() {
         if (ec != nullptr) {
@@ -47,18 +46,30 @@ struct ObjectInfo {
 
 struct Stripe {
     unsigned int stripe_id;
-    std::string key;
     std::vector<unsigned int> blocks2nodes;
-    std::vector<char*> objects; // in order with data blocks
 };
 
 struct Node {
     unsigned int node_id;
     std::string node_ip;
     int node_port;
-    std::unordered_map<std::string, unsigned int> nodes2blocks;
+    std::unordered_map<unsigned int, unsigned int> nodes2blocks;
 };
 
+struct DecodeRequest {
+    DecodeRequest(std::string ip, int port,
+                  std::vector<std::vector<int>> matrix)
+        : ip(ip), port(port), matrix(matrix) {}
+    std::string ip;
+    int port;
+    std::vector<std::vector<int>> matrix; // 解码矩阵（如纠删码矩阵）
+};
+
+struct RepairPlan {
+    unsigned int stripe_id;             // 待修复的条带id
+    std::vector<DecodeRequest> helpers; // 参与修复的helpers
+    Node selected_new_node;             // 修复完成后，数据放置的目标节点
+};
 
 struct RepairResp {
     double decoding_time;
@@ -70,25 +81,9 @@ struct RepairResp {
     bool success;
 };
 
-
-struct MainRepairResp {
-    double decoding_time;
-    double cross_cluster_time;
+struct GF2BasisResult {
+    std::vector<std::vector<int>> basis;          // 基向量（行），size = rank
+    std::vector<std::vector<int>> reps;           // reps[i] = {k1, k2, ...} 表示 row_i = basis[k1] ⊕ basis[k2] ⊕ ...
 };
 
-struct MainRecalResp {
-    double computing_time;
-    double cross_cluster_time;
-};
-
-struct RelocateResp {
-    double cross_cluster_time;
-};
-
-// ECFAMILY check_ec_family(ECTYPE ec_type);
-// ErasureCode *ec_factory(ECTYPE ec_type, CodingParameters cp);
-// RSCode *rs_factory(ECTYPE ec_type, CodingParameters cp);
-// ErasureCode *clone_ec(ECTYPE ec_type, ErasureCode *ec);
-// void parse_args(ParametersInfo &paras, std::string config_file);
-// int stripe_wide_after_merge(ParametersInfo paras, int step_size);
 } // namespace ECProject

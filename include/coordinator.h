@@ -17,10 +17,16 @@ class Coordinator {
     void run();
     void request_set(std::string key, size_t value_size);
     void request_get(std::string key);
-    RepairResp request_repair(std::string key, unsigned int failed_ids);
+
+    /**
+     * @brief 发生单块故障时，请求修复
+     * @param stripe: 待修复条带
+     * @param failed_block_id: 故障块号
+     * @return: 修复响应结果
+     */
+    RepairResp request_repair(Stripe &stripe, unsigned int failed_block_id);
 
   private:
-    
     void init_cluster_info();
     Stripe &new_stripe(const std::string &key);
 
@@ -30,8 +36,25 @@ class Coordinator {
                    RepairResp &response);
     std::vector<std::vector<int>>
     get_matrix(const std::vector<std::vector<int>> &decode_matrix, int i);
+
+    /**
+     * @brief 获取矩阵decode_matrix的第i个子矩阵
+     * @return: 返回第i个子矩阵，如果第i个子矩阵为全0，返回{}
+     */
+    std::vector<std::vector<int>>
+    get_submatrix(const std::vector<std::vector<int>> &decode_matrix, int i);
+
     std::vector<std::vector<int>>
     generate_repair_plan(const std::vector<std::vector<int>> &matrix);
+
+    /**
+     * @brief 根据条带和故障节点，生成修复计划
+     * @param stripe: 待修复条带
+     * @param failed_node: 故障节点
+     * @return: 修复计划
+     */
+    RepairPlan generate_repair_plan(Stripe &stripe,
+                                    unsigned int failed_block_id);
 
     void decode_xor(const std::vector<char> &original_data,
                     const std::vector<std::vector<int>> &repair_plan,

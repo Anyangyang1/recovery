@@ -74,7 +74,23 @@ class Datanode {
                            const std::string &key, char *value,
                            size_t value_size);
 
+    /**
+     * @brief 执行修复操作
+     * @param stripe_id: 待修复的条带id
+     * @param helpers: 参与修复的helpers
+     * @param block_size: 数据块的大小
+     */
+    void do_repair(unsigned int stripe_id, std::vector<DecodeRequest> helpers,
+                   size_t block_size);
+
   private:
+    /**
+     * @brief 将数据写入磁盘中
+     * @param key: 写入的文件名
+     * @param value: 写入的数据
+     * @param value_size: 写入数据的大小
+     * @return: 数据写入是否成功
+     */
     bool store_data(const std::string &key, const char *value,
                     size_t value_size);
     bool access_data(const std::string &key, char *value_buf,
@@ -85,6 +101,9 @@ class Datanode {
     void local_decode(const std::vector<std::vector<int>> &matrix,
                       char *data_buf, char *decode_buf, size_t packet_size);
 
+    GF2BasisResult
+    compute_basis_gf2_indices(const std::vector<std::vector<int>> &matrix);
+
   private:
     std::unique_ptr<coro_rpc::coro_rpc_server> rpc_server_{nullptr};
     std::string ip_;
@@ -92,5 +111,16 @@ class Datanode {
     int port_for_transfer_data_;
     asio::io_context io_context_{};
     asio::ip::tcp::acceptor acceptor_;
+
+    // 辅助哈希（C++11 兼容）
+    struct VecIntHash {
+        size_t operator()(const std::vector<int> &v) const {
+            size_t h = v.size();
+            for (int x : v) {
+                h ^= static_cast<size_t>(x) + 0x9e3779b9 + (h << 6) + (h >> 2);
+            }
+            return h;
+        }
+    };
 };
 } // namespace ECProject

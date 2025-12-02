@@ -5,7 +5,6 @@
 #include <vector>
 namespace ECProject {
 
-
 void Coordinator::init_cluster_info() {
     tinyxml2::XMLDocument xml;
     if (xml.LoadFile(xml_path_.c_str()) != tinyxml2::XML_SUCCESS) {
@@ -151,76 +150,90 @@ void Coordinator::encode_and_store_object(Stripe stripe) {
         std::cerr << e.what() << '\n';
     }
 }
-RepairResp Coordinator::request_repair(std::string key,
-                                       unsigned int failed_id) {
+RepairResp Coordinator::request_repair(Stripe &stripe,
+                                       unsigned int failed_block_id) {
     RepairResp response;
-    do_repair(key, failed_id, response);
+    RepairPlan repair_plan = generate_repair_plan(stripe, failed_block_id);
+    Node new_node = repair_plan.selected_new_node;
+    std::string node_ip_port =
+        new_node.node_ip + ":" + std::to_string(new_node.node_port);
+    async_simple::coro::syncAwait(
+        datanodes_[node_ip_port]->call<&Datanode::do_repair>(
+            repair_plan.stripe_id, repair_plan.helpers, ec_schema_.block_size));
     return response;
 }
-void Coordinator::do_repair(std::string key, unsigned int failed_id,
-                            RepairResp &response) {
+
+RepairPlan Coordinator::generate_repair_plan(Stripe &stripe,
+                                             unsigned int failed_block_id) {
+    unsigned int stripe_id = stripe.stripe_id;
     std::vector<std::vector<int>> &decode_matrix =
-        opt_decode_matrix_with_all_failed_mode_[failed_id];
-    ErasureCode *ec = ec_schema_.ec;
-    size_t block_size = ec_schema_.block_size;
-    size_t packet_size = ec_schema_.packet_size;
-    const int k = ec->k, m = ec->m, w = ec->w;
-    const int blocks_num_per_stripe = k + m;
-    std::unordered_map<unsigned int, std::vector<char>> original_datas;
-    std::mutex original_lock;
-    Stripe stripe = stripe_table_[key];
-    std::vector<unsigned int> blocks2nodes = stripe.blocks2nodes;
-
-    auto get_from_node = [this, &original_datas, &original_lock, packet_size,
-                          stripe, key,
-                          decode_matrix](unsigned int block_id) mutable {
-        Node node = node_table_[stripe.blocks2nodes[block_id]];
-        std::vector<std::vector<int>> matrix =
-            get_matrix(decode_matrix, block_id);
-        if (matrix.size() > 0) {
-            std::vector<char> tmp_val(matrix.size() * packet_size);
-            bool res = read_from_datanode_with_matrix(
-                node.node_ip, node.node_port,
-                key + "block_" + std::to_string(block_id), tmp_val.data(),
-                tmp_val.size(), matrix);
-            if (!res) {
-                pthread_exit(NULL);
+        opt_decode_matrix_with_all_failed_mode_[failed_block_id];
+    std::vector<unsigned int> node_ids = stripe.block2nodes;
+    RepairPlan repair_plan;
+    for (size_t block_id = 0; block_id < node_ids.size(); block_id++) {
+        if (block_id != failed_block_id) {
+            std::vector<std::vector<int>> local_decode_matrix =
+                get_submatrix(decode_matrix, block_id);
+            if (local_decode_matrix.size() > 0) {
+                unsigned int node_id = node_ids[block_id];
+                Node helper_node = node_table_[node_id];
+                DecodeRequest helper =
+                    DecodeRequest(helper_node.node_ip, helper_node.node_port,
+                                  local_decode_matrix);
+                repair_plan.helpers.push_back(helper);
             }
-            original_lock.lock();
-            original_datas[block_id] = tmp_val;
-            original_lock.unlock();
         }
-    };
+    }
+    repair_plan.stripe_id = stripe_id;
+    unsigned int new_node_id = select_node(node_ids);
+    repair_plan.selected_new_node = node_table_[new_node_id];
+    return repair_plan;
+};
+}
 
-    auto send_to_datanode = [this, block_size](unsigned int block_id,
-                                               char *data, std::string node_ip,
-                                               int node_port, std::string key) {
-        std::string block_id_str = std::to_string(block_id);
-        write_to_datanode(node_ip, node_port,
-                          key + "block_" + std::to_string(block_id), data,
-                          block_size);
-    };
+std::vector<std::vector<int>>
+Coordinator::get_submatrix(const std::vector<std::vector<int>> &decode_matrix,
+                           int i) {
+    if (decode_matrix.empty())
+        return {};
 
-    std::vector<std::thread> readers;
-    for (int i = 0; i < blocks_num_per_stripe; i++) {
-        readers.push_back(std::thread(get_from_node, i));
+    size_t w = decode_matrix.size();
+    if (w == 0)
+        return {};
+
+    // 检查列对齐
+    size_t total_cols = decode_matrix[0].size();
+    if (total_cols % w != 0 || i < 0)
+        return {};
+
+    size_t block_idx = static_cast<size_t>(i);
+    size_t blocks = total_cols / w;
+    if (block_idx >= blocks)
+        return {};
+
+    // 计算第 i 块的列范围
+    size_t start_col = block_idx * w;
+
+    // 先检查是否全零（提前退出优化）
+    bool all_zero = true;
+    for (size_t r = 0; r < w && all_zero; ++r) {
+        for (size_t c = 0; c < w && all_zero; ++c) {
+            if (decode_matrix[r][start_col + c] != 0) {
+                all_zero = false;
+            }
+        }
     }
 
-    for (int i = 0; i < blocks_num_per_stripe; i++) {
-        readers[i].join();
+    if (all_zero) {
+        return {}; // 返回空矩阵
     }
 
-    std::vector<char> decode_data(w * packet_size);
-    std::fill_n(decode_data.data(), packet_size * w, 0);
-    decode(original_datas, decode_matrix, decode_data);
-
-    unsigned int candinate_node_id = select_node(blocks2nodes);
-
-    auto writer = std::thread(send_to_datanode, failed_id, decode_data.data(),
-                              node_table_[candinate_node_id].node_ip,
-                              node_table_[candinate_node_id].node_port, key);
-    writer.join();
-    stripe.blocks2nodes[failed_id] = candinate_node_id;
+    // 否则拷贝子矩阵
+    std::vector<std::vector<int>> result(w, std::vector<int>(w));
+    for (size_t r = 0; r < w; ++r) {
+        std::copy_n(decode_matrix[r].begin() + start_col, w, result[r].begin());
+    }
+    return result;
 }
 
 std::vector<std::vector<int>>
@@ -304,54 +317,6 @@ Coordinator::generate_repair_plan(const std::vector<std::vector<int>> &matrix) {
         }
     }
     return repair_plan;
-}
-
-void Coordinator::decode_xor(const std::vector<char> &original_data,
-                             const std::vector<std::vector<int>> &matrix,
-                             std::vector<char> &decode_data,
-                             size_t packet_size) {
-    auto repair_plan = generate_repair_plan(matrix);
-    size_t w = repair_plan.size();
-    assert(decode_data.size() == w * packet_size);
-
-    // 每份 packet_size 字节
-    for (size_t i = 0; i < w; ++i) {
-        const auto &deps = repair_plan[i];
-        if (deps.empty())
-            continue; // 不处理：保持 decode_data[i]
-                      // 原值（通常已含原始数据或待修复）
-
-        char *out = decode_data.data() + i * packet_size;
-        // // 初始化为 0，后续异或累积
-        // std::fill_n(out, packet_size, 0);
-
-        for (int idx : deps) {
-            assert(idx >= 0 &&
-                   static_cast<size_t>(idx) * packet_size + packet_size <=
-                       original_data.size());
-            const char *src = original_data.data() + idx * packet_size;
-            for (size_t j = 0; j < packet_size; ++j) {
-                out[j] ^= src[j];
-            }
-        }
-    }
-}
-
-void Coordinator::decode(
-    const std::unordered_map<unsigned int, std::vector<char>> &original_datas,
-    const std::vector<std::vector<int>> &decode_matrix,
-    std::vector<char> &decode_data) {
-    ErasureCode *ec = ec_schema_.ec;
-    size_t packet_size = ec_schema_.packet_size;
-    const int k = ec->k, m = ec->m;
-    const int blocks_num_per_stripe = k + m;
-    for (int i = 0; i < blocks_num_per_stripe; i++) {
-        auto matrix = get_matrix(decode_matrix, i);
-        auto original_data = original_datas.find(i);
-        if (original_data != original_datas.end()) {
-            decode_xor(original_data->second, matrix, decode_data, packet_size);
-        }
-    }
 }
 
 unsigned int
