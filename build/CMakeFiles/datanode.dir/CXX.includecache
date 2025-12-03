@@ -12930,7 +12930,9 @@ magic_names.hpp
 ylt/struct_pack/md5_constexpr.hpp
 ../yalantinglibs/include/ylt/util/ylt/struct_pack/md5_constexpr.hpp
 
-/home/anyangyang/study/recovery/src/datanode/datanode.cpp
+/home/anyangyang/study/recovery/src/datanode/run_datanode.cpp
+iostream
+-
 datanode.h
 /home/anyangyang/study/recovery/src/datanode/datanode.h
 
