@@ -34,29 +34,76 @@ void Coordinator::init_cluster_info() {
     num_of_nodes_ = node_id;
 }
 
-Stripe &Coordinator::new_stripe(const string &key) {
+Stripe &Coordinator::new_stripe() {
     Stripe temp;
     temp.stripe_id = cur_stripe_id_++;
-    temp.key = key;
     temp.blocks2nodes = generateUniqueRandom(
         num_of_nodes_, ec_schema_.ec->k + ec_schema_.ec->m);
-    stripe_table_[key] = temp;
+    stripe_table_[temp.stripe_id] = temp;
 
     for (size_t i = 0; i < temp.blocks2nodes.size(); i++) {
         int node_id = temp.blocks2nodes[i];
-        node_table_[node_id].nodes2blocks[key] = i;
+        node_table_[node_id].nodes2blocks[temp.stripe_id] = i;
     }
 
-    return stripe_table_[key];
+    return stripe_table_[temp.stripe_id];
 }
 
-void Coordinator::request_set(string key, size_t value_size) {
-    if (commited_object_table_.contains(key)) {
-        my_assert(false);
-    }
+unsigned int Coordinator::request_set(size_t value_size) {
     my_assert(value_size == ec_schema_.block_size * ec_schema_.ec->k);
-    Stripe stripe = new_stripe(key);
+    Stripe stripe = new_stripe();
     encode_and_store_object(stripe);
+    return stripe.stripe_id;
+}
+
+bool Coordinator::write_to_datanode(const string &ip, int port,
+                                    const string &key, char *value,
+                                    size_t value_size) {
+    try {
+        std::string node_ip_port = ip + ":" + std::to_string(port);
+        async_simple::coro::syncAwait(
+            datanodes_[node_ip_port]->call<&Datanode::handle_set>(key,
+                                                                  value_size));
+
+        asio::error_code error;
+        asio::ip::tcp::socket socket_(io_context_);
+        asio::ip::tcp::resolver resolver(io_context_);
+        asio::error_code con_error;
+        asio::connect(
+            socket_,
+            resolver.resolve({ip, std::to_string(port + SOCKET_PORT_OFFSET)}),
+            con_error);
+        if (!con_error) {
+#ifdef MY_DEBYG
+            std::cout << "Connect to " << ip << ":" << port + SOCKET_PORT_OFFSET
+                      << " success!" << std::endl;
+#endif
+        }
+
+        asio::write(socket_, asio::buffer(value, value_size));
+
+        std::vector<unsigned char> finish_buf(sizeof(int));
+        asio::read(socket_, asio::buffer(finish_buf, finish_buf.size()));
+        int finish = bytes_to_int(finish_buf);
+
+        asio::error_code ignore_ec;
+        socket_.shutdown(asio::ip::tcp::socket::shutdown_both, ignore_ec);
+        socket_.close(ignore_ec);
+
+        // if (!finish) {
+        //     std::cout << "[DataNode" << self_cluster_id_ << "][SET]"
+        //               << " Set errors in datanodes!" << std::endl;
+        // } else {
+#ifdef MY_DEBUG
+        std::cout << "[DataNode" << self_cluster_id_ << "][SET]"
+                  << " Set " << key << " success! With length of " << value_size
+                  << std::endl;
+#endif
+        // }
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << '\n';
+    }
+    return true;
 }
 
 void Coordinator::encode_and_store_object(Stripe stripe) {
@@ -67,21 +114,7 @@ void Coordinator::encode_and_store_object(Stripe stripe) {
         asio::ip::tcp::socket socket_(io_context_);
         acceptor_.accept(socket_);
         size_t value_buf_size = k * ec_schema_.block_size;
-        std::vector<char> key_buf((int)stripe.key.size());
         std::vector<char> value_buf(value_buf_size, 0);
-        std::vector<unsigned char> size_buf(sizeof(int));
-
-        asio::read(socket_, asio::buffer(size_buf.data(), size_buf.size()));
-        int key_size = bytes_to_int(size_buf);
-        my_assert(key_size == (int)stripe.key.size());
-
-        asio::read(socket_, asio::buffer(size_buf.data(), size_buf.size()));
-        int value_size = bytes_to_int(size_buf);
-        my_assert(value_size == value_buf_size);
-
-        size_t read_len_of_key =
-            asio::read(socket_, asio::buffer(key_buf.data(), key_buf.size()));
-        my_assert(read_len_of_key == key_buf.size());
 
         size_t read_len_of_value =
             asio::read(socket_, asio::buffer(value_buf.data(), value_buf_size));
@@ -116,7 +149,7 @@ void Coordinator::encode_and_store_object(Stripe stripe) {
         for (int j = 0; j < num_of_blocks_each_stripe; j++) {
             unsigned int node_id = stripe.blocks2nodes[j];
             auto node = node_table_[node_id];
-            std::string key = stripe.key + "block_" + std::to_string(j);
+            std::string key = "stripe" + std::to_string(stripe.stripe_id);
             writers.push_back(std::thread(
                 [this, j, k, node, data, coding, cur_block_size, key]() {
                     if (j < k) {
@@ -159,7 +192,8 @@ RepairResp Coordinator::request_repair(Stripe &stripe,
         new_node.node_ip + ":" + std::to_string(new_node.node_port);
     async_simple::coro::syncAwait(
         datanodes_[node_ip_port]->call<&Datanode::do_repair>(
-            repair_plan.stripe_id, repair_plan.helpers, ec_schema_.block_size));
+            repair_plan.stripe_id, repair_plan.helpers, ec_schema_.block_size,
+            ec_schema_.ec->w));
     return response;
 }
 
@@ -168,7 +202,7 @@ RepairPlan Coordinator::generate_repair_plan(Stripe &stripe,
     unsigned int stripe_id = stripe.stripe_id;
     std::vector<std::vector<int>> &decode_matrix =
         opt_decode_matrix_with_all_failed_mode_[failed_block_id];
-    std::vector<unsigned int> node_ids = stripe.block2nodes;
+    std::vector<unsigned int> node_ids = stripe.blocks2nodes;
     RepairPlan repair_plan;
     for (size_t block_id = 0; block_id < node_ids.size(); block_id++) {
         if (block_id != failed_block_id) {
@@ -177,9 +211,10 @@ RepairPlan Coordinator::generate_repair_plan(Stripe &stripe,
             if (local_decode_matrix.size() > 0) {
                 unsigned int node_id = node_ids[block_id];
                 Node helper_node = node_table_[node_id];
-                DecodeRequest helper =
-                    DecodeRequest(helper_node.node_ip, helper_node.node_port,
-                                  local_decode_matrix);
+                DecodeRequest helper;
+                helper.ip = helper_node.node_ip;
+                helper.port = helper_node.node_port;
+                helper.matrix = local_decode_matrix;
                 repair_plan.helpers.push_back(helper);
             }
         }
@@ -188,7 +223,6 @@ RepairPlan Coordinator::generate_repair_plan(Stripe &stripe,
     unsigned int new_node_id = select_node(node_ids);
     repair_plan.selected_new_node = node_table_[new_node_id];
     return repair_plan;
-};
 }
 
 std::vector<std::vector<int>>
@@ -234,89 +268,6 @@ Coordinator::get_submatrix(const std::vector<std::vector<int>> &decode_matrix,
         std::copy_n(decode_matrix[r].begin() + start_col, w, result[r].begin());
     }
     return result;
-}
-
-std::vector<std::vector<int>>
-Coordinator::get_matrix(const std::vector<std::vector<int>> &decode_matrix,
-                        int i) {
-    int w = decode_matrix.size(); // matrix 是 w × [(k+m)*w]
-    int total_cols = decode_matrix[0].size();
-    int blocks = total_cols / w; // 即 (k + m)
-    my_assert(i >= 0 && i < blocks);
-
-    std::vector<std::vector<int>> result;
-    int start_col = i * w;
-    for (int r = 0; r < w; ++r) {
-        // 检查第 r 行、从 start_col 开始的 w 个元素是否全 0
-        bool all_zero = true;
-        for (int c = 0; c < w; ++c) {
-            if (decode_matrix[r][start_col + c] != 0) {
-                all_zero = false;
-                break;
-            }
-        }
-        if (!all_zero) {
-            result.push_back(
-                std::vector<int>(decode_matrix[r].begin() + start_col,
-                                 decode_matrix[r].begin() + start_col + w));
-        }
-    }
-    return result;
-}
-
-std::vector<std::vector<int>>
-Coordinator::generate_repair_plan(const std::vector<std::vector<int>> &matrix) {
-    int w = matrix.size();
-    if (w == 0)
-        return {};
-
-    std::vector<std::vector<int>> repair_plan(w);
-    std::vector<std::bitset<64>>
-        basis; // 假设 w <= 64；若 w 更大，改用 vector<bool> 或动态 bitset
-    std::vector<int> basis_idx;
-
-    for (int i = 0; i < w; ++i) {
-        // 跳过全零行
-        bool all_zero = true;
-        for (int j = 0; j < w; ++j) {
-            if (matrix[i][j] != 0) {
-                all_zero = false;
-                break;
-            }
-        }
-        if (all_zero)
-            continue;
-
-        // 构造当前行的 bitset
-        std::bitset<64> row;
-        for (int j = 0; j < w; ++j) {
-            if (matrix[i][j])
-                row.set(j);
-        }
-
-        // 高斯消元：尝试用已有基表示该行
-        std::bitset<64> temp = row;
-        std::vector<int> combo;
-        for (size_t b = 0; b < basis.size(); ++b) {
-            // 找最高位 1 对齐
-            size_t lead = basis[b]._Find_first();
-            if (temp.test(lead)) {
-                temp ^= basis[b];
-                combo.push_back(basis_idx[b]); // 记录参与异或的原始行号
-            }
-        }
-
-        if (temp.none()) {
-            // 可由前面行异或得到 → repair_plan[i] = combo（所有参与行）
-            repair_plan[i] = combo;
-        } else {
-            // 线性无关 → 加入基；repair_plan[i] 保持为空（按题意）
-            basis.push_back(temp);
-            basis_idx.push_back(i);
-            // repair_plan[i] 留空（vector 默认为空）
-        }
-    }
-    return repair_plan;
 }
 
 unsigned int

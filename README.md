@@ -25,7 +25,7 @@ asio-1.30.2/               ← 注意：目录名是 asio-1.30.2（不是 asio-1-30-2！）
 
 + 编写makefile文件，进行编译
 
-## C++17
+## C++20
 
 ```bash
 # 查看当前版本
@@ -33,16 +33,16 @@ g++ --version
 
 # 安装新版本
 sudo yum install centos-release-scl
-sudo yum install devtoolset-9-gcc devtoolset-9-gcc-c++
+sudo yum install devtoolset-11-gcc devtoolset-11-gcc-c++
 
 
 ## 2选1，临时启用或永久生效
-scl enable devtoolset-9 bash  # 临时启用 GCC 9
+scl enable devtoolset-11 bash  # 临时启用 GCC 11
 # 或加到 ~/.bashrc：
-# echo "source /opt/rh/devtoolset-9/enable" >> ~/.bashrc
+# echo "source /opt/rh/devtoolset-11/enable" >> ~/.bashrc
 
 
-echo "source /opt/rh/devtoolset-9/enable" >> ~/.bashrc
+echo "source /opt/rh/devtoolset-11/enable" >> ~/.bashrc
 source ~/.bashrc   # 立即生效当前终端，永久生效
 ```
 

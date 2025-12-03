@@ -57,9 +57,10 @@ struct Node {
 };
 
 struct DecodeRequest {
-    DecodeRequest(std::string ip, int port,
-                  std::vector<std::vector<int>> matrix)
-        : ip(ip), port(port), matrix(matrix) {}
+    // DecodeRequest() {}
+    // DecodeRequest(std::string ip, int port,
+    //               std::vector<std::vector<int>> matrix)
+    //     : ip(ip), port(port), matrix(matrix) {}
     std::string ip;
     int port;
     std::vector<std::vector<int>> matrix; // ½âÂë¾ØÕó£¨Èç¾ÀÉ¾Âë¾ØÕó£©

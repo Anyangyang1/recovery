@@ -15,7 +15,7 @@ class Coordinator {
     Coordinator(std::string ip, int port, std::string config_path);
     ~Coordinator();
     void run();
-    void request_set(std::string key, size_t value_size);
+    unsigned int request_set(size_t value_size);
     void request_get(std::string key);
 
     /**
@@ -26,16 +26,24 @@ class Coordinator {
      */
     RepairResp request_repair(Stripe &stripe, unsigned int failed_block_id);
 
+    /**
+     * @brief 将数据写入指定节点
+     * @param ip: 写入节点的ip
+     * @param port: 写入节点的port
+     * @param key: 写入的文件名
+     * @param value: 写入的数据
+     * @param value_size: 写入数据的大小
+     * @return: 数据写入是否成功
+     */
+    bool write_to_datanode(const std::string &ip, int port,
+                           const std::string &key, char *value,
+                           size_t value_size);
+
   private:
     void init_cluster_info();
-    Stripe &new_stripe(const std::string &key);
+    Stripe &new_stripe();
 
     void encode_and_store_object(Stripe stripe);
-
-    void do_repair(std::string key, unsigned int failed_id,
-                   RepairResp &response);
-    std::vector<std::vector<int>>
-    get_matrix(const std::vector<std::vector<int>> &decode_matrix, int i);
 
     /**
      * @brief 获取矩阵decode_matrix的第i个子矩阵
@@ -43,9 +51,6 @@ class Coordinator {
      */
     std::vector<std::vector<int>>
     get_submatrix(const std::vector<std::vector<int>> &decode_matrix, int i);
-
-    std::vector<std::vector<int>>
-    generate_repair_plan(const std::vector<std::vector<int>> &matrix);
 
     /**
      * @brief 根据条带和故障节点，生成修复计划
@@ -55,15 +60,6 @@ class Coordinator {
      */
     RepairPlan generate_repair_plan(Stripe &stripe,
                                     unsigned int failed_block_id);
-
-    void decode_xor(const std::vector<char> &original_data,
-                    const std::vector<std::vector<int>> &repair_plan,
-                    std::vector<char> &decode_data, size_t packet_size);
-
-    void decode(const std::unordered_map<unsigned int, std::vector<char>>
-                    &original_datas,
-                const std::vector<std::vector<int>> &decode_matrix,
-                std::vector<char> &decode_data);
 
     unsigned int select_node(const std::vector<unsigned int> &block2node);
 
@@ -75,7 +71,7 @@ class Coordinator {
     int port_;
     int port_for_transfer_data_;
     std::unordered_map<unsigned int, Node> node_table_;
-    std::unordered_map<std::string, Stripe> stripe_table_;
+    std::unordered_map<unsigned int, Stripe> stripe_table_;
     // std::string networkcore_;
     std::string config_path_;
     asio::io_context io_context_{};

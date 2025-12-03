@@ -66,19 +66,19 @@ void Datanode::handle_set(const std::string &key, size_t value_size) {
     };
 }
 
-std::shared_ptr<coro_rpc::coro_rpc_client> get_rpc_client(const std::string &ip,
-                                                          int port) {
-    std::string key = ip + ":" + std::to_string(port);
+// std::shared_ptr<coro_rpc::coro_rpc_client> get_rpc_client(const std::string &ip,
+//                                                           int port) {
+//     std::string key = ip + ":" + std::to_string(port);
 
-    auto it = datanodes_.find(key);
-    if (it == datanodes_.end()) {
-        auto client = std::make_shared<coro_rpc::coro_rpc_client>();
-        async_simple::coro::syncAwait(client->connect(ip, port));
-        // 线程不安全时用以下方式插入：
-        it = datanodes_.emplace(std::move(key), client).first;
-    }
-    return it->second;
-}
+//     auto it = datanodes_.find(key);
+//     if (it == datanodes_.end()) {
+//         auto client = std::make_shared<coro_rpc::coro_rpc_client>();
+//         async_simple::coro::syncAwait(client->connect(ip, port));
+//         // 线程不安全时用以下方式插入：
+//         it = datanodes_.emplace(std::move(key), client).first;
+//     }
+//     return it->second;
+// }
 // 其中 datanodes_ 类型应为：
 // std::unordered_map<std::string, std::shared_ptr<coro_rpc::coro_rpc_client>>
 // datanodes_;
@@ -267,62 +267,18 @@ void Datanode::local_decode(const std::vector<std::vector<int>> &matrix,
     }
 }
 
-bool Datanode::write_to_datanode(const string &ip, int port, const string &key,
-                                 char *value, size_t value_size) {
-    try {
-        std::string node_ip_port = ip + ":" + std::to_string(port);
-        async_simple::coro::syncAwait(
-            datanodes_[node_ip_port]->call<&Datanode::handle_set>(key,
-                                                                  value_size));
 
-        asio::error_code error;
-        asio::ip::tcp::socket socket_(io_context_);
-        asio::ip::tcp::resolver resolver(io_context_);
-        asio::error_code con_error;
-        asio::connect(
-            socket_,
-            resolver.resolve({ip, std::to_string(port + SOCKET_PORT_OFFSET)}),
-            con_error);
-        if (!con_error) {
-#ifdef MY_DEBYG
-            std::cout << "Connect to " << ip << ":" << port + SOCKET_PORT_OFFSET
-                      << " success!" << std::endl;
-#endif
-        }
-
-        asio::write(socket_, asio::buffer(value, value_size));
-
-        std::vector<unsigned char> finish_buf(sizeof(int));
-        asio::read(socket_, asio::buffer(finish_buf, finish_buf.size()));
-        int finish = bytes_to_int(finish_buf);
-
-        asio::error_code ignore_ec;
-        socket_.shutdown(asio::ip::tcp::socket::shutdown_both, ignore_ec);
-        socket_.close(ignore_ec);
-
-        // if (!finish) {
-        //     std::cout << "[DataNode" << self_cluster_id_ << "][SET]"
-        //               << " Set errors in datanodes!" << std::endl;
-        // } else {
-#ifdef MY_DEBUG
-        std::cout << "[DataNode" << self_cluster_id_ << "][SET]"
-                  << " Set " << key << " success! With length of " << value_size
-                  << std::endl;
-#endif
-        // }
-    } catch (const std::exception &e) {
-        std::cerr << e.what() << '\n';
-    }
-    return true;
-}
 
 bool Datanode::read_from_datanode_with_local_decode(
     const string &ip, int port, const string &key, char *value,
     size_t value_size, const vector<vector<int>> &matrix) {
     bool res = true;
     try {
+        std::unique_ptr<coro_rpc::coro_rpc_client> client = std::make_unique<coro_rpc::coro_rpc_client>();
         async_simple::coro::syncAwait(
-            get_rpc_client(ip, port)->call<&Datanode::handle_get_local_decode>(
+            client->connect(ip, std::to_string(port)));
+        async_simple::coro::syncAwait(
+            client->call<&Datanode::handle_get_local_decode>(
                 key, value_size, matrix));
 #ifdef MY_DEBYG
         std::cout << "[DataNode" << self_cluster_id_ << "][GET]"
@@ -356,9 +312,11 @@ bool Datanode::read_from_datanode(const string &ip, int port, const string &key,
                                   char *value, size_t value_size) {
     bool res = true;
     try {
-        std::string node_ip_port = ip + ":" + std::to_string(port);
+        std::unique_ptr<coro_rpc::coro_rpc_client> client = std::make_unique<coro_rpc::coro_rpc_client>();
         async_simple::coro::syncAwait(
-            datanodes_[node_ip_port]->call<&Datanode::handle_get_original>(
+            client->connect(ip, std::to_string(port)));
+        async_simple::coro::syncAwait(
+            client->call<&Datanode::handle_get_original>(
                 key, value_size));
 #ifdef MY_DEBYG
         std::cout << "[DataNode" << self_cluster_id_ << "][GET]"
@@ -391,122 +349,10 @@ bool Datanode::read_from_datanode(const string &ip, int port, const string &key,
     return res;
 }
 
-void Datanode::do_repair(std::string key, unsigned int failed_id,
-                         RepairResp &response) {
-    std::vector<std::vector<int>> &decode_matrix =
-        opt_decode_matrix_with_all_failed_mode_[failed_id];
-    ErasureCode *ec = ec_schema_.ec;
-    size_t block_size = ec_schema_.block_size;
-    size_t packet_size = ec_schema_.packet_size;
-    const int k = ec->k, m = ec->m, w = ec->w;
-    const int blocks_num_per_stripe = k + m;
-    std::unordered_map<unsigned int, std::vector<char>> original_datas;
-    std::mutex original_lock;
-    Stripe stripe = stripe_table_[key];
-    std::vector<unsigned int> blocks2nodes = stripe.blocks2nodes;
-
-    auto get_from_node = [this, &original_datas, &original_lock, packet_size,
-                          stripe, key,
-                          decode_matrix](unsigned int block_id) mutable {
-        Node node = node_table_[stripe.blocks2nodes[block_id]];
-        std::vector<std::vector<int>> matrix =
-            get_matrix(decode_matrix, block_id);
-        if (matrix.size() > 0) {
-            std::vector<char> tmp_val(matrix.size() * packet_size);
-            bool res = read_from_datanode_with_matrix(
-                node.node_ip, node.node_port,
-                key + "block_" + std::to_string(block_id), tmp_val.data(),
-                tmp_val.size(), matrix);
-            if (!res) {
-                pthread_exit(NULL);
-            }
-            original_lock.lock();
-            original_datas[block_id] = tmp_val;
-            original_lock.unlock();
-        }
-    };
-
-    auto send_to_datanode = [this, block_size](unsigned int block_id,
-                                               char *data, std::string node_ip,
-                                               int node_port, std::string key) {
-        std::string block_id_str = std::to_string(block_id);
-        write_to_datanode(node_ip, node_port,
-                          key + "block_" + std::to_string(block_id), data,
-                          block_size);
-    };
-
-    std::vector<std::thread> readers;
-    for (int i = 0; i < blocks_num_per_stripe; i++) {
-        readers.push_back(std::thread(get_from_node, i));
-    }
-
-    for (int i = 0; i < blocks_num_per_stripe; i++) {
-        readers[i].join();
-    }
-
-    std::vector<char> decode_data(w * packet_size);
-    std::fill_n(decode_data.data(), packet_size * w, 0);
-    decode(original_datas, decode_matrix, decode_data);
-
-    unsigned int candinate_node_id = select_node(blocks2nodes);
-
-    auto writer = std::thread(send_to_datanode, failed_id, decode_data.data(),
-                              node_table_[candinate_node_id].node_ip,
-                              node_table_[candinate_node_id].node_port, key);
-    writer.join();
-    stripe.blocks2nodes[failed_id] = candinate_node_id;
-}
-
-void Datanode::decode_xor(const std::vector<char> &original_data,
-                          const std::vector<std::vector<int>> &matrix,
-                          std::vector<char> &decode_data, size_t packet_size) {
-    auto repair_plan = generate_repair_plan(matrix);
-    size_t w = repair_plan.size();
-    assert(decode_data.size() == w * packet_size);
-
-    // 每份 packet_size 字节
-    for (size_t i = 0; i < w; ++i) {
-        const auto &deps = repair_plan[i];
-        if (deps.empty())
-            continue; // 不处理：保持 decode_data[i]
-                      // 原值（通常已含原始数据或待修复）
-
-        char *out = decode_data.data() + i * packet_size;
-        // // 初始化为 0，后续异或累积
-        // std::fill_n(out, packet_size, 0);
-
-        for (int idx : deps) {
-            assert(idx >= 0 &&
-                   static_cast<size_t>(idx) * packet_size + packet_size <=
-                       original_data.size());
-            const char *src = original_data.data() + idx * packet_size;
-            for (size_t j = 0; j < packet_size; ++j) {
-                out[j] ^= src[j];
-            }
-        }
-    }
-}
-
-void Datanode::decode(
-    const std::unordered_map<unsigned int, std::vector<char>> &original_datas,
-    const std::vector<std::vector<int>> &decode_matrix,
-    std::vector<char> &decode_data) {
-    ErasureCode *ec = ec_schema_.ec;
-    size_t packet_size = ec_schema_.packet_size;
-    const int k = ec->k, m = ec->m;
-    const int blocks_num_per_stripe = k + m;
-    for (int i = 0; i < blocks_num_per_stripe; i++) {
-        auto matrix = get_matrix(decode_matrix, i);
-        auto original_data = original_datas.find(i);
-        if (original_data != original_datas.end()) {
-            decode_xor(original_data->second, matrix, decode_data, packet_size);
-        }
-    }
-}
 
 void Datanode::do_repair(unsigned int stripe_id,
                          std::vector<DecodeRequest> helpers, size_t block_size,
-                         unsigned int w) {
+                         int w) {
     assert(block_size % w == 0);
     std::string file_name = "stripe" + std::to_string(stripe_id);
     size_t packet_size = block_size / w;
@@ -533,7 +379,7 @@ void Datanode::do_repair(unsigned int stripe_id,
     std::vector<std::thread> readers;
     std::vector<std::exception_ptr> exceptions(helpers.size());
 
-    for (int i = 0; i < helpers.size(); ++i) {
+    for (size_t i = 0; i < helpers.size(); ++i) {
         readers.emplace_back([&, i]() {
             try {
                 get_from_node(i, helpers[i]);

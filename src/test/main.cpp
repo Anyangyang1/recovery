@@ -11,6 +11,67 @@
 using namespace std;
 using namespace ECProject;
 
+void handle_get(const std::string &key, size_t value_size)
+
+int main(int argc, char *argv[]) {
+    uint16_t port = 8888;
+
+    coro_rpc::coro_rpc_server server(/*thread_num=*/4, port);
+
+    // 注册 RPC 函数（必须取地址 &func）
+    server.register_handler<&add>();
+    // server.register_handler<&greet>();
+
+    std::cout << "Server listening on 0.0.0.0:" << port << "\n";
+
+    // 启动并阻塞
+    auto ec = server.start();
+    if (ec) {
+        std::cerr << "Server1 start failed: " << ec.message() << "\n";
+        return;
+    }
+    return 0;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 int add(int a, int b);
 void testServer() {
     // 默认端口 8888，支持 ./server 9999 指定端口
@@ -60,10 +121,6 @@ void testClient() { async_simple::coro::syncAwait(run_client()); }
 
 
 void reducePacketsTest();
-int main(int argc, char *argv[]) {
-    RDMA_LOG_IF(4, true) << "hello" << endl;
-    return 0;
-}
 
 void reducePacketsTest() {
     vector<int> KK{4,6,8};

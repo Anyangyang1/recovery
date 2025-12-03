@@ -27,12 +27,12 @@ class Datanode {
     Datanode(std::string ip, int port);
     ~Datanode();
     void run();
-    // void handle_get_local_decode(const std::string &key, size_t value_size,
-    //                              const vector<vector<int>> &matrix);
+    void handle_get_local_decode(const std::string &key, size_t value_size,
+                                 const vector<vector<int>> &matrix);
 
-    // void handle_get_original(const std::string &key, size_t value_size);
+    void handle_get_original(const std::string &key, size_t value_size);
 
-    // void handle_set(const std::string &key, size_t value_size);
+    void handle_set(const std::string &key, size_t value_size);
 
     /**
      * @brief 从指定节点读取进行局部解码后的数据
@@ -61,18 +61,7 @@ class Datanode {
                             const std::string &key, char *value,
                             size_t value_size);
 
-    /**
-     * @brief 将数据写入指定节点
-     * @param ip: 写入节点的ip
-     * @param port: 写入节点的port
-     * @param key: 写入的文件名
-     * @param value: 写入的数据
-     * @param value_size: 写入数据的大小
-     * @return: 数据写入是否成功
-     */
-    bool write_to_datanode(const std::string &ip, int port,
-                           const std::string &key, char *value,
-                           size_t value_size);
+    
 
     /**
      * @brief 执行修复操作
@@ -81,7 +70,7 @@ class Datanode {
      * @param block_size: 数据块的大小
      */
     void do_repair(unsigned int stripe_id, std::vector<DecodeRequest> helpers,
-                   size_t block_size);
+                   size_t block_size, int w);
 
   private:
     /**
@@ -101,8 +90,32 @@ class Datanode {
     void local_decode(const std::vector<std::vector<int>> &matrix,
                       char *data_buf, char *decode_buf, size_t packet_size);
 
+    /**
+     * @brief 根据维矩阵，计算基底向量，以及每一行可以由哪些基底向量表示
+     * @param matrix: w*w的维矩阵
+     * @return: {basis, reps}。其中basis表示基底向量，reps表示原来的矩阵可以由哪些基底向量线性表示
+     */
     GF2BasisResult
     compute_basis_gf2_indices(const std::vector<std::vector<int>> &matrix);
+
+    /**
+     * @brief 将original_datas中的所有数据执行异或操作并返回
+     * @param original_datas: 数据
+     * @return: 返回异或后的数据
+     */
+    std::vector<char>
+    decode_xor(const std::vector<std::vector<char>> &original_datas);
+
+    /**
+     * @brief 根据局部解码的数据，计算出解码需要的原始数据
+     * @param buf: 局部解码数据
+     * @param reps: 原始数据可由哪些局部解码数据计算得到
+     * @param original_data: 解码需要的原始数据
+     * @param packet_size: 包的大小
+     */
+    void compute_original_data(const char *buf,
+                               const std::vector<std::vector<int>> &reps,
+                               char *original_data, size_t packet_size);
 
   private:
     std::unique_ptr<coro_rpc::coro_rpc_server> rpc_server_{nullptr};
