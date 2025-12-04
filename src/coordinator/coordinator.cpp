@@ -5,6 +5,21 @@
 #include <vector>
 namespace ECProject {
 
+Coordinator::Coordinator(std::string ip, int port, std::string xml_path)
+    : ip_(ip), port_(port), xml_path_(xml_path) {
+    easylog::set_min_severity(easylog::Severity::ERROR);
+    rpc_server_ = std::make_unique<coro_rpc::coro_rpc_server>(4, port_);
+    rpc_server_->register_handler<&Coordinator::request_set>(this);
+    rpc_server_->register_handler<&Coordinator::request_get>(this);
+    rpc_server_->register_handler<&Coordinator::request_repair>(this);
+    
+    cur_stripe_id_ = 0;
+
+    init_cluster_info();
+}
+Coordinator::~Coordinator() { rpc_server_->stop(); }
+void Coordinator::run() { rpc_server_->start(); }
+
 void Coordinator::init_cluster_info() {
     tinyxml2::XMLDocument xml;
     if (xml.LoadFile(xml_path_.c_str()) != tinyxml2::XML_SUCCESS) {
@@ -56,56 +71,6 @@ unsigned int Coordinator::request_set(size_t value_size) {
     return stripe.stripe_id;
 }
 
-bool Coordinator::write_to_datanode(const string &ip, int port,
-                                    const string &key, char *value,
-                                    size_t value_size) {
-    try {
-        std::string node_ip_port = ip + ":" + std::to_string(port);
-        async_simple::coro::syncAwait(
-            datanodes_[node_ip_port]->call<&Datanode::handle_set>(key,
-                                                                  value_size));
-
-        asio::error_code error;
-        asio::ip::tcp::socket socket_(io_context_);
-        asio::ip::tcp::resolver resolver(io_context_);
-        asio::error_code con_error;
-        asio::connect(
-            socket_,
-            resolver.resolve({ip, std::to_string(port + SOCKET_PORT_OFFSET)}),
-            con_error);
-        if (!con_error) {
-#ifdef MY_DEBYG
-            std::cout << "Connect to " << ip << ":" << port + SOCKET_PORT_OFFSET
-                      << " success!" << std::endl;
-#endif
-        }
-
-        asio::write(socket_, asio::buffer(value, value_size));
-
-        std::vector<unsigned char> finish_buf(sizeof(int));
-        asio::read(socket_, asio::buffer(finish_buf, finish_buf.size()));
-        int finish = bytes_to_int(finish_buf);
-
-        asio::error_code ignore_ec;
-        socket_.shutdown(asio::ip::tcp::socket::shutdown_both, ignore_ec);
-        socket_.close(ignore_ec);
-
-        // if (!finish) {
-        //     std::cout << "[DataNode" << self_cluster_id_ << "][SET]"
-        //               << " Set errors in datanodes!" << std::endl;
-        // } else {
-#ifdef MY_DEBUG
-        std::cout << "[DataNode" << self_cluster_id_ << "][SET]"
-                  << " Set " << key << " success! With length of " << value_size
-                  << std::endl;
-#endif
-        // }
-    } catch (const std::exception &e) {
-        std::cerr << e.what() << '\n';
-    }
-    return true;
-}
-
 void Coordinator::encode_and_store_object(Stripe stripe) {
     auto encode_and_store = [this, stripe]() mutable {
         int k = ec_schema_.ec->k;
@@ -153,11 +118,11 @@ void Coordinator::encode_and_store_object(Stripe stripe) {
             writers.push_back(std::thread(
                 [this, j, k, node, data, coding, cur_block_size, key]() {
                     if (j < k) {
-                        write_to_datanode(node.node_ip, node.node_port, key,
-                                          data[j], cur_block_size);
+                        // write_to_datanode(node.node_ip, node.node_port, key,
+                        //                   data[j], cur_block_size);
                     } else {
-                        write_to_datanode(node.node_ip, node.node_port, key,
-                                          coding[j - k], cur_block_size);
+                        // write_to_datanode(node.node_ip, node.node_port, key,
+                        //                   coding[j - k], cur_block_size);
                     }
                 }));
         }

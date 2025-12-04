@@ -9,12 +9,10 @@ Datanode::Datanode(std::string ip, int port)
     easylog::set_min_severity(easylog::Severity::ERROR);
     // port is for rpc
     rpc_server_ = std::make_unique<coro_rpc::coro_rpc_server>(1, port_);
-    // rpc_server_->register_handler<&Datanode::checkalive>(this);
     rpc_server_->register_handler<&Datanode::handle_set>(this);
-    rpc_server_->register_handler<&Datanode::handle_get_original>(this);
-    rpc_server_->register_handler<&Datanode::handle_get_local_decode>(this);
-    // rpc_server_->register_handler<&Datanode::handle_delete>(this);
-    // rpc_server_->register_handler<&Datanode::handle_transfer>(this);
+    rpc_server_->register_handler<&Datanode::handle_get>(this);
+    rpc_server_->register_handler<&Datanode::handle_get_with_local_decode>(
+        this);
 
     std::string targetdir = "./storage/";
     if (access(targetdir.c_str(), 0) == -1) {
@@ -27,146 +25,74 @@ Datanode::~Datanode() {
     rpc_server_->stop();
 }
 
-void Datanode::run() { auto err = rpc_server_->start(); }
+void Datanode::run() { rpc_server_->start(); }
 
 void Datanode::handle_set(const std::string &key, size_t value_size) {
     auto handler = [this, key, value_size]() mutable {
         try {
-            asio::error_code ec;
-            asio::ip::tcp::socket socket_(io_context_);
-            acceptor_.accept(socket_);
+            asio::ip::tcp::socket socket(io_context_);
+            acceptor_.accept(socket);
 
-            std::string value_buf(value_size, 0);
+            auto value_buf = std::make_unique<char[]>(value_size);
+            asio::read(socket, asio::buffer(value_buf.get(), value_size));
 
-            asio::read(socket_,
-                       asio::buffer(value_buf.data(), value_buf.size()), ec);
-
-            bool ret = store_data(key, value_buf.data(), value_size);
-
-            if (ret) { // response
-                std::vector<unsigned char> finish = int_to_bytes(1);
-                asio::write(socket_, asio::buffer(finish, finish.size()));
-            } else {
-                std::vector<unsigned char> finish = int_to_bytes(0);
-                asio::write(socket_, asio::buffer(finish, finish.size()));
-            }
-
-            asio::error_code ignore_ec;
-            socket_.shutdown(asio::ip::tcp::socket::shutdown_both, ignore_ec);
-            socket_.close(ignore_ec);
-
-#ifdef MY_DEBUG
-            std::cout << "[Datanode" << port_ << "][Write] successfully write "
-                      << key << " with " << value_size << "bytes" << std::endl;
-#endif
+            bool ret = store_data(key, value_buf.get(), value_size);
+            socket.close();
 
         } catch (const std::exception &e) {
             std::cerr << e.what() << '\n';
         }
     };
+    std::thread(handler).detach();
 }
 
-// std::shared_ptr<coro_rpc::coro_rpc_client> get_rpc_client(const std::string &ip,
-//                                                           int port) {
-//     std::string key = ip + ":" + std::to_string(port);
-
-//     auto it = datanodes_.find(key);
-//     if (it == datanodes_.end()) {
-//         auto client = std::make_shared<coro_rpc::coro_rpc_client>();
-//         async_simple::coro::syncAwait(client->connect(ip, port));
-//         // 线程不安全时用以下方式插入：
-//         it = datanodes_.emplace(std::move(key), client).first;
-//     }
-//     return it->second;
-// }
-// 其中 datanodes_ 类型应为：
-// std::unordered_map<std::string, std::shared_ptr<coro_rpc::coro_rpc_client>>
-// datanodes_;
-
-void Datanode::handle_get_local_decode(const std::string &key,
-                                       size_t value_size,
-                                       const vector<vector<int>> &matrix) {
-    auto handler = [this, key, value_size, matrix]() mutable {
-        asio::error_code ec;
-        asio::ip::tcp::socket socket_(io_context_);
-        acceptor_.accept(socket_);
-
-        size_t need_packets = matrix.size();
-        size_t packet_size = value_size / need_packets;
-        size_t w = matrix[0].size();
-
-        std::string data_buf(w * packet_size, 0);
-        bool ret = access_data(key, data_buf.data(), packet_size * w);
-
-        std::string decode_buf(value_size, 0);
-        local_decode(matrix, data_buf.data(), decode_buf.data(), packet_size);
-
-        asio::write(socket_,
-                    asio::buffer(decode_buf.data(), decode_buf.size()));
-        std::vector<unsigned char> finish_buf(sizeof(int));
-        asio::read(socket_, asio::buffer(finish_buf, finish_buf.size()));
-        int finish = bytes_to_int(finish_buf);
-        if (!finish) {
-            std::cout << "[Datanode" << port_
-                      << "][GET] destination set failed!" << std::endl;
-            asio::error_code ignore_ec;
-            socket_.shutdown(asio::ip::tcp::socket::shutdown_both, ignore_ec);
-            socket_.close(ignore_ec);
-#ifdef MY_DEBUG
-            std::cout << "[Datanode" << port_ << "][GET] write to socket!"
-                      << std::endl;
-#endif
-        }
-    };
-    try {
-#ifdef MY_DEBUG
-        std::cout << "[Datanode" << port_ << "][GET] ready to handle get!"
-                  << std::endl;
-#endif
-        std::thread my_thread(handler);
-        my_thread.detach();
-    } catch (std::exception &e) {
-        std::cout << "exception" << std::endl;
-        std::cout << e.what() << std::endl;
-    }
-}
-
-void Datanode::handle_get_original(const std::string &key, size_t value_size) {
+void Datanode::handle_get(const std::string &key, size_t value_size) {
     auto handler = [this, key, value_size]() mutable {
-        asio::error_code ec;
-        asio::ip::tcp::socket socket_(io_context_);
-        acceptor_.accept(socket_);
+        try {
+            asio::ip::tcp::socket socket(io_context_);
+            acceptor_.accept(socket);
 
-        std::string data_buf(value_size, 0);
-        bool ret = access_data(key, data_buf.data(), value_size);
+            auto data_buf = std::make_unique<char[]>(value_size);
+            bool ret = access_data(key, data_buf.get(), value_size);
+            cout << key << endl;
 
-        asio::write(socket_, asio::buffer(data_buf.data(), data_buf.size()));
-        std::vector<unsigned char> finish_buf(sizeof(int));
-        asio::read(socket_, asio::buffer(finish_buf, finish_buf.size()));
-        int finish = bytes_to_int(finish_buf);
-        if (!finish) {
-            std::cout << "[Datanode" << port_
-                      << "][GET] destination set failed!" << std::endl;
-            asio::error_code ignore_ec;
-            socket_.shutdown(asio::ip::tcp::socket::shutdown_both, ignore_ec);
-            socket_.close(ignore_ec);
-#ifdef MY_DEBUG
-            std::cout << "[Datanode" << port_ << "][GET] write to socket!"
-                      << std::endl;
-#endif
+            asio::write(socket, asio::buffer(data_buf.get(), value_size));
+            socket.close();
+        } catch (std::exception &e) {
+            std::cout << "exception" << std::endl;
+            std::cout << e.what() << std::endl;
         }
     };
-    try {
-#ifdef MY_DEBUG
-        std::cout << "[Datanode" << port_ << "][GET] ready to handle get!"
-                  << std::endl;
-#endif
-        std::thread my_thread(handler);
-        my_thread.detach();
-    } catch (std::exception &e) {
-        std::cout << "exception" << std::endl;
-        std::cout << e.what() << std::endl;
-    }
+    std::thread(handler).detach();
+}
+
+void Datanode::handle_get_with_local_decode(const std::string &key,
+                                            size_t value_size,
+                                            const vector<vector<int>> &matrix) {
+    auto handler = [this, key, value_size, matrix]() mutable {
+        try {
+            asio::ip::tcp::socket socket(io_context_);
+            acceptor_.accept(socket);
+
+            size_t need_packets = matrix.size();
+            size_t packet_size = value_size / need_packets;
+            size_t w = matrix[0].size();
+
+            size_t data_size = w * packet_size;
+            auto data_buf = std::make_unique<char[]>(data_size);
+            bool ret = access_data(key, data_buf.get(), data_size);
+
+            auto decode_buf = std::make_unique<char[]>(value_size);
+            local_decode(matrix, data_buf.get(), decode_buf.get(), packet_size);
+
+            asio::write(socket, asio::buffer(decode_buf.get(), value_size));
+            socket.close();
+
+        } catch (std::exception &e) {
+            std::cout << e.what() << std::endl;
+        }
+    };
+    std::thread(handler).detach();
 }
 
 bool Datanode::access_data(const std::string &key, char *value_buf,
@@ -267,88 +193,85 @@ void Datanode::local_decode(const std::vector<std::vector<int>> &matrix,
     }
 }
 
-
-
 bool Datanode::read_from_datanode_with_local_decode(
     const string &ip, int port, const string &key, char *value,
     size_t value_size, const vector<vector<int>> &matrix) {
-    bool res = true;
+
     try {
-        std::unique_ptr<coro_rpc::coro_rpc_client> client = std::make_unique<coro_rpc::coro_rpc_client>();
+        auto client = std::make_unique<coro_rpc::coro_rpc_client>();
         async_simple::coro::syncAwait(
             client->connect(ip, std::to_string(port)));
         async_simple::coro::syncAwait(
-            client->call<&Datanode::handle_get_local_decode>(
+            client->call<&Datanode::handle_get_with_local_decode>(
                 key, value_size, matrix));
-#ifdef MY_DEBYG
-        std::cout << "[DataNode" << self_cluster_id_ << "][GET]"
-                  << "Call datanode to handle get " << key << std::endl;
-#endif
-        asio::error_code ec;
-        asio::ip::tcp::socket socket_(io_context_);
-        asio::ip::tcp::resolver resolver(io_context_);
-        asio::error_code con_error;
-        asio::connect(
-            socket_,
-            resolver.resolve({ip, std::to_string(port + SOCKET_PORT_OFFSET)}),
-            con_error);
+        client.reset();
 
-        asio::read(socket_, asio::buffer(value, value_size), ec);
-#ifdef MY_DEBYG
-        std::cout << "[DataNode" << self_cluster_id_ << "][GET]"
-                  << "Read data from socket with length of " << value_size
-                  << std::endl;
-#endif
-        asio::error_code ignore_ec;
-        socket_.shutdown(asio::ip::tcp::socket::shutdown_both, ignore_ec);
-        socket_.close(ignore_ec);
+        asio::ip::tcp::socket socket(io_context_);
+        asio::ip::tcp::resolver resolver(io_context_);
+        auto endpoints =
+            resolver.resolve(ip, std::to_string(port + SOCKET_PORT_OFFSET));
+        asio::connect(socket, endpoints);
+
+        asio::read(socket, asio::buffer(value, value_size));
+        socket.close();
+        return true;
     } catch (const std::exception &e) {
         std::cerr << e.what() << '\n';
+        return false;
     }
-    return res;
 }
 
 bool Datanode::read_from_datanode(const string &ip, int port, const string &key,
                                   char *value, size_t value_size) {
-    bool res = true;
     try {
-        std::unique_ptr<coro_rpc::coro_rpc_client> client = std::make_unique<coro_rpc::coro_rpc_client>();
+        auto client = std::make_unique<coro_rpc::coro_rpc_client>();
         async_simple::coro::syncAwait(
             client->connect(ip, std::to_string(port)));
         async_simple::coro::syncAwait(
-            client->call<&Datanode::handle_get_original>(
-                key, value_size));
-#ifdef MY_DEBYG
-        std::cout << "[DataNode" << self_cluster_id_ << "][GET]"
-                  << "Call datanode to handle get " << key << std::endl;
-#endif
-        asio::error_code ec;
-        asio::ip::tcp::socket socket_(io_context_);
+            client->call<&Datanode::handle_get>(key, value_size));
+        client.reset();
+
+        asio::ip::tcp::socket socket(io_context_);
         asio::ip::tcp::resolver resolver(io_context_);
-        asio::error_code con_error;
-        asio::connect(
-            socket_,
-            resolver.resolve({ip, std::to_string(port + SOCKET_PORT_OFFSET)}),
-            con_error);
+        auto endpoints =
+            resolver.resolve(ip, std::to_string(port + SOCKET_PORT_OFFSET));
+        asio::connect(socket, endpoints);
 
-        asio::read(socket_, asio::buffer(value, value_size), ec);
+        asio::read(socket, asio::buffer(value, value_size));
 
-        std::vector<unsigned char> finish = int_to_bytes(1);
-        asio::write(socket_, asio::buffer(finish, finish.size()));
-#ifdef MY_DEBYG
-        std::cout << "[DataNode" << self_cluster_id_ << "][GET]"
-                  << "Read data from socket with length of " << value_size
-                  << std::endl;
-#endif
-        asio::error_code ignore_ec;
-        socket_.shutdown(asio::ip::tcp::socket::shutdown_both, ignore_ec);
-        socket_.close(ignore_ec);
+        socket.close();
+        return true;
     } catch (const std::exception &e) {
         std::cerr << e.what() << '\n';
+        return false;
     }
-    return res;
 }
 
+bool Datanode::write_to_datanode(const string &ip, int port, const string &key,
+                                 char *value, size_t value_size) {
+    try {
+        auto client = std::make_unique<coro_rpc::coro_rpc_client>();
+        async_simple::coro::syncAwait(
+            client->connect(ip, std::to_string(port)));
+        async_simple::coro::syncAwait(
+            client->call<&Datanode::handle_set>(key, value_size));
+        client.reset();
+
+        asio::ip::tcp::socket socket(io_context_);
+        asio::ip::tcp::resolver resolver(io_context_);
+        auto endpoints =
+            resolver.resolve({ip, std::to_string(port + SOCKET_PORT_OFFSET)});
+        asio::connect(socket, endpoints);
+
+        asio::write(socket, asio::buffer(value, value_size));
+
+        socket.close();
+        return true;
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << '\n';
+        return false;
+    }
+}
 
 void Datanode::do_repair(unsigned int stripe_id,
                          std::vector<DecodeRequest> helpers, size_t block_size,
@@ -401,7 +324,6 @@ void Datanode::do_repair(unsigned int stripe_id,
     assert(decode_data.size() == block_size);
     store_data(file_name, decode_data.data(), decode_data.size());
 }
-
 
 std::vector<char>
 Datanode::decode_xor(const std::vector<std::vector<char>> &original_datas) {

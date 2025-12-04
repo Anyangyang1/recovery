@@ -12,11 +12,11 @@
 namespace ECProject {
 class Coordinator {
   public:
-    Coordinator(std::string ip, int port, std::string config_path);
+    Coordinator(std::string ip, int port, std::string xml_path);
     ~Coordinator();
     void run();
     unsigned int request_set(size_t value_size);
-    void request_get(std::string key);
+    void request_get(unsigned int stripe_id);
 
     /**
      * @brief 发生单块故障时，请求修复
@@ -26,18 +26,7 @@ class Coordinator {
      */
     RepairResp request_repair(Stripe &stripe, unsigned int failed_block_id);
 
-    /**
-     * @brief 将数据写入指定节点
-     * @param ip: 写入节点的ip
-     * @param port: 写入节点的port
-     * @param key: 写入的文件名
-     * @param value: 写入的数据
-     * @param value_size: 写入数据的大小
-     * @return: 数据写入是否成功
-     */
-    bool write_to_datanode(const std::string &ip, int port,
-                           const std::string &key, char *value,
-                           size_t value_size);
+  
 
   private:
     void init_cluster_info();
@@ -72,17 +61,14 @@ class Coordinator {
     int port_for_transfer_data_;
     std::unordered_map<unsigned int, Node> node_table_;
     std::unordered_map<unsigned int, Stripe> stripe_table_;
-    // std::string networkcore_;
-    std::string config_path_;
+    std::string xml_path_;
     asio::io_context io_context_{};
     asio::ip::tcp::acceptor acceptor_;
     unsigned int cur_stripe_id_;
     int num_of_nodes_;
     std::mutex mutex_;
     std::condition_variable cv_;
-    std::vector<unsigned int> free_nodes_;
     ECSchema ec_schema_;
-    std::string xml_path_;
     std::unordered_map<std::string, ObjectInfo> commited_object_table_;
     std::unordered_map<std::string, ObjectInfo> updating_object_table_;
     std::vector<std::vector<std::vector<int>>>

@@ -39,11 +39,6 @@ struct ECSchema {
     }
 };
 
-struct ObjectInfo {
-    size_t value_len;
-    std::vector<unsigned int> stripes;
-};
-
 struct Stripe {
     unsigned int stripe_id;
     std::vector<unsigned int> blocks2nodes;

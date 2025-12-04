@@ -27,10 +27,10 @@ class Datanode {
     Datanode(std::string ip, int port);
     ~Datanode();
     void run();
-    void handle_get_local_decode(const std::string &key, size_t value_size,
+    void handle_get_with_local_decode(const std::string &key, size_t value_size,
                                  const vector<vector<int>> &matrix);
 
-    void handle_get_original(const std::string &key, size_t value_size);
+    void handle_get(const std::string &key, size_t value_size);
 
     void handle_set(const std::string &key, size_t value_size);
 
@@ -61,7 +61,18 @@ class Datanode {
                             const std::string &key, char *value,
                             size_t value_size);
 
-    
+      /**
+     * @brief 将数据写入指定节点
+     * @param ip: 写入节点的ip
+     * @param port: 写入节点的port
+     * @param key: 写入的文件名
+     * @param value: 写入的数据
+     * @param value_size: 写入数据的大小
+     * @return: 数据写入是否成功
+     */
+    bool write_to_datanode(const std::string &ip, int port,
+                           const std::string &key, char *value,
+                           size_t value_size);
 
     /**
      * @brief 执行修复操作
