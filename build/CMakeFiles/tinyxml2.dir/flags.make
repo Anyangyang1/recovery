@@ -6,5 +6,5 @@ CXX_FLAGS =   -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-se
 
 CXX_DEFINES = 
 
-CXX_INCLUDES = -I/home/anyangyang/study/recovery/tinyxml2 -isystem /home/anyangyang/study/recovery/yalantinglibs/include 
+CXX_INCLUDES = -I/home/anyangyang/study/recovery/tinyxml2-9.0.0 -isystem /home/anyangyang/study/recovery/yalantinglibs/include 
 

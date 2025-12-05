@@ -17,7 +17,7 @@ set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../yalantinglibs/include/ylt/thirdparty"
   "../Jerasure-1.2A"
   "../include"
-  "../tinyxml2"
+  "../tinyxml2-9.0.0"
   "../yalantinglibs/include"
   )
 

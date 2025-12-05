@@ -6,6 +6,11 @@
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/test.dir/src/test/test1.cpp.o -c /home/anyangyang/study/recovery/src/test/test1.cpp",
+  "file": "/home/anyangyang/study/recovery/src/test/test1.cpp"
+},
+{
+  "directory": "/home/anyangyang/study/recovery/build",
   "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include/client -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/include/algorithm -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/client.dir/src/client/client.cpp.o -c /home/anyangyang/study/recovery/src/client/client.cpp",
   "file": "/home/anyangyang/study/recovery/src/client/client.cpp"
 },
@@ -31,12 +36,17 @@
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",
-  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include/coordinator -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/tinyxml2 -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o -c /home/anyangyang/study/recovery/src/coordinator/coordinator.cpp",
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/Jerasure-1.2A -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -pthread -std=c++2a -o CMakeFiles/ec.dir/src/ec/rs.cpp.o -c /home/anyangyang/study/recovery/src/ec/rs.cpp",
+  "file": "/home/anyangyang/study/recovery/src/ec/rs.cpp"
+},
+{
+  "directory": "/home/anyangyang/study/recovery/build",
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include/coordinator -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/tinyxml2-9.0.0 -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o -c /home/anyangyang/study/recovery/src/coordinator/coordinator.cpp",
   "file": "/home/anyangyang/study/recovery/src/coordinator/coordinator.cpp"
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",
-  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include/coordinator -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/tinyxml2 -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o -c /home/anyangyang/study/recovery/src/coordinator/run_coordinator.cpp",
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include/coordinator -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/tinyxml2-9.0.0 -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o -c /home/anyangyang/study/recovery/src/coordinator/run_coordinator.cpp",
   "file": "/home/anyangyang/study/recovery/src/coordinator/run_coordinator.cpp"
 },
 {
@@ -56,8 +66,8 @@
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",
-  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/tinyxml2 -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -Wno-missing-field-initializers -std=c++2a -o CMakeFiles/tinyxml2.dir/tinyxml2/tinyxml2.cpp.o -c /home/anyangyang/study/recovery/tinyxml2/tinyxml2.cpp",
-  "file": "/home/anyangyang/study/recovery/tinyxml2/tinyxml2.cpp"
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/tinyxml2-9.0.0 -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -Wno-missing-field-initializers -std=c++2a -o CMakeFiles/tinyxml2.dir/tinyxml2-9.0.0/tinyxml2.cpp.o -c /home/anyangyang/study/recovery/tinyxml2-9.0.0/tinyxml2.cpp",
+  "file": "/home/anyangyang/study/recovery/tinyxml2-9.0.0/tinyxml2.cpp"
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",

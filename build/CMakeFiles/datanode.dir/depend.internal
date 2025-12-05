@@ -7,10 +7,13 @@ CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o
  ../Jerasure-1.2A/jerasure.h
  ../Jerasure-1.2A/reed_sol.h
  ../include/algorithm/utils.h
+ ../include/coordinator.h
  ../include/datanode.h
  ../include/ec/erasure_code.h
  ../include/ec/rs.h
+ ../include/jerasure_wrapper.h
  ../include/metadata.h
+ ../include/tinyxml2.h
  ../yalantinglibs/include/ylt/coro_io/coro_io.hpp
  ../yalantinglibs/include/ylt/coro_io/detail/client_queue.hpp
  ../yalantinglibs/include/ylt/coro_io/ibverbs/ib_buffer.hpp
@@ -734,6 +737,7 @@ CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o
  ../include/datanode.h
  ../include/ec/erasure_code.h
  ../include/ec/rs.h
+ ../include/jerasure_wrapper.h
  ../include/metadata.h
  ../yalantinglibs/include/ylt/coro_io/coro_io.hpp
  ../yalantinglibs/include/ylt/coro_io/detail/client_queue.hpp

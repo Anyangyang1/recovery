@@ -6,9 +6,9 @@
 
 #IncludeRegexTransform: 
 
-/home/anyangyang/study/recovery/tinyxml2/tinyxml2.cpp
+/home/anyangyang/study/recovery/tinyxml2-9.0.0/tinyxml2.cpp
 tinyxml2.h
-/home/anyangyang/study/recovery/tinyxml2/tinyxml2.h
+/home/anyangyang/study/recovery/tinyxml2-9.0.0/tinyxml2.h
 new
 -
 stddef.h
@@ -20,7 +20,7 @@ cstddef
 cstdarg
 -
 
-/home/anyangyang/study/recovery/tinyxml2/tinyxml2.h
+/home/anyangyang/study/recovery/tinyxml2-9.0.0/tinyxml2.h
 ctype.h
 -
 limits.h

@@ -6,10 +6,13 @@ CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../Jerasure-1.2A/reed_sol.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/algorithm/utils.h
+CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/coordinator.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/datanode.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/ec/erasure_code.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/ec/rs.h
+CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/jerasure_wrapper.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/metadata.h
+CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/tinyxml2.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../yalantinglibs/include/ylt/coro_io/coro_io.hpp
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../yalantinglibs/include/ylt/coro_io/detail/client_queue.hpp
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../yalantinglibs/include/ylt/coro_io/ibverbs/ib_buffer.hpp
@@ -733,6 +736,7 @@ CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/algorithm/ut
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/datanode.h
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/ec/erasure_code.h
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/ec/rs.h
+CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/jerasure_wrapper.h
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/metadata.h
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../yalantinglibs/include/ylt/coro_io/coro_io.hpp
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../yalantinglibs/include/ylt/coro_io/detail/client_queue.hpp

@@ -8,4 +8,15 @@ CMakeFiles/ec.dir/src/ec/erasure_code.cpp.o
  ../Jerasure-1.2A/reed_sol.h
  ../include/algorithm/utils.h
  ../include/ec/erasure_code.h
+ ../include/jerasure_wrapper.h
  /home/anyangyang/study/recovery/src/ec/erasure_code.cpp
+CMakeFiles/ec.dir/src/ec/rs.cpp.o
+ ../Jerasure-1.2A/cauchy.h
+ ../Jerasure-1.2A/galois.h
+ ../Jerasure-1.2A/jerasure.h
+ ../Jerasure-1.2A/reed_sol.h
+ ../include/algorithm/utils.h
+ ../include/ec/erasure_code.h
+ ../include/ec/rs.h
+ ../include/jerasure_wrapper.h
+ /home/anyangyang/study/recovery/src/ec/rs.cpp

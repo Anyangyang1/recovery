@@ -18,6 +18,8 @@ stdlib.h
 galois.h
 ../Jerasure-1.2A/galois.h
 
+../Jerasure-1.2A/reed_sol.h
+
 ../include/algorithm/loadbalance.h
 vector
 -
@@ -55,12 +57,20 @@ random
 -
 vector
 -
-../../Jerasure-1.2A/cauchy.h
-../Jerasure-1.2A/cauchy.h
-../../Jerasure-1.2A/jerasure.h
-../Jerasure-1.2A/jerasure.h
+../jerasure_wrapper.h
+../include/jerasure_wrapper.h
 source_location
 -
+
+../include/jerasure_wrapper.h
+../Jerasure-1.2A/cauchy.h
+../Jerasure-1.2A/cauchy.h
+../Jerasure-1.2A/reed_sol.h
+../Jerasure-1.2A/reed_sol.h
+../Jerasure-1.2A/jerasure.h
+../Jerasure-1.2A/jerasure.h
+../Jerasure-1.2A/galois.h
+../Jerasure-1.2A/galois.h
 
 /home/anyangyang/study/recovery/src/algorithm/loadbance.cpp
 loadbalance.h
@@ -80,5 +90,11 @@ cassert
 chrono
 -
 unordered_set
+-
+
+/home/anyangyang/study/recovery/src/algorithm/utils.cpp
+utils.h
+/home/anyangyang/study/recovery/src/algorithm/utils.h
+fstream
 -
 

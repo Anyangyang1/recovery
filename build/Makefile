@@ -592,6 +592,33 @@ src/ec/erasure_code.cpp.s:
 	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/src/ec/erasure_code.cpp.s
 .PHONY : src/ec/erasure_code.cpp.s
 
+src/ec/rs.o: src/ec/rs.cpp.o
+
+.PHONY : src/ec/rs.o
+
+# target to build an object file
+src/ec/rs.cpp.o:
+	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/src/ec/rs.cpp.o
+.PHONY : src/ec/rs.cpp.o
+
+src/ec/rs.i: src/ec/rs.cpp.i
+
+.PHONY : src/ec/rs.i
+
+# target to preprocess a source file
+src/ec/rs.cpp.i:
+	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/src/ec/rs.cpp.i
+.PHONY : src/ec/rs.cpp.i
+
+src/ec/rs.s: src/ec/rs.cpp.s
+
+.PHONY : src/ec/rs.s
+
+# target to generate assembly for a file
+src/ec/rs.cpp.s:
+	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/src/ec/rs.cpp.s
+.PHONY : src/ec/rs.cpp.s
+
 src/test/main.o: src/test/main.cpp.o
 
 .PHONY : src/test/main.o
@@ -619,32 +646,59 @@ src/test/main.cpp.s:
 	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/test/main.cpp.s
 .PHONY : src/test/main.cpp.s
 
-tinyxml2/tinyxml2.o: tinyxml2/tinyxml2.cpp.o
+src/test/test1.o: src/test/test1.cpp.o
 
-.PHONY : tinyxml2/tinyxml2.o
+.PHONY : src/test/test1.o
 
 # target to build an object file
-tinyxml2/tinyxml2.cpp.o:
-	$(MAKE) -f CMakeFiles/tinyxml2.dir/build.make CMakeFiles/tinyxml2.dir/tinyxml2/tinyxml2.cpp.o
-.PHONY : tinyxml2/tinyxml2.cpp.o
+src/test/test1.cpp.o:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/test/test1.cpp.o
+.PHONY : src/test/test1.cpp.o
 
-tinyxml2/tinyxml2.i: tinyxml2/tinyxml2.cpp.i
+src/test/test1.i: src/test/test1.cpp.i
 
-.PHONY : tinyxml2/tinyxml2.i
+.PHONY : src/test/test1.i
 
 # target to preprocess a source file
-tinyxml2/tinyxml2.cpp.i:
-	$(MAKE) -f CMakeFiles/tinyxml2.dir/build.make CMakeFiles/tinyxml2.dir/tinyxml2/tinyxml2.cpp.i
-.PHONY : tinyxml2/tinyxml2.cpp.i
+src/test/test1.cpp.i:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/test/test1.cpp.i
+.PHONY : src/test/test1.cpp.i
 
-tinyxml2/tinyxml2.s: tinyxml2/tinyxml2.cpp.s
+src/test/test1.s: src/test/test1.cpp.s
 
-.PHONY : tinyxml2/tinyxml2.s
+.PHONY : src/test/test1.s
 
 # target to generate assembly for a file
-tinyxml2/tinyxml2.cpp.s:
-	$(MAKE) -f CMakeFiles/tinyxml2.dir/build.make CMakeFiles/tinyxml2.dir/tinyxml2/tinyxml2.cpp.s
-.PHONY : tinyxml2/tinyxml2.cpp.s
+src/test/test1.cpp.s:
+	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/test/test1.cpp.s
+.PHONY : src/test/test1.cpp.s
+
+tinyxml2-9.0.0/tinyxml2.o: tinyxml2-9.0.0/tinyxml2.cpp.o
+
+.PHONY : tinyxml2-9.0.0/tinyxml2.o
+
+# target to build an object file
+tinyxml2-9.0.0/tinyxml2.cpp.o:
+	$(MAKE) -f CMakeFiles/tinyxml2.dir/build.make CMakeFiles/tinyxml2.dir/tinyxml2-9.0.0/tinyxml2.cpp.o
+.PHONY : tinyxml2-9.0.0/tinyxml2.cpp.o
+
+tinyxml2-9.0.0/tinyxml2.i: tinyxml2-9.0.0/tinyxml2.cpp.i
+
+.PHONY : tinyxml2-9.0.0/tinyxml2.i
+
+# target to preprocess a source file
+tinyxml2-9.0.0/tinyxml2.cpp.i:
+	$(MAKE) -f CMakeFiles/tinyxml2.dir/build.make CMakeFiles/tinyxml2.dir/tinyxml2-9.0.0/tinyxml2.cpp.i
+.PHONY : tinyxml2-9.0.0/tinyxml2.cpp.i
+
+tinyxml2-9.0.0/tinyxml2.s: tinyxml2-9.0.0/tinyxml2.cpp.s
+
+.PHONY : tinyxml2-9.0.0/tinyxml2.s
+
+# target to generate assembly for a file
+tinyxml2-9.0.0/tinyxml2.cpp.s:
+	$(MAKE) -f CMakeFiles/tinyxml2.dir/build.make CMakeFiles/tinyxml2.dir/tinyxml2-9.0.0/tinyxml2.cpp.s
+.PHONY : tinyxml2-9.0.0/tinyxml2.cpp.s
 
 # Help Target
 help:
@@ -704,12 +758,18 @@ help:
 	@echo "... src/ec/erasure_code.o"
 	@echo "... src/ec/erasure_code.i"
 	@echo "... src/ec/erasure_code.s"
+	@echo "... src/ec/rs.o"
+	@echo "... src/ec/rs.i"
+	@echo "... src/ec/rs.s"
 	@echo "... src/test/main.o"
 	@echo "... src/test/main.i"
 	@echo "... src/test/main.s"
-	@echo "... tinyxml2/tinyxml2.o"
-	@echo "... tinyxml2/tinyxml2.i"
-	@echo "... tinyxml2/tinyxml2.s"
+	@echo "... src/test/test1.o"
+	@echo "... src/test/test1.i"
+	@echo "... src/test/test1.s"
+	@echo "... tinyxml2-9.0.0/tinyxml2.o"
+	@echo "... tinyxml2-9.0.0/tinyxml2.i"
+	@echo "... tinyxml2-9.0.0/tinyxml2.s"
 .PHONY : help
 
 
