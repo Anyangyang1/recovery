@@ -5,9 +5,7 @@
 #include <map>
 #include <ylt/coro_rpc/coro_rpc_client.hpp>
 #include <ylt/coro_rpc/coro_rpc_server.hpp>
-extern "C" {
-#include "../../Jerasure-1.2A/galois.h"
-}
+#include "jerasure_wrapper.h"
 
 #include "metadata.h"
 #ifdef IN_MEMORY
@@ -28,11 +26,13 @@ class Datanode {
     ~Datanode();
     void run();
     void handle_get_with_local_decode(const std::string &key, size_t value_size,
-                                 const vector<vector<int>> &matrix);
+                                      const vector<vector<int>> &matrix);
 
     void handle_get(const std::string &key, size_t value_size);
 
     void handle_set(const std::string &key, size_t value_size);
+
+    void handle_upload(unsigned int stripe_id, size_t value_size);
 
     /**
      * @brief 从指定节点读取进行局部解码后的数据
@@ -61,7 +61,7 @@ class Datanode {
                             const std::string &key, char *value,
                             size_t value_size);
 
-      /**
+    /**
      * @brief 将数据写入指定节点
      * @param ip: 写入节点的ip
      * @param port: 写入节点的port
@@ -104,7 +104,8 @@ class Datanode {
     /**
      * @brief 根据维矩阵，计算基底向量，以及每一行可以由哪些基底向量表示
      * @param matrix: w*w的维矩阵
-     * @return: {basis, reps}。其中basis表示基底向量，reps表示原来的矩阵可以由哪些基底向量线性表示
+     * @return: {basis,
+     * reps}。其中basis表示基底向量，reps表示原来的矩阵可以由哪些基底向量线性表示
      */
     GF2BasisResult
     compute_basis_gf2_indices(const std::vector<std::vector<int>> &matrix);
@@ -128,6 +129,10 @@ class Datanode {
                                const std::vector<std::vector<int>> &reps,
                                char *original_data, size_t packet_size);
 
+    void encode_and_distribute(const StripeInfo &stripe_info,
+                               std::unique_ptr<char[]> object_data,
+                               size_t total_size);
+
   private:
     std::unique_ptr<coro_rpc::coro_rpc_server> rpc_server_{nullptr};
     std::string ip_;
@@ -135,6 +140,9 @@ class Datanode {
     int port_for_transfer_data_;
     asio::io_context io_context_{};
     asio::ip::tcp::acceptor acceptor_;
+
+    std::string coordinator_ip_;
+    int coordinator_port_;
 
     // 辅助哈希（C++11 兼容）
     struct VecIntHash {

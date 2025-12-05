@@ -1,12 +1,7 @@
 #pragma once
 
 #include "utils.h"
-
-extern "C" {
-#include "../../Jerasure-1.2A/cauchy.h"
-#include "../../Jerasure-1.2A/jerasure.h"
-#include "../../Jerasure-1.2A/reed_sol.h"
-}
+#include "../jerasure_wrapper.h"
 
 namespace ECProject {
 
@@ -25,21 +20,10 @@ class ErasureCode {
                         int block_size) = 0;
     virtual void decode(char **data_ptrs, char **coding_ptrs, int blocksize,
                         int *erasures, int failed_num) = 0;
-    virtual bool check_if_decodable(std::vector<int> failure_idxs) = 0;
+    
     virtual void make_encoding_matrix(int *final_matrix) {}
-    virtual void encode_partial_blocks(
-        char **data_ptrs, char **coding_ptrs, int block_size,
-        std::vector<int> data_idxs, std::vector<int> parity_idxs,
-        std::vector<int> failure_idxs, std::vector<int> live_idxs,
-        std::vector<bool> &partial_flags, bool partial_scheme) = 0;
-    virtual void decode_with_partial_blocks(char **data_ptrs,
-                                            char **coding_ptrs, int block_size,
-                                            std::vector<int> failure_idxs,
-                                            std::vector<int> parity_idxs) = 0;
-    virtual int
-    num_of_partial_blocks_to_transfer(std::vector<int> data_idxs,
-                                      std::vector<int> parity_idxs) = 0;
-
+    
+   
     void print_matrix(int *matrix, int rows, int cols, std::string msg);
     void get_identity_matrix(int *matrix, int rows, int kk);
     virtual void make_full_matrix(int *matrix, int kk);
@@ -69,19 +53,5 @@ class ErasureCode {
         const std::vector<int> &failure_idxs,
         const std::vector<int> &live_idxs);
 
-    // partition stragtegy, subject to single-region fault tolerance
-    virtual void partition_flat();
-    virtual void partition_random() = 0;
-    virtual void partition_optimal() = 0;
-    void generate_partition();
-    void print_info(std::vector<std::vector<int>> info, std::string info_str);
-
-    virtual std::string self_information() = 0;
-    virtual std::string type() = 0;
-
-    // virtual bool generate_repair_plan(std::vector<int> failure_idxs,
-    // 																	std::vector<RepairPlan>&
-    // plans, 																	bool partial_scheme, 																	bool repair_priority, 																	bool repair_method) =
-    // 0;
 };
 } // namespace ECProject

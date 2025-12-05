@@ -21,22 +21,8 @@
 
 namespace ECProject {
 struct ECSchema {
-    ErasureCode *ec = nullptr;
-    size_t block_size; // bytes
-
-    ~ECSchema() {
-        if (ec != nullptr) {
-            delete ec;
-        }
-    }
-
-    void set_ec(ErasureCode *new_ec) {
-        if (ec != nullptr) {
-            delete ec;
-            ec = nullptr;
-        }
-        ec = new_ec;
-    }
+    std::unique_ptr<ErasureCode> ec;  // 改为智能指针，更安全
+    size_t block_size = 0;
 };
 
 struct Stripe {
@@ -51,6 +37,11 @@ struct Node {
     std::unordered_map<unsigned int, unsigned int> nodes2blocks;
 };
 
+struct NodeIpInfo {
+    std::string node_ip;
+    int node_port;
+};
+
 struct DecodeRequest {
     // DecodeRequest() {}
     // DecodeRequest(std::string ip, int port,
@@ -59,6 +50,21 @@ struct DecodeRequest {
     std::string ip;
     int port;
     std::vector<std::vector<int>> matrix; // 解码矩阵（如纠删码矩阵）
+};
+
+struct UploadInfo {
+    std::string node_ip;
+    int node_port;
+    unsigned int stripe_id;
+};
+
+struct StripeInfo {
+    unsigned int stripe_id;
+    std::vector<NodeIpInfo> nodes_info;
+    int k;
+    int m;
+    int w;
+    size_t block_size;
 };
 
 struct RepairPlan {

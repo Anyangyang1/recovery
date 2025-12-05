@@ -1,5 +1,4 @@
 #include "loadbalance.h"
-#include "logging.hpp"
 #include "sggh.h"
 #include "utils.h"
 #include <asio.hpp>

@@ -5,7 +5,7 @@ if(CMAKE_BUILD_TYPE STREQUAL "Debug")
     add_compile_definitions(MY_DEBUG)  # CMake 3.12+
     # 或旧版：add_definitions(-DDEBUG)
 endif()
-
+# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -fsanitize=address -g")
 
 # ====== 全局设置 ======
 set(CMAKE_CXX_STANDARD 20)
@@ -26,7 +26,7 @@ find_package(Threads REQUIRED)
 # set(ASIO_ROOT ${CMAKE_SOURCE_DIR}/asio-1.36.0)
 set(YLT_ROOT  ${CMAKE_SOURCE_DIR}/yalantinglibs)
 set(JERASURE_ROOT ${CMAKE_SOURCE_DIR}/Jerasure-1.2A)
-set(TINYXML2_ROOT  ${CMAKE_SOURCE_DIR}/tinyxml2)  
+set(TINYXML2_ROOT  ${CMAKE_SOURCE_DIR}/tinyxml2-9.0.0)  
 
 # ====== 全局编译选项（抑制第三方警告）======
 include_directories(SYSTEM ${YLT_ROOT}/include)

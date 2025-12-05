@@ -101,3 +101,35 @@ make clean
 # 或 rm -rf *
 ```
 
+
+## 一些命令
+使用新版本的cmake
+```bash
+/opt/cmake/bin/cmake --version
+```
+测量网络带宽
+```bash
+# 服务端（Node A）
+iperf3 -s
+
+# 客户端（Node B）
+iperf3 -c <server_ip> [-t 10] [-P 4]
+```
+安装iperf3
+```bash
+sudo yum install iperf3          # CentOS 7/8（EPEL 需先启用）
+# 或
+sudo dnf install iperf3          # RHEL 8+/Fedora/Rocky
+# 若未找到，先启用 EPEL：
+sudo yum install epel-release    # CentOS 7/8
+```
+
+查看占用端口号的进程
+```bash
+sudo lsof -i :8080
+# 或
+sudo netstat -tulnp | grep :8080
+# 或（较新系统推荐）
+ss -tulnp | grep :8080
+```
+

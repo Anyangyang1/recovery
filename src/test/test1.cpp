@@ -1,10 +1,8 @@
 #include "loadbalance.h"
-#include "logging.hpp"
 #include "sggh.h"
 #include "utils.h"
 #include <asio.hpp>
 #include <chrono>
-#include "logging.hpp"
 #include <iostream>
 #include <thread>
 #include <ylt/coro_rpc/coro_rpc_client.hpp>

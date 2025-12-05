@@ -7,18 +7,41 @@ namespace ECProject {
 
 Coordinator::Coordinator(std::string ip, int port, std::string xml_path)
     : ip_(ip), port_(port), xml_path_(xml_path) {
-    easylog::set_min_severity(easylog::Severity::ERROR);
+    easylog::set_min_severity(easylog::Severity::DEBUG);
     rpc_server_ = std::make_unique<coro_rpc::coro_rpc_server>(4, port_);
     rpc_server_->register_handler<&Coordinator::request_set>(this);
     rpc_server_->register_handler<&Coordinator::request_get>(this);
     rpc_server_->register_handler<&Coordinator::request_repair>(this);
-    
+    rpc_server_->register_handler<&Coordinator::get_stripe_info>(this);
     cur_stripe_id_ = 0;
+    try {
+        init_cluster_info();
+    } catch (const std::exception &e) {
+        std::cerr << "init_cluster_info failed: " << e.what() << std::endl;
+        std::abort(); // 或 throw
+    }
+    
+    ec_schema_.ec = std::make_unique<RSCode>(2, 1);
+    ec_schema_.block_size = 16;
 
-    init_cluster_info();
 }
-Coordinator::~Coordinator() { rpc_server_->stop(); }
-void Coordinator::run() { rpc_server_->start(); }
+Coordinator::~Coordinator() { // 1. 先断开所有 datanodes（同步等待）
+    for (auto &[uri, client] : datanodes_) {
+        if (client) {
+            client->close(); // 或 client->stop(); 查 API
+            // 可加 syncAwait(client->async_close()) 若支持
+        }
+    }
+    datanodes_.clear(); // 确保 client 析构前已 close
+
+    // 2. 再停 server
+    if (rpc_server_) {
+        rpc_server_->stop();
+    }
+}
+void Coordinator::run() {
+    auto ret = rpc_server_->start();
+}
 
 void Coordinator::init_cluster_info() {
     tinyxml2::XMLDocument xml;
@@ -30,7 +53,6 @@ void Coordinator::init_cluster_info() {
     if (!root || std::string(root->Name()) != "datanodes") {
         throw std::runtime_error("Root element must be <datanodes>");
     }
-
     unsigned int node_id = 0;
     for (tinyxml2::XMLElement *node = root->FirstChildElement("datanode");
          node != nullptr; node = node->NextSiblingElement("datanode")) {
@@ -40,10 +62,20 @@ void Coordinator::init_cluster_info() {
         if (pos == std::string::npos) {
             throw std::runtime_error("Invalid node URI: missing ':'");
         }
-
-        node_table_[node_id].node_id = node_id;
-        node_table_[node_id].node_ip = uri.substr(0, pos);
-        node_table_[node_id].node_port = std::stoi(uri.substr(pos + 1));
+        std::string ip = uri.substr(0, uri.find(':'));
+        int port = std::stoi(uri.substr(uri.find(':') + 1, uri.size()));
+        datanodes_[uri] = std::make_unique<coro_rpc::coro_rpc_client>();
+        auto ec = async_simple::coro::syncAwait(
+            datanodes_[uri]->connect(ip, std::to_string(port)));
+        if (ec) {
+            std::cerr << "Failed to connect to " << uri << ": " << ec.message()
+                      << std::endl;
+        }
+        Node temp;
+        temp.node_id = node_id;
+        temp.node_ip = std::move(ip);
+        temp.node_port = port;
+        node_table_[node_id] = temp;
         ++node_id;
     }
     num_of_nodes_ = node_id;
@@ -64,91 +96,38 @@ Stripe &Coordinator::new_stripe() {
     return stripe_table_[temp.stripe_id];
 }
 
-unsigned int Coordinator::request_set(size_t value_size) {
-    my_assert(value_size == ec_schema_.block_size * ec_schema_.ec->k);
-    Stripe stripe = new_stripe();
-    encode_and_store_object(stripe);
-    return stripe.stripe_id;
-}
-
-void Coordinator::encode_and_store_object(Stripe stripe) {
-    auto encode_and_store = [this, stripe]() mutable {
-        int k = ec_schema_.ec->k;
-        int m = ec_schema_.ec->m;
-        int num_of_blocks_each_stripe = k + m;
-        asio::ip::tcp::socket socket_(io_context_);
-        acceptor_.accept(socket_);
-        size_t value_buf_size = k * ec_schema_.block_size;
-        std::vector<char> value_buf(value_buf_size, 0);
-
-        size_t read_len_of_value =
-            asio::read(socket_, asio::buffer(value_buf.data(), value_buf_size));
-        my_assert(read_len_of_value == value_buf_size);
-
-        char *object_value = value_buf.data();
-        std::vector<char *> data_v(k);
-        std::vector<char *> coding_v(m);
-        char **data = (char **)data_v.data();
-        char **coding = (char **)coding_v.data();
-
-        size_t cur_block_size = ec_schema_.block_size;
-        my_assert(cur_block_size > 0);
-
-        std::vector<std::vector<char>> space_for_parity_blocks(
-            m, std::vector<char>(cur_block_size));
-        for (int j = 0; j < k; j++) {
-            data[j] = &object_value[j * cur_block_size];
-        }
-        for (int j = 0; j < m; j++) {
-            coding[j] = space_for_parity_blocks[j].data();
-        }
-        double encoding_time = 0;
-        struct timeval start_time, end_time;
-        gettimeofday(&start_time, NULL);
-        ec_schema_.ec->encode(data, coding, cur_block_size);
-        gettimeofday(&end_time, NULL);
-        encoding_time +=
-            end_time.tv_sec - start_time.tv_sec +
-            (end_time.tv_usec - start_time.tv_usec) * 1.0 / 1000000;
-        std::vector<std::thread> writers;
-        for (int j = 0; j < num_of_blocks_each_stripe; j++) {
-            unsigned int node_id = stripe.blocks2nodes[j];
-            auto node = node_table_[node_id];
-            std::string key = "stripe" + std::to_string(stripe.stripe_id);
-            writers.push_back(std::thread(
-                [this, j, k, node, data, coding, cur_block_size, key]() {
-                    if (j < k) {
-                        // write_to_datanode(node.node_ip, node.node_port, key,
-                        //                   data[j], cur_block_size);
-                    } else {
-                        // write_to_datanode(node.node_ip, node.node_port, key,
-                        //                   coding[j - k], cur_block_size);
-                    }
-                }));
-        }
-        for (size_t j = 0; j < writers.size(); j++) {
-            writers[j].join();
-        }
-        std::vector<unsigned char> finish = int_to_bytes(1);
-        asio::write(socket_, asio::buffer(finish, finish.size()));
-
-        std::vector<unsigned char> encoding_time_buf =
-            double_to_bytes(encoding_time);
-        asio::write(socket_,
-                    asio::buffer(encoding_time_buf, encoding_time_buf.size()));
-
-        asio::error_code ignore_ec;
-        socket_.shutdown(asio::ip::tcp::socket::shutdown_both, ignore_ec);
-        socket_.close(ignore_ec);
-    };
-    try {
-        std::thread new_thread(encode_and_store);
-        new_thread.detach();
-    } catch (const std::exception &e) {
-        std::cerr << e.what() << '\n';
+StripeInfo Coordinator::get_stripe_info(unsigned int stripe_id) {
+    StripeInfo stripe_info;
+    stripe_info.stripe_id = stripe_id;
+    stripe_info.block_size = ec_schema_.block_size;
+    stripe_info.k = ec_schema_.ec->k;
+    stripe_info.m = ec_schema_.ec->m;
+    stripe_info.w = ec_schema_.ec->w;
+    auto node_ids = stripe_table_[stripe_id].blocks2nodes;
+    for (auto node_id : node_ids) {
+        Node node = node_table_[node_id];
+        NodeIpInfo node_ip_info;
+        node_ip_info.node_ip = node.node_id;
+        node_ip_info.node_port = node.node_port;
+        stripe_info.nodes_info.push_back(node_ip_info);
     }
+    return stripe_info;
 }
-RepairResp Coordinator::request_repair(Stripe &stripe,
+
+UploadInfo Coordinator::request_set(size_t value_size) {
+    ELOG(DEBUG) << "value_size: " << value_size;
+    my_assert(value_size == ec_schema_.block_size * ec_schema_.ec->k);
+    
+    Stripe stripe = new_stripe();
+    UploadInfo upload_info;
+    unsigned int node0_id = stripe.blocks2nodes[0];
+    upload_info.stripe_id = stripe.stripe_id;
+    upload_info.node_ip = node_table_[node0_id].node_ip;
+    upload_info.node_port = node_table_[node0_id].node_port;
+    return upload_info;
+}
+
+RepairResp Coordinator::request_repair(const Stripe &stripe,
                                        unsigned int failed_block_id) {
     RepairResp response;
     RepairPlan repair_plan = generate_repair_plan(stripe, failed_block_id);
@@ -161,8 +140,9 @@ RepairResp Coordinator::request_repair(Stripe &stripe,
             ec_schema_.ec->w));
     return response;
 }
+void Coordinator::request_get(unsigned int stripe_id) {}
 
-RepairPlan Coordinator::generate_repair_plan(Stripe &stripe,
+RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
                                              unsigned int failed_block_id) {
     unsigned int stripe_id = stripe.stripe_id;
     std::vector<std::vector<int>> &decode_matrix =

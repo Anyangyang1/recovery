@@ -9,12 +9,7 @@
 #include <numeric>
 #include <random>
 #include <vector>
-
-extern "C" {
-#include "../../Jerasure-1.2A/cauchy.h"
-#include "../../Jerasure-1.2A/jerasure.h"
-}
-
+#include "../jerasure_wrapper.h"
 #include <source_location>
 
 #define my_assert(condition)                                                   \

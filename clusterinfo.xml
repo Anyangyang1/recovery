@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <datanodes>
-  <datanode uri="0.0.0.0:17600" />
-  <datanode uri="0.0.0.0:17601" />
-  <datanode uri="0.0.0.0:17602" />
-  <datanode uri="0.0.0.0:17603" />
+  <datanode uri="192.168.1.13:8888" />
+  <datanode uri="192.168.1.14:8888" />
+  <datanode uri="192.168.1.15:8888" />
 </datanodes>
