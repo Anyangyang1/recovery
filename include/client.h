@@ -14,8 +14,8 @@ namespace ECProject {
 
   private:
     std::unique_ptr<coro_rpc::coro_rpc_client> rpc_coordinator_{nullptr};
-    int port_;
     std::string ip_;
+    int port_;
     std::string coordinator_ip_;
     int coordinator_port_;
     asio::io_context io_context_{};

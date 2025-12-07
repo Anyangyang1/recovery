@@ -18,36 +18,56 @@ Client::Client(std::string ip, int port, std::string coordinator_ip,
 Client::~Client() { acceptor_.close(); }
 
 void Client::set(std::string value) {
-
+    // Step 1: Request upload target from coordinator
     auto result = async_simple::coro::syncAwait(
         rpc_coordinator_->call_for<&Coordinator::request_set>(
             std::chrono::seconds{3}, value.size()));
 
     if (!result) {
-        ELOG(ERROR) << "RPC call failed: " << result.error();
+        ELOG(ERROR) << "RPC request_set failed: " << result.error();
         return; // »òÆäËû fallback
     }
-
     auto response = std::move(result).value();
-    auto client = std::make_unique<coro_rpc::coro_rpc_client>();
-    async_simple::coro::syncAwait(
-        client->connect(response.node_ip, std::to_string(response.node_port)));
-    async_simple::coro::syncAwait(client->call<&Datanode::handle_upload>(
-        response.stripe_id, value.size()));
-    
 
-    ELOG(DEBUG) << "[SET] Send data"
-              << " to node_address:" << response.node_ip << ":"
-              << response.node_port;
+    // Step 2: Connect to target datanode (RPC port)
+    auto rpc_client = std::make_unique<coro_rpc::coro_rpc_client>();
+    {
+        auto conn_res = async_simple::coro::syncAwait(rpc_client->connect(
+            response.node_ip, std::to_string(response.node_port)));
+        if (conn_res) {
+            ELOG(ERROR) << "Failed to connect datanode RPC ("
+                        << response.node_ip << ":" << response.node_port
+                        << "): " << conn_res.message();
+            return;
+        }
+    }
 
-    asio::ip::tcp::socket socket_(io_context_);
-    asio::ip::tcp::endpoint endpoint(asio::ip::make_address(response.node_ip),
-                                     response.node_port + SOCKET_PORT_OFFSET);
-    socket_.connect(endpoint);
-    asio::write(socket_, asio::buffer(value, value.size()));
-    socket_.close();
-    client.reset();
-    ELOG(DEBUG) << "Send data completely.";
+    // Step 3: Notify datanode to prepare for upload
+    {
+        auto call_res = async_simple::coro::syncAwait(
+            rpc_client->call<&Datanode::handle_upload>(response.stripe_id,
+                                                       value.size()));
+        if (!call_res) {
+            ELOG(ERROR) << "RPC handle_upload failed: " << call_res.error();
+            return;
+        }
+    }
+
+    // Step 4: Send raw data via socket (data port = node_port + offset)
+    int data_port = response.node_port + SOCKET_PORT_OFFSET;
+    ELOG(DEBUG) << "[SET] Sending data (" << value.size() << "B) to "
+                << response.node_ip << ":" << data_port;
+    try {
+        asio::ip::tcp::socket socket(io_context_);
+        asio::ip::tcp::endpoint endpoint(
+            asio::ip::make_address(response.node_ip), data_port);
+        socket.connect(endpoint);
+        asio::write(socket, asio::buffer(value, value.size()));
+        socket.close();
+        ELOG(DEBUG) << "Send data completely.";
+    } catch (const std::exception &e) {
+        ELOG(ERROR) << "[SET] Data transfer failed: " << e.what();
+    }
 }
 
 // std::string Client::get(std::string key) {

@@ -88,4 +88,10 @@ struct GF2BasisResult {
     std::vector<std::vector<int>> reps;           // reps[i] = {k1, k2, ...} 表示 row_i = basis[k1] ⊕ basis[k2] ⊕ ...
 };
 
+struct UploadTask {
+    unsigned int stripe_id;
+    size_t value_size;
+    std::promise<void> ready_promise; // 通知 client 可以发数据
+};
+
 } // namespace ECProject

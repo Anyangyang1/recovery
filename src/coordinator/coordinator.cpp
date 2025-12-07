@@ -22,7 +22,7 @@ Coordinator::Coordinator(std::string ip, int port, std::string xml_path)
     }
     
     ec_schema_.ec = std::make_unique<RSCode>(2, 1);
-    ec_schema_.block_size = 16;
+    ec_schema_.block_size = 512;
 
 }
 Coordinator::~Coordinator() { // 1. 先断开所有 datanodes（同步等待）
@@ -107,7 +107,7 @@ StripeInfo Coordinator::get_stripe_info(unsigned int stripe_id) {
     for (auto node_id : node_ids) {
         Node node = node_table_[node_id];
         NodeIpInfo node_ip_info;
-        node_ip_info.node_ip = node.node_id;
+        node_ip_info.node_ip = node.node_ip;
         node_ip_info.node_port = node.node_port;
         stripe_info.nodes_info.push_back(node_ip_info);
     }

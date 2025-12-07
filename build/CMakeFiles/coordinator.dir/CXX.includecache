@@ -63,18 +63,24 @@ ylt/coro_rpc/coro_rpc_server.hpp
 -
 
 ../include/datanode.h
+jerasure_wrapper.h
+../include/jerasure_wrapper.h
 asio.hpp
 -
 fstream
 -
 map
 -
+queue
+-
+coroutine
+-
+thread
+-
 ylt/coro_rpc/coro_rpc_client.hpp
 -
 ylt/coro_rpc/coro_rpc_server.hpp
 -
-jerasure_wrapper.h
-../include/jerasure_wrapper.h
 metadata.h
 ../include/metadata.h
 libmemcached/memcached.h

@@ -1,12 +1,14 @@
 #pragma once
 
+#include "jerasure_wrapper.h"
 #include <asio.hpp>
 #include <fstream>
 #include <map>
+#include <queue>
+#include <coroutine>
+#include <thread>
 #include <ylt/coro_rpc/coro_rpc_client.hpp>
 #include <ylt/coro_rpc/coro_rpc_server.hpp>
-#include "jerasure_wrapper.h"
-
 #include "metadata.h"
 #ifdef IN_MEMORY
 #ifdef MEMCACHED
@@ -24,6 +26,7 @@ class Datanode {
   public:
     Datanode(std::string ip, int port);
     ~Datanode();
+    void stop();
     void run();
     void handle_get_with_local_decode(const std::string &key, size_t value_size,
                                       const vector<vector<int>> &matrix);
@@ -134,15 +137,22 @@ class Datanode {
                                size_t total_size);
 
   private:
-    std::unique_ptr<coro_rpc::coro_rpc_server> rpc_server_{nullptr};
     std::string ip_;
     int port_;
     int port_for_transfer_data_;
-    asio::io_context io_context_{};
-    asio::ip::tcp::acceptor acceptor_;
-
     std::string coordinator_ip_;
     int coordinator_port_;
+
+    asio::io_context io_context_{};
+    
+    // data listener
+    asio::ip::tcp::acceptor acceptor_;
+
+    // RPC
+    std::unique_ptr<coro_rpc::coro_rpc_server> rpc_server_{nullptr};
+
+ 
+
 
     // ¸¨Öú¹þÏ££¨C++11 ¼æÈÝ£©
     struct VecIntHash {

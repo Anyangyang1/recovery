@@ -3,13 +3,13 @@
 namespace ECProject {
 Datanode::Datanode(std::string ip, int port)
     : ip_(ip), port_(port), port_for_transfer_data_(port + SOCKET_PORT_OFFSET),
+      coordinator_ip_("192.168.1.12"), coordinator_port_(COORDINATOR_PORT),
       acceptor_(io_context_, asio::ip::tcp::endpoint(
                                  asio::ip::address::from_string(ip.c_str()),
-                                 port_for_transfer_data_)),
-      coordinator_ip_("192.168.1.12"), coordinator_port_(COORDINATOR_PORT) {
-    easylog::set_min_severity(easylog::Severity::INFO);
+                                 port_for_transfer_data_)) {
+    easylog::set_min_severity(easylog::Severity::DEBUG);
     // port is for rpc
-    rpc_server_ = std::make_unique<coro_rpc::coro_rpc_server>(1, port_);
+    rpc_server_ = std::make_unique<coro_rpc::coro_rpc_server>(4, port_);
     rpc_server_->register_handler<&Datanode::handle_set>(this);
     rpc_server_->register_handler<&Datanode::handle_get>(this);
     rpc_server_->register_handler<&Datanode::handle_get_with_local_decode>(
@@ -75,35 +75,57 @@ void Datanode::handle_get(const std::string &key, size_t value_size) {
 
 // ====== Datanode::handle_upload (重构后) ======
 void Datanode::handle_upload(unsigned int stripe_id, size_t value_size) {
-    try {
-        // === Step 1: 同步接收数据（避免 async + detach 风险）===
-        auto value_buf = std::make_unique<char[]>(value_size);
-        {
+    ELOG(DEBUG) << "[RPC] handle_upload(" << stripe_id << ", " << value_size
+                << ")";
+    // === Step 1: 读取数据 ===
+    auto handler = [this, stripe_id, value_size]() mutable {
+        try {
             asio::ip::tcp::socket socket(io_context_);
-            acceptor_.accept(socket);
-            asio::read(socket, asio::buffer(value_buf.get(), value_size));
+            std::error_code ec;
+            // Sync accept — safe in dedicated RPC thread
+            ELOG(DEBUG) << "prepare reveive data...";
+            acceptor_.accept(socket, ec);
+            if (ec) {
+                ELOG(ERROR) << "Accept failed: " << ec.message();
+                return;
+            }
+            ELOG(DEBUG) << "start reveive data...";
+            // Sync read
+            auto value_buf = std::make_unique<char[]>(value_size);
+            size_t n = asio::read(
+                socket, asio::buffer(value_buf.get(), value_size), ec);
             socket.close();
-        } // socket 析构，连接关闭
+            if (ec || n != value_size) {
+                ELOG(DEBUG) << "reveive data... error";
+                return;
+            }
+            std::string value_str(value_buf.get(), value_size);
+            ELOG(DEBUG) << "receive data: " << value_str;
 
-        // === Step 2: 同步获取元数据 ===
-        auto client = std::make_unique<coro_rpc::coro_rpc_client>();
-        async_simple::coro::syncAwait(client->connect(
-            coordinator_ip_, std::to_string(coordinator_port_)));
-        StripeInfo stripe_info =
-            async_simple::coro::syncAwait(
-                client->call<&Coordinator::get_stripe_info>(stripe_id))
-                .value();
-        client.reset();
+            // === Step 2: 同步获取元数据 ===
+            auto client = std::make_unique<coro_rpc::coro_rpc_client>();
+            auto conn_res = async_simple::coro::syncAwait(client->connect(
+                coordinator_ip_, std::to_string(coordinator_port_)));
+            if (conn_res) {
+                ELOG(ERROR)
+                    << "Failed to connect coordinator RPC (" << coordinator_ip_
+                    << ":" << coordinator_port_ << "): " << conn_res.message();
+            }
+            StripeInfo stripe_info =
+                async_simple::coro::syncAwait(
+                    client->call<&Coordinator::get_stripe_info>(stripe_id))
+                    .value();
+            client.reset();
 
-        ELOG(DEBUG) << "receive data: " << value_buf;
-
-        // // === Step 3: 同步执行编码 + 分发（可改为协程异步，但先保正确性）===
-        // encode_and_distribute(stripe_info, std::move(value_buf), value_size);
-
-    } catch (const std::exception &e) {
-        ELOG(ERROR) << "[Datanode] handle_upload failed: " << e.what();
-        throw; // 让 RPC 框架返回错误给 client
-    }
+            // === Step 3: 同步执行编码 +
+            // 分发（可改为协程异步，但先保正确性）===
+            encode_and_distribute(stripe_info, std::move(value_buf),
+                                  value_size);
+        } catch (const std::exception &e) {
+            ELOG(ERROR) << "[Datanode] handle_upload failed: " << e.what();
+        }
+    };
+    std::thread(handler).detach();
 }
 
 void Datanode::handle_get_with_local_decode(const std::string &key,
@@ -191,7 +213,9 @@ bool Datanode::access_data(const std::string &key, char *value_buf,
 
 bool Datanode::store_data(const std::string &key, const char *value,
                           size_t value_size) {
-    std::string targetdir = "./storage/" + std::to_string(port_) + "/";
+    ELOG(DEBUG) << "write data to disk...key = " << key
+                << ",value_size = " << value_size;
+    std::string targetdir = "./storage/";
     std::string writepath = targetdir + key;
     if (access(targetdir.c_str(), 0) == -1) {
         mkdir(targetdir.c_str(), S_IRWXU);
@@ -223,7 +247,8 @@ void Datanode::local_decode(const std::vector<std::vector<int>> &matrix,
         // 初始化输出块为全0（异或起点）
         std::memset(out, 0, packet_size);
 
-        // 按列异或：若 matrix[i][j]==1，则 data_buf + j*packet_size 异或入 out
+        // 按列异或：若 matrix[i][j]==1，则 data_buf + j*packet_size 异或入
+        // out
         for (size_t j = 0; j < w; ++j) {
             if (matrix[i][j]) {
                 char *src = data_buf + j * packet_size;
@@ -291,6 +316,7 @@ bool Datanode::read_from_datanode(const string &ip, int port, const string &key,
 
 bool Datanode::write_to_datanode(const string &ip, int port, const string &key,
                                  char *value, size_t value_size) {
+    ELOG(DEBUG) << "prepare to write to(" << ip << ":" << port << ")";
     try {
         auto client = std::make_unique<coro_rpc::coro_rpc_client>();
         async_simple::coro::syncAwait(
@@ -478,8 +504,8 @@ Datanode::compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
         // 遍历所有主元列（按列递增顺序 = 基向量顺序）
         for (int c = 0; c < w; ++c) {
             if (v[c] == 1 && pivot_row_for_col[c] != -1) {
-                int basis_idx =
-                    pivot_row_for_col[c]; // 该主元对应的基索引（0 ~ rank-1）
+                int basis_idx = pivot_row_for_col[c]; // 该主元对应的基索引（0
+                                                      // ~ rank-1）
                 reps[i].push_back(basis_idx);
 
                 // v ^= basis[basis_idx]
@@ -502,6 +528,7 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
 
     int k = stripe_info.k;
     int m = stripe_info.m;
+    int w = stripe_info.w;
     size_t block_size = stripe_info.block_size;
 
     // 校验数据完整性
@@ -525,6 +552,9 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     // 执行编码
     // stripe_info.ec_schema.ec->encode(
     //     data_ptrs.data(), coding_ptrs.data(), block_size);
+    int *matrix = cauchy_original_coding_matrix(k, m, w);
+    jerasure_matrix_encode(k, m, w, matrix, data_ptrs.data(),
+                           coding_ptrs.data(), block_size);
 
     // === 并发写入所有块（含本地）===
     std::string key = "stripe" + std::to_string(stripe_info.stripe_id);
@@ -535,9 +565,10 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     for (int idx = 0; idx < k + m; ++idx) {
         const auto &node = stripe_info.nodes_info[idx];
         char *block_data = (idx < k) ? data_ptrs[idx] : coding_ptrs[idx - k];
-
+        ELOG(DEBUG) << "prepare wirte data to (" << node.node_ip << ":"
+                    << std::to_string(node.node_port) << ")";
         // 若是本节点 → 直接 store_data（避免 network loopback）
-        if (node.node_ip == ip_ && node.node_port == port_) {
+        if (idx == 0) {
             futures.push_back(std::async(
                 std::launch::async, [this, key, block_data, block_size]() {
                     return this->store_data(key, block_data, block_size);
@@ -548,8 +579,9 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
             futures.push_back(
                 std::async(std::launch::async, [this, node, key, block_data,
                                                 block_size, coding_buf]() {
-                    return this->write_to_datanode(node.node_ip, node.node_port,
-                                                   key, block_data, block_size);
+                    return this->write_to_datanode(
+                        node.node_ip, node.node_port, key,
+                        block_data, block_size);
                 }));
         }
     }
@@ -566,8 +598,8 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
         throw std::runtime_error("Failed to write one or more blocks");
     }
 
-    // // === Step 4: 通知 Coordinator 写入完成（可选：异步 fire-and-forget）===
-    // try {
+    // // === Step 4: 通知 Coordinator 写入完成（可选：异步
+    // fire-and-forget）=== try {
     //     auto client = std::make_unique<coro_rpc::coro_rpc_client>();
     //     async_simple::coro::syncAwait(
     //         client->connect(coordinator_ip_, coordinator_port_));
@@ -575,8 +607,8 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     //         client->call<&Coordinator::mark_stripe_written>(stripe_info.stripe_id));
     // } catch (...) {
     //     // 可容忍：Coordinator 可通过心跳/修复发现缺失条带
-    //     std::cerr << "[Datanode] Failed to notify Coordinator, but data is
-    //     stored." << std::endl;
+    //     std::cerr << "[Datanode] Failed to notify Coordinator, but data
+    //     is stored." << std::endl;
     // }
 }
 
