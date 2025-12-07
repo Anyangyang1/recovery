@@ -10,6 +10,7 @@ CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/coordinator.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/datanode.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/ec/erasure_code.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/ec/rs.h
+CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/ec/rs_xor.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/jerasure_wrapper.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/metadata.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/tinyxml2.h
@@ -736,6 +737,7 @@ CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/algorithm/ut
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/datanode.h
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/ec/erasure_code.h
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/ec/rs.h
+CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/ec/rs_xor.h
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/jerasure_wrapper.h
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/metadata.h
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../yalantinglibs/include/ylt/coro_io/coro_io.hpp

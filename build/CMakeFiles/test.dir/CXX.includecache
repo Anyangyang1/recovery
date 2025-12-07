@@ -59,6 +59,8 @@ vector
 -
 ../jerasure_wrapper.h
 ../include/jerasure_wrapper.h
+ylt/easylog.hpp
+../include/algorithm/ylt/easylog.hpp
 source_location
 -
 

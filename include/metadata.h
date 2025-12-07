@@ -1,6 +1,7 @@
 #pragma once
 #include "erasure_code.h"
 #include "rs.h"
+#include "rs_xor.h"
 #include "utils.h"
 #include <unordered_map>
 #include <unordered_set>
@@ -20,9 +21,13 @@
 #define CLIENT_PORT 21212
 
 namespace ECProject {
+
+
+
 struct ECSchema {
-    std::unique_ptr<ErasureCode> ec;  // 改为智能指针，更安全
     size_t block_size = 0;
+    ECTYPE ec_type;
+    std::unique_ptr<ErasureCode> ec; // 改为智能指针，更安全
 };
 
 struct Stripe {
@@ -65,6 +70,7 @@ struct StripeInfo {
     int m;
     int w;
     size_t block_size;
+    ECTYPE ec_type;
 };
 
 struct RepairPlan {
@@ -84,8 +90,9 @@ struct RepairResp {
 };
 
 struct GF2BasisResult {
-    std::vector<std::vector<int>> basis;          // 基向量（行），size = rank
-    std::vector<std::vector<int>> reps;           // reps[i] = {k1, k2, ...} 表示 row_i = basis[k1] ⊕ basis[k2] ⊕ ...
+    std::vector<std::vector<int>> basis; // 基向量（行），size = rank
+    std::vector<std::vector<int>> reps;  // reps[i] = {k1, k2, ...} 表示 row_i =
+                                         // basis[k1] ⊕ basis[k2] ⊕ ...
 };
 
 struct UploadTask {

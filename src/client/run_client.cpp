@@ -21,7 +21,6 @@ std::string generate_random_string(size_t length) {
 int main(int argc, char **argv) {
     Client client("0.0.0.0", CLIENT_PORT, "192.168.1.12", COORDINATOR_PORT);
     const int k = 2;
-    const int m = 1;
     const int block_size = 512;
     const int value_size = k * block_size;
     std::string value = generate_random_string(value_size);

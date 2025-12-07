@@ -41,6 +41,8 @@ vector
 -
 ../jerasure_wrapper.h
 ../include/jerasure_wrapper.h
+ylt/easylog.hpp
+../include/algorithm/ylt/easylog.hpp
 source_location
 -
 
@@ -91,16 +93,22 @@ unistd.h
 -
 
 ../include/ec/erasure_code.h
+../jerasure_wrapper.h
+../include/jerasure_wrapper.h
 utils.h
 ../include/ec/utils.h
-../jerasure_wrapper.h
-../include/jerasure_wrapper.h
 
 ../include/ec/rs.h
-erasure_code.h
-../include/ec/erasure_code.h
 ../jerasure_wrapper.h
 ../include/jerasure_wrapper.h
+erasure_code.h
+../include/ec/erasure_code.h
+
+../include/ec/rs_xor.h
+../jerasure_wrapper.h
+../include/jerasure_wrapper.h
+erasure_code.h
+../include/ec/erasure_code.h
 
 ../include/jerasure_wrapper.h
 ../Jerasure-1.2A/cauchy.h
@@ -117,6 +125,8 @@ erasure_code.h
 ../include/erasure_code.h
 rs.h
 ../include/rs.h
+rs_xor.h
+../include/rs_xor.h
 utils.h
 ../include/utils.h
 unordered_map
@@ -12989,4 +12999,12 @@ datanode.h
 /home/anyangyang/study/recovery/src/datanode/datanode.h
 coordinator.h
 /home/anyangyang/study/recovery/src/datanode/coordinator.h
+
+/home/anyangyang/study/recovery/src/datanode/run_datanode.cpp
+datanode.h
+/home/anyangyang/study/recovery/src/datanode/datanode.h
+ylt/easylog.hpp
+/home/anyangyang/study/recovery/src/datanode/ylt/easylog.hpp
+iostream
+-
 

@@ -83,19 +83,34 @@ CMakeFiles/ec.dir/src/ec/rs.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ec.dir/src/ec/rs.cpp.s"
 	/opt/rh/devtoolset-11/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/anyangyang/study/recovery/src/ec/rs.cpp -o CMakeFiles/ec.dir/src/ec/rs.cpp.s
 
+CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o: CMakeFiles/ec.dir/flags.make
+CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o: ../src/ec/rs_xor.cpp
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o"
+	/opt/rh/devtoolset-11/root/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o -c /home/anyangyang/study/recovery/src/ec/rs_xor.cpp
+
+CMakeFiles/ec.dir/src/ec/rs_xor.cpp.i: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/ec.dir/src/ec/rs_xor.cpp.i"
+	/opt/rh/devtoolset-11/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/anyangyang/study/recovery/src/ec/rs_xor.cpp > CMakeFiles/ec.dir/src/ec/rs_xor.cpp.i
+
+CMakeFiles/ec.dir/src/ec/rs_xor.cpp.s: cmake_force
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/ec.dir/src/ec/rs_xor.cpp.s"
+	/opt/rh/devtoolset-11/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/anyangyang/study/recovery/src/ec/rs_xor.cpp -o CMakeFiles/ec.dir/src/ec/rs_xor.cpp.s
+
 # Object files for target ec
 ec_OBJECTS = \
 "CMakeFiles/ec.dir/src/ec/erasure_code.cpp.o" \
-"CMakeFiles/ec.dir/src/ec/rs.cpp.o"
+"CMakeFiles/ec.dir/src/ec/rs.cpp.o" \
+"CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o"
 
 # External object files for target ec
 ec_EXTERNAL_OBJECTS =
 
 libec.a: CMakeFiles/ec.dir/src/ec/erasure_code.cpp.o
 libec.a: CMakeFiles/ec.dir/src/ec/rs.cpp.o
+libec.a: CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o
 libec.a: CMakeFiles/ec.dir/build.make
 libec.a: CMakeFiles/ec.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library libec.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX static library libec.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/ec.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/ec.dir/link.txt --verbose=$(VERBOSE)
 

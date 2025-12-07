@@ -1,10 +1,10 @@
 #pragma once
 
-#include "utils.h"
 #include "../jerasure_wrapper.h"
+#include "utils.h"
 
 namespace ECProject {
-
+enum ECTYPE { RS, XOR };
 class ErasureCode {
   public:
     int k;     /* number of data blocks */
@@ -20,10 +20,10 @@ class ErasureCode {
                         int block_size) = 0;
     virtual void decode(char **data_ptrs, char **coding_ptrs, int blocksize,
                         int *erasures, int failed_num) = 0;
-    
+    virtual std::unique_ptr<ErasureCode> clone() const = 0;
+
     virtual void make_encoding_matrix(int *final_matrix) {}
-    
-   
+
     void print_matrix(int *matrix, int rows, int cols, std::string msg);
     void get_identity_matrix(int *matrix, int rows, int kk);
     virtual void make_full_matrix(int *matrix, int kk);
@@ -52,6 +52,5 @@ class ErasureCode {
         int block_size, const std::vector<int> &data_idxs,
         const std::vector<int> &failure_idxs,
         const std::vector<int> &live_idxs);
-
 };
 } // namespace ECProject

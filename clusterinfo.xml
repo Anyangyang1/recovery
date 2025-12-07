@@ -5,5 +5,4 @@
   <datanode uri="192.168.1.16:8888" />
   <datanode uri="192.168.1.17:8888" />
   <datanode uri="192.168.1.18:8888" />
-  
 </datanodes>

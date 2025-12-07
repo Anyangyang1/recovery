@@ -20,10 +20,10 @@ Coordinator::Coordinator(std::string ip, int port, std::string xml_path)
         std::cerr << "init_cluster_info failed: " << e.what() << std::endl;
         std::abort(); // 或 throw
     }
-    
-    ec_schema_.ec = std::make_unique<RSCode>(2, 1);
-    ec_schema_.block_size = 512;
 
+    ec_schema_.ec = std::make_unique<XORCode>(2, 2, 4);
+    ec_schema_.block_size = 512;
+    ec_schema_.ec_type = XOR;
 }
 Coordinator::~Coordinator() { // 1. 先断开所有 datanodes（同步等待）
     for (auto &[uri, client] : datanodes_) {
@@ -39,9 +39,7 @@ Coordinator::~Coordinator() { // 1. 先断开所有 datanodes（同步等待）
         rpc_server_->stop();
     }
 }
-void Coordinator::run() {
-    auto ret = rpc_server_->start();
-}
+void Coordinator::run() { auto ret = rpc_server_->start(); }
 
 void Coordinator::init_cluster_info() {
     tinyxml2::XMLDocument xml;
@@ -99,10 +97,11 @@ Stripe &Coordinator::new_stripe() {
 StripeInfo Coordinator::get_stripe_info(unsigned int stripe_id) {
     StripeInfo stripe_info;
     stripe_info.stripe_id = stripe_id;
-    stripe_info.block_size = ec_schema_.block_size;
     stripe_info.k = ec_schema_.ec->k;
     stripe_info.m = ec_schema_.ec->m;
     stripe_info.w = ec_schema_.ec->w;
+    stripe_info.block_size = ec_schema_.block_size;
+    stripe_info.ec_type = ec_schema_.ec_type;
     auto node_ids = stripe_table_[stripe_id].blocks2nodes;
     for (auto node_id : node_ids) {
         Node node = node_table_[node_id];
@@ -117,7 +116,7 @@ StripeInfo Coordinator::get_stripe_info(unsigned int stripe_id) {
 UploadInfo Coordinator::request_set(size_t value_size) {
     ELOG(DEBUG) << "value_size: " << value_size;
     my_assert(value_size == ec_schema_.block_size * ec_schema_.ec->k);
-    
+
     Stripe stripe = new_stripe();
     UploadInfo upload_info;
     unsigned int node0_id = stripe.blocks2nodes[0];

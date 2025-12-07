@@ -11,6 +11,7 @@ CMakeFiles/client.dir/src/client/client.cpp.o: ../include/coordinator.h
 CMakeFiles/client.dir/src/client/client.cpp.o: ../include/datanode.h
 CMakeFiles/client.dir/src/client/client.cpp.o: ../include/ec/erasure_code.h
 CMakeFiles/client.dir/src/client/client.cpp.o: ../include/ec/rs.h
+CMakeFiles/client.dir/src/client/client.cpp.o: ../include/ec/rs_xor.h
 CMakeFiles/client.dir/src/client/client.cpp.o: ../include/jerasure_wrapper.h
 CMakeFiles/client.dir/src/client/client.cpp.o: ../include/metadata.h
 CMakeFiles/client.dir/src/client/client.cpp.o: ../include/tinyxml2.h
@@ -739,6 +740,7 @@ CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/coordinator.h
 CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/datanode.h
 CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/ec/erasure_code.h
 CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/ec/rs.h
+CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/ec/rs_xor.h
 CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/jerasure_wrapper.h
 CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/metadata.h
 CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/tinyxml2.h

@@ -525,7 +525,6 @@ Datanode::compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
 void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
                                      std::unique_ptr<char[]> object_data,
                                      size_t total_size) {
-
     int k = stripe_info.k;
     int m = stripe_info.m;
     int w = stripe_info.w;
@@ -550,11 +549,16 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     }
 
     // 执行编码
-    // stripe_info.ec_schema.ec->encode(
-    //     data_ptrs.data(), coding_ptrs.data(), block_size);
-    int *matrix = cauchy_original_coding_matrix(k, m, w);
-    jerasure_matrix_encode(k, m, w, matrix, data_ptrs.data(),
-                           coding_ptrs.data(), block_size);
+    std::unique_ptr<ErasureCode> ec;
+    if (stripe_info.ec_type == XOR) {
+        ec = std::make_unique<XORCode>(k, m, w);
+    } else {
+        ec = std::make_unique<RSCode>(k, m);
+    }
+    ec->encode(data_ptrs.data(), coding_ptrs.data(), block_size);
+    // int *matrix = cauchy_original_coding_matrix(k, m, w);
+    // jerasure_matrix_encode(k, m, w, matrix, data_ptrs.data(),
+    //                        coding_ptrs.data(), block_size);
 
     // === 并发写入所有块（含本地）===
     std::string key = "stripe" + std::to_string(stripe_info.stripe_id);
@@ -579,9 +583,8 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
             futures.push_back(
                 std::async(std::launch::async, [this, node, key, block_data,
                                                 block_size, coding_buf]() {
-                    return this->write_to_datanode(
-                        node.node_ip, node.node_port, key,
-                        block_data, block_size);
+                    return this->write_to_datanode(node.node_ip, node.node_port,
+                                                   key, block_data, block_size);
                 }));
         }
     }

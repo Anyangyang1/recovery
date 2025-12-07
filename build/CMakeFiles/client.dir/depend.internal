@@ -12,6 +12,7 @@ CMakeFiles/client.dir/src/client/client.cpp.o
  ../include/datanode.h
  ../include/ec/erasure_code.h
  ../include/ec/rs.h
+ ../include/ec/rs_xor.h
  ../include/jerasure_wrapper.h
  ../include/metadata.h
  ../include/tinyxml2.h
@@ -740,6 +741,7 @@ CMakeFiles/client.dir/src/client/run_client.cpp.o
  ../include/datanode.h
  ../include/ec/erasure_code.h
  ../include/ec/rs.h
+ ../include/ec/rs_xor.h
  ../include/jerasure_wrapper.h
  ../include/metadata.h
  ../include/tinyxml2.h

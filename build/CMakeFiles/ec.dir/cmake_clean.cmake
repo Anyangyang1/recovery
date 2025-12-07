@@ -1,6 +1,7 @@
 file(REMOVE_RECURSE
   "CMakeFiles/ec.dir/src/ec/erasure_code.cpp.o"
   "CMakeFiles/ec.dir/src/ec/rs.cpp.o"
+  "CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o"
   "libec.pdb"
   "libec.a"
 )

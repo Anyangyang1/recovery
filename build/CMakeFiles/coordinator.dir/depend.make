@@ -10,6 +10,7 @@ CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/coordin
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/datanode.h
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/ec/erasure_code.h
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/ec/rs.h
+CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/ec/rs_xor.h
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/jerasure_wrapper.h
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/metadata.h
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/tinyxml2.h
@@ -737,6 +738,7 @@ CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/coo
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/datanode.h
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/ec/erasure_code.h
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/ec/rs.h
+CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/ec/rs_xor.h
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/jerasure_wrapper.h
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/metadata.h
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/tinyxml2.h

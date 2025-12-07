@@ -11,6 +11,7 @@ CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o
  ../include/datanode.h
  ../include/ec/erasure_code.h
  ../include/ec/rs.h
+ ../include/ec/rs_xor.h
  ../include/jerasure_wrapper.h
  ../include/metadata.h
  ../include/tinyxml2.h
@@ -738,6 +739,7 @@ CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o
  ../include/datanode.h
  ../include/ec/erasure_code.h
  ../include/ec/rs.h
+ ../include/ec/rs_xor.h
  ../include/jerasure_wrapper.h
  ../include/metadata.h
  ../include/tinyxml2.h

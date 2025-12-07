@@ -41,6 +41,11 @@
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/Jerasure-1.2A -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -pthread -std=c++2a -o CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o -c /home/anyangyang/study/recovery/src/ec/rs_xor.cpp",
+  "file": "/home/anyangyang/study/recovery/src/ec/rs_xor.cpp"
+},
+{
+  "directory": "/home/anyangyang/study/recovery/build",
   "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include/coordinator -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -I/home/anyangyang/study/recovery/tinyxml2-9.0.0 -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o -c /home/anyangyang/study/recovery/src/coordinator/coordinator.cpp",
   "file": "/home/anyangyang/study/recovery/src/coordinator/coordinator.cpp"
 },

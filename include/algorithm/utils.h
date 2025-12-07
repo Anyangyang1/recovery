@@ -10,7 +10,9 @@
 #include <random>
 #include <vector>
 #include "../jerasure_wrapper.h"
+#include "ylt/easylog.hpp"
 #include <source_location>
+
 
 #define my_assert(condition)                                                   \
     exit_when((condition), std::source_location::current())

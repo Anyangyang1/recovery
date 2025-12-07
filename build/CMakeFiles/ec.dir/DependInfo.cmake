@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/anyangyang/study/recovery/src/ec/erasure_code.cpp" "/home/anyangyang/study/recovery/build/CMakeFiles/ec.dir/src/ec/erasure_code.cpp.o"
   "/home/anyangyang/study/recovery/src/ec/rs.cpp" "/home/anyangyang/study/recovery/build/CMakeFiles/ec.dir/src/ec/rs.cpp.o"
+  "/home/anyangyang/study/recovery/src/ec/rs_xor.cpp" "/home/anyangyang/study/recovery/build/CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

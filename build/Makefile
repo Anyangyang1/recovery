@@ -619,6 +619,33 @@ src/ec/rs.cpp.s:
 	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/src/ec/rs.cpp.s
 .PHONY : src/ec/rs.cpp.s
 
+src/ec/rs_xor.o: src/ec/rs_xor.cpp.o
+
+.PHONY : src/ec/rs_xor.o
+
+# target to build an object file
+src/ec/rs_xor.cpp.o:
+	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o
+.PHONY : src/ec/rs_xor.cpp.o
+
+src/ec/rs_xor.i: src/ec/rs_xor.cpp.i
+
+.PHONY : src/ec/rs_xor.i
+
+# target to preprocess a source file
+src/ec/rs_xor.cpp.i:
+	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/src/ec/rs_xor.cpp.i
+.PHONY : src/ec/rs_xor.cpp.i
+
+src/ec/rs_xor.s: src/ec/rs_xor.cpp.s
+
+.PHONY : src/ec/rs_xor.s
+
+# target to generate assembly for a file
+src/ec/rs_xor.cpp.s:
+	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/src/ec/rs_xor.cpp.s
+.PHONY : src/ec/rs_xor.cpp.s
+
 src/test/main.o: src/test/main.cpp.o
 
 .PHONY : src/test/main.o
@@ -761,6 +788,9 @@ help:
 	@echo "... src/ec/rs.o"
 	@echo "... src/ec/rs.i"
 	@echo "... src/ec/rs.s"
+	@echo "... src/ec/rs_xor.o"
+	@echo "... src/ec/rs_xor.i"
+	@echo "... src/ec/rs_xor.s"
 	@echo "... src/test/main.o"
 	@echo "... src/test/main.i"
 	@echo "... src/test/main.s"
