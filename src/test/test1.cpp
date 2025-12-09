@@ -37,8 +37,8 @@ void reducePacketsTest() {
                 cout << "origin packets: " << K * W << endl;
                 cout << "need packets: " << rankSum1 << endl;
                 std::cout << "duration: " << time1 << " ms\n";
-                cout << "^^^^^^^^^^^^^^K,M,W,FailedBlock^^^^^^^^^^^^^^" << K
-                     << "," << M << "," << W << endl;
+                cout << "^^^^^^^^^^^^^^K,M,W,FailedBlock,num^^^^^^^^^^^^^^" << K
+                     << "," << M << "," << W << "," << num << endl;
             }
         }
     }

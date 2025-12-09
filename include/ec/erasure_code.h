@@ -14,6 +14,7 @@ class ErasureCode {
     ErasureCode() = default;
     ErasureCode(int k, int m) : k(k), m(m) {}
     ErasureCode(int k, int m, int w) : k(k), m(m), w(w) {}
+
     virtual ~ErasureCode() {}
 
     virtual void encode(char **data_ptrs, char **coding_ptrs,

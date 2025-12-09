@@ -4,13 +4,13 @@
 #include <unistd.h>
 using namespace ECProject;
 std::string generate_random_string(size_t length) {
-    static const char charset[] =
-        "0123456789"
-        "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-        "abcdefghijklmnopqrstuvwxyz";
+    static const char charset[] = "0123456789"
+                                  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                  "abcdefghijklmnopqrstuvwxyz";
     static std::random_device rd;
     static std::mt19937 gen(rd());
-    static std::uniform_int_distribution<> dis(0, sizeof(charset) - 2); // -2: exclude trailing '\0'
+    static std::uniform_int_distribution<> dis(
+        0, sizeof(charset) - 2); // -2: exclude trailing '\0'
 
     std::string str(length, 0);
     for (size_t i = 0; i < length; ++i) {
@@ -23,8 +23,14 @@ int main(int argc, char **argv) {
     const int k = 2;
     const int block_size = 512;
     const int value_size = k * block_size;
-    std::string value = generate_random_string(value_size);
-    ELOG(DEBUG) << "value: " << value;
-    client.set(value);
+    int num = atoi(argv[1]);
+    if (num == 1) {
+        std::string value = generate_random_string(value_size);
+        ELOG(DEBUG) << "value: " << value;
+        client.set(value);
+    } else {
+        client.request_repair(0, 1);
+    }
+
     return 0;
 }

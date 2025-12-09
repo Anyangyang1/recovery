@@ -5,12 +5,14 @@
 #include <ylt/coro_rpc/coro_rpc_client.hpp>
 
 namespace ECProject {
-  class Client {
+class Client {
   public:
-    Client(std::string ip, int port, std::string coordinator_ip, int coordinator_port);
+    Client(std::string ip, int port, std::string coordinator_ip,
+           int coordinator_port);
     ~Client();
 
     void set(std::string value);
+    void request_repair(unsigned int stripe_id, unsigned int failed_block_id);
 
   private:
     std::unique_ptr<coro_rpc::coro_rpc_client> rpc_coordinator_{nullptr};
@@ -20,5 +22,5 @@ namespace ECProject {
     int coordinator_port_;
     asio::io_context io_context_{};
     asio::ip::tcp::acceptor acceptor_;
-  };
 };
+}; // namespace ECProject

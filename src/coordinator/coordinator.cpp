@@ -126,8 +126,24 @@ UploadInfo Coordinator::request_set(size_t value_size) {
     return upload_info;
 }
 
-RepairResp Coordinator::request_repair(const Stripe &stripe,
+RepairResp Coordinator::request_repair_with_opt(const Stripe &stripe,
+                                                unsigned int failed_block_id) {
+    RepairResp response;
+    RepairPlan repair_plan =
+        generate_repair_plan_with_opt(stripe, failed_block_id);
+    Node new_node = repair_plan.selected_new_node;
+    std::string node_ip_port =
+        new_node.node_ip + ":" + std::to_string(new_node.node_port);
+    async_simple::coro::syncAwait(
+        datanodes_[node_ip_port]->call<&Datanode::do_repair_with_opt>(
+            repair_plan.stripe_id, repair_plan.helpers, ec_schema_.block_size,
+            ec_schema_.ec->w));
+    return response;
+}
+
+RepairResp Coordinator::request_repair(unsigned int stripe_id,
                                        unsigned int failed_block_id) {
+    const Stripe stripe = stripe_table_[stripe_id];
     RepairResp response;
     RepairPlan repair_plan = generate_repair_plan(stripe, failed_block_id);
     Node new_node = repair_plan.selected_new_node;
@@ -139,10 +155,12 @@ RepairResp Coordinator::request_repair(const Stripe &stripe,
             ec_schema_.ec->w));
     return response;
 }
+
 void Coordinator::request_get(unsigned int stripe_id) {}
 
-RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
-                                             unsigned int failed_block_id) {
+RepairPlan
+Coordinator::generate_repair_plan_with_opt(const Stripe &stripe,
+                                           unsigned int failed_block_id) {
     unsigned int stripe_id = stripe.stripe_id;
     std::vector<std::vector<int>> &decode_matrix =
         opt_decode_matrix_with_all_failed_mode_[failed_block_id];
@@ -166,6 +184,76 @@ RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
     repair_plan.stripe_id = stripe_id;
     unsigned int new_node_id = select_node(node_ids);
     repair_plan.selected_new_node = node_table_[new_node_id];
+    return repair_plan;
+}
+
+RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
+                                             unsigned int failed_block_id) {
+    const int k = ec_schema_.ec->k;
+    const int m = ec_schema_.ec->m;
+    const int w = ec_schema_.ec->w;
+    std::vector<std::vector<int>> codingMatrix = cauchy_original_coding_matrix_vector(k, m ,w);
+    cout << "codingMatrix: " << endl;
+    cout << codingMatrix << endl;
+    std::vector<unsigned int> node_ids = stripe.blocks2nodes;
+    unsigned int stripe_id = stripe.stripe_id;
+    RepairPlan repair_plan;
+    repair_plan.stripe_id = stripe_id;
+    unsigned int new_node_id = select_node(node_ids);
+    repair_plan.selected_new_node = node_table_[new_node_id];
+
+    std::vector<std::vector<int>> recoveryCoeffs(1, std::vector<int>(k, 0));
+    std::vector<int> recoveryIds(k, 0);
+    // 校验块故障
+    if (failed_block_id >= (unsigned int)k) {
+
+        int blkIdx = failed_block_id - k;
+        for (int i = 0; i < k; i++) {
+            recoveryCoeffs[0][i] = codingMatrix[blkIdx][i];
+            recoveryIds[i] = i;
+        }
+    } else { // 数据块故障
+        vector<int> codingFlat(m * k);
+        for (int i = 0; i < m; ++i) {
+            for (int j = 0; j < k; ++j) {
+                codingFlat[i * k + j] = codingMatrix[i][j];
+            }
+        }
+        vector<int> erased(k + m, 0);
+        erased[failed_block_id] = 1;
+        // 调用 Jerasure 生成解码矩阵
+        vector<int> decodeMatrix(k * k);
+        vector<int> dmIds(k);
+        int ret = jerasure_make_decoding_matrix(
+            k, m, w, codingFlat.data(), erased.data(), decodeMatrix.data(),
+            dmIds.data());
+        cout << "decodeMatrix: " << endl;
+        for (int i = 0; i < k; i++) {
+            for (int j = 0; j < k; j++) {
+                cout << decodeMatrix[i * k + j] << " ";
+            }
+            cout << endl;
+        }
+        for (int i = 0; i < k; i++) {
+            recoveryCoeffs[0][i] = decodeMatrix[failed_block_id * k + i];
+            recoveryIds[i] = dmIds[i];
+        }
+    }
+    cout << "recoveryIds:" << recoveryIds << endl;
+    cout << "recoveryCoeffs:" << recoveryCoeffs << endl;
+    std::vector<std::vector<int>> bitmatrix =
+        matrix2Bitmatrix(recoveryCoeffs, w);
+    for (int i = 0; i < k; i++) {
+        std::vector<std::vector<int>> local_decode_matrix =
+            get_submatrix(bitmatrix, i);
+        unsigned int node_id = node_ids[recoveryIds[i]];
+        Node helper_node = node_table_[node_id];
+        DecodeRequest helper;
+        helper.ip = helper_node.node_ip;
+        helper.port = helper_node.node_port;
+        helper.matrix = local_decode_matrix;
+        repair_plan.helpers.push_back(helper);
+    }
     return repair_plan;
 }
 

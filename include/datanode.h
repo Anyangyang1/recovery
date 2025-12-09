@@ -1,15 +1,15 @@
 #pragma once
 
 #include "jerasure_wrapper.h"
+#include "metadata.h"
 #include <asio.hpp>
+#include <coroutine>
 #include <fstream>
 #include <map>
 #include <queue>
-#include <coroutine>
 #include <thread>
 #include <ylt/coro_rpc/coro_rpc_client.hpp>
 #include <ylt/coro_rpc/coro_rpc_server.hpp>
-#include "metadata.h"
 #ifdef IN_MEMORY
 #ifdef MEMCACHED
 #include <libmemcached/memcached.h>
@@ -83,6 +83,16 @@ class Datanode {
      * @param helpers: 参与修复的helpers
      * @param block_size: 数据块的大小
      */
+    void do_repair_with_opt(unsigned int stripe_id,
+                            std::vector<DecodeRequest> helpers,
+                            size_t block_size, int w);
+
+    /**
+     * @brief 执行修复操作
+     * @param stripe_id: 待修复的条带id
+     * @param helpers: 参与修复的helpers
+     * @param block_size: 数据块的大小
+     */
     void do_repair(unsigned int stripe_id, std::vector<DecodeRequest> helpers,
                    size_t block_size, int w);
 
@@ -144,15 +154,12 @@ class Datanode {
     int coordinator_port_;
 
     asio::io_context io_context_{};
-    
+
     // data listener
     asio::ip::tcp::acceptor acceptor_;
 
     // RPC
     std::unique_ptr<coro_rpc::coro_rpc_server> rpc_server_{nullptr};
-
- 
-
 
     // 辅助哈希（C++11 兼容）
     struct VecIntHash {

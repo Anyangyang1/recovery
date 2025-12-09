@@ -48,10 +48,6 @@ struct NodeIpInfo {
 };
 
 struct DecodeRequest {
-    // DecodeRequest() {}
-    // DecodeRequest(std::string ip, int port,
-    //               std::vector<std::vector<int>> matrix)
-    //     : ip(ip), port(port), matrix(matrix) {}
     std::string ip;
     int port;
     std::vector<std::vector<int>> matrix; // 解码矩阵（如纠删码矩阵）
@@ -95,10 +91,6 @@ struct GF2BasisResult {
                                          // basis[k1] ⊕ basis[k2] ⊕ ...
 };
 
-struct UploadTask {
-    unsigned int stripe_id;
-    size_t value_size;
-    std::promise<void> ready_promise; // 通知 client 可以发数据
-};
+
 
 } // namespace ECProject

@@ -15,6 +15,8 @@ Datanode::Datanode(std::string ip, int port)
     rpc_server_->register_handler<&Datanode::handle_get_with_local_decode>(
         this);
     rpc_server_->register_handler<&Datanode::handle_upload>(this);
+    rpc_server_->register_handler<&Datanode::do_repair>(this);
+    rpc_server_->register_handler<&Datanode::do_repair_with_opt>(this);
 
     std::string targetdir = "./storage/";
     if (access(targetdir.c_str(), 0) == -1) {
@@ -341,9 +343,9 @@ bool Datanode::write_to_datanode(const string &ip, int port, const string &key,
     }
 }
 
-void Datanode::do_repair(unsigned int stripe_id,
-                         std::vector<DecodeRequest> helpers, size_t block_size,
-                         int w) {
+void Datanode::do_repair_with_opt(unsigned int stripe_id,
+                                  std::vector<DecodeRequest> helpers,
+                                  size_t block_size, int w) {
     assert(block_size % w == 0);
     std::string file_name = "stripe" + std::to_string(stripe_id);
     size_t packet_size = block_size / w;
@@ -365,6 +367,51 @@ void Datanode::do_repair(unsigned int stripe_id,
 
         compute_original_data(buf.data(), result.reps,
                               original_datas[idx].data(), packet_size);
+    };
+
+    std::vector<std::thread> readers;
+    std::vector<std::exception_ptr> exceptions(helpers.size());
+
+    for (size_t i = 0; i < helpers.size(); ++i) {
+        readers.emplace_back([&, i]() {
+            try {
+                get_from_node(i, helpers[i]);
+            } catch (...) {
+                exceptions[i] = std::current_exception();
+            }
+        });
+    }
+
+    for (auto &t : readers)
+        t.join();
+
+    for (auto &e : exceptions) {
+        if (e)
+            std::rethrow_exception(e);
+    }
+
+    auto decode_data = decode_xor(original_datas);
+    assert(decode_data.size() == block_size);
+    store_data(file_name, decode_data.data(), decode_data.size());
+}
+
+void Datanode::do_repair(unsigned int stripe_id,
+                         std::vector<DecodeRequest> helpers, size_t block_size,
+                         int w) {
+    assert(block_size % w == 0);
+    std::string file_name = "stripe" + std::to_string(stripe_id);
+    // size_t packet_size = block_size / w;
+
+    std::vector<std::vector<char>> original_datas(
+        helpers.size(), std::vector<char>(block_size));
+
+    auto get_from_node = [&](int idx, const DecodeRequest &helper) {
+        bool ok = read_from_datanode_with_local_decode(
+            helper.ip, helper.port, file_name, original_datas[idx].data(),
+            block_size, helper.matrix);
+        if (!ok) {
+            throw std::runtime_error("Read failed from " + helper.ip);
+        }
     };
 
     std::vector<std::thread> readers;
