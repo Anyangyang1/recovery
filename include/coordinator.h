@@ -24,7 +24,7 @@ class Coordinator {
      * @param failed_block_id: ¹ÊÕÏ¿éºÅ
      * @return: ĞŞ¸´ÏìÓ¦½á¹û
      */
-    RepairResp request_repair_with_opt(const Stripe &stripe,
+    RepairResp request_repair_with_opt(unsigned int stripe_id,
                                        unsigned int failed_block_id);
 
     /**

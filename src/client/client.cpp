@@ -76,6 +76,12 @@ void Client::request_repair(unsigned int stripe_id, unsigned int failed_block_id
             std::chrono::seconds{3}, stripe_id, failed_block_id));
 }
 
+void Client::request_repair_with_opt(unsigned int stripe_id, unsigned int failed_block_id) {
+    async_simple::coro::syncAwait(
+        rpc_coordinator_->call_for<&Coordinator::request_repair_with_opt>(
+            std::chrono::seconds{3}, stripe_id, failed_block_id));
+}
+
 // std::string Client::get(std::string key) {
 //     size_t value_len =
 //         async_simple::coro::syncAwait(

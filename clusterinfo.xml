@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <datanodes>
+  <!-- 数据节点列表 -->
   <datanode uri="192.168.1.14:8888" />
   <datanode uri="192.168.1.15:8888" />
   <datanode uri="192.168.1.16:8888" />
   <datanode uri="192.168.1.17:8888" />
   <datanode uri="192.168.1.18:8888" />
+  <datanode uri="192.168.1.19:8888" />
+  <datanode uri="192.168.1.20:8888" />
+  <datanode uri="192.168.1.21:8888" />
+  <datanode uri="192.168.1.22:8888" />
+  <datanode uri="192.168.1.23:8888" />
 </datanodes>

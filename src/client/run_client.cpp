@@ -20,16 +20,25 @@ std::string generate_random_string(size_t length) {
 }
 int main(int argc, char **argv) {
     Client client("0.0.0.0", CLIENT_PORT, "192.168.1.12", COORDINATOR_PORT);
-    const int k = 2;
-    const int block_size = 512;
+    const int k = 4;
+    const int block_size = 1024;
     const int value_size = k * block_size;
-    int num = atoi(argv[1]);
-    if (num == 1) {
+    string cmd = argv[1];
+    if (cmd == "set") {
         std::string value = generate_random_string(value_size);
         ELOG(DEBUG) << "value: " << value;
         client.set(value);
+    } else if (cmd == "repair") {
+        unsigned int stripe_id = stoi(argv[2]);
+        unsigned int block_id = stoi(argv[3]);
+        client.request_repair(stripe_id, block_id);
+
+    } else if (cmd == "repair_opt") {
+        unsigned int stripe_id = stoi(argv[2]);
+        unsigned int block_id = stoi(argv[3]);
+        client.request_repair_with_opt(stripe_id, block_id);
     } else {
-        client.request_repair(0, 1);
+        ELOG(ERROR) << "cmd error";
     }
 
     return 0;

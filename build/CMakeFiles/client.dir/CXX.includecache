@@ -13002,12 +13002,6 @@ magic_names.hpp
 ylt/struct_pack/md5_constexpr.hpp
 ../yalantinglibs/include/ylt/util/ylt/struct_pack/md5_constexpr.hpp
 
-/home/anyangyang/study/recovery/src/client/client.cpp
-client.h
-/home/anyangyang/study/recovery/src/client/client.h
-unistd.h
--
-
 /home/anyangyang/study/recovery/src/client/run_client.cpp
 client.h
 /home/anyangyang/study/recovery/src/client/client.h

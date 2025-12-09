@@ -168,6 +168,7 @@ target_include_directories(datanode PRIVATE
 )
 
 target_link_libraries(datanode PRIVATE jerasure Threads::Threads m ec)
+target_link_libraries(datanode PRIVATE -static-libstdc++ -static-libgcc)
 
 
 # ¡ª¡ª test Ä£¿é ¡ª¡ª

@@ -20,6 +20,16 @@ galois.h
 
 ../Jerasure-1.2A/reed_sol.h
 
+../include/algorithm/sggh.h
+utils.h
+../include/algorithm/utils.h
+random
+-
+set
+-
+vector
+-
+
 ../include/algorithm/utils.h
 algorithm
 -
@@ -12999,14 +13009,12 @@ coordinator.h
 /home/anyangyang/study/recovery/src/coordinator/coordinator.h
 metadata.h
 /home/anyangyang/study/recovery/src/coordinator/metadata.h
+sggh.h
+/home/anyangyang/study/recovery/src/coordinator/sggh.h
 algorithm
 -
 random
 -
 vector
 -
-
-/home/anyangyang/study/recovery/src/coordinator/run_coordinator.cpp
-coordinator.h
-/home/anyangyang/study/recovery/src/coordinator/coordinator.h
 

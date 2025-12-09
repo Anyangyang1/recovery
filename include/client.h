@@ -13,6 +13,7 @@ class Client {
 
     void set(std::string value);
     void request_repair(unsigned int stripe_id, unsigned int failed_block_id);
+    void request_repair_with_opt(unsigned int stripe_id, unsigned int failed_block_id);
 
   private:
     std::unique_ptr<coro_rpc::coro_rpc_client> rpc_coordinator_{nullptr};

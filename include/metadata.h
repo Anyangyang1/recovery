@@ -50,6 +50,7 @@ struct NodeIpInfo {
 struct DecodeRequest {
     std::string ip;
     int port;
+    std::string file_name;
     std::vector<std::vector<int>> matrix; // 解码矩阵（如纠删码矩阵）
 };
 
@@ -73,6 +74,7 @@ struct RepairPlan {
     unsigned int stripe_id;             // 待修复的条带id
     std::vector<DecodeRequest> helpers; // 参与修复的helpers
     Node selected_new_node;             // 修复完成后，数据放置的目标节点
+    std::string repair_file_name;
 };
 
 struct RepairResp {

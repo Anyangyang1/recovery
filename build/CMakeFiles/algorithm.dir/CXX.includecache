@@ -20,14 +20,6 @@ galois.h
 
 ../Jerasure-1.2A/reed_sol.h
 
-../include/algorithm/loadbalance.h
-vector
--
-random
--
-utils.h
-../include/algorithm/utils.h
-
 ../include/algorithm/sggh.h
 utils.h
 ../include/algorithm/utils.h
@@ -282,12 +274,6 @@ functional
 memory
 -
 
-/home/anyangyang/study/recovery/src/algorithm/loadbance.cpp
-loadbalance.h
-/home/anyangyang/study/recovery/src/algorithm/loadbalance.h
-sggh.h
-/home/anyangyang/study/recovery/src/algorithm/sggh.h
-
 /home/anyangyang/study/recovery/src/algorithm/sggh.cpp
 sggh.h
 /home/anyangyang/study/recovery/src/algorithm/sggh.h
@@ -300,11 +286,5 @@ cassert
 chrono
 -
 unordered_set
--
-
-/home/anyangyang/study/recovery/src/algorithm/utils.cpp
-utils.h
-/home/anyangyang/study/recovery/src/algorithm/utils.h
-fstream
 -
 

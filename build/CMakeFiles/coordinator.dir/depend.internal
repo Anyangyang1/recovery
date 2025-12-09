@@ -6,6 +6,7 @@ CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o
  ../Jerasure-1.2A/galois.h
  ../Jerasure-1.2A/jerasure.h
  ../Jerasure-1.2A/reed_sol.h
+ ../include/algorithm/sggh.h
  ../include/algorithm/utils.h
  ../include/coordinator.h
  ../include/datanode.h

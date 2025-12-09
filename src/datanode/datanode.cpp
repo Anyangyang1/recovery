@@ -343,11 +343,10 @@ bool Datanode::write_to_datanode(const string &ip, int port, const string &key,
     }
 }
 
-void Datanode::do_repair_with_opt(unsigned int stripe_id,
-                                  std::vector<DecodeRequest> helpers,
-                                  size_t block_size, int w) {
+void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
+                                  size_t block_size, int w,
+                                  std::string repair_file_name) {
     assert(block_size % w == 0);
-    std::string file_name = "stripe" + std::to_string(stripe_id);
     size_t packet_size = block_size / w;
 
     std::vector<std::vector<char>> original_datas(
@@ -357,10 +356,12 @@ void Datanode::do_repair_with_opt(unsigned int stripe_id,
         auto result = compute_basis_gf2_indices(helper.matrix);
         size_t buf_size = packet_size * result.basis.size();
         std::vector<char> buf(buf_size);
-
-        bool ok = read_from_datanode_with_local_decode(helper.ip, helper.port,
-                                                       file_name, buf.data(),
-                                                       buf_size, result.basis);
+        ELOG(DEBUG) << "read data form(" << helper.ip + ":" << helper.port
+                    << ")...";
+        ELOG(DEBUG) << "buf_size: " << buf_size;
+        bool ok = read_from_datanode_with_local_decode(
+            helper.ip, helper.port, helper.file_name, buf.data(), buf_size,
+            result.basis);
         if (!ok) {
             throw std::runtime_error("Read failed from " + helper.ip);
         }
@@ -392,23 +393,25 @@ void Datanode::do_repair_with_opt(unsigned int stripe_id,
 
     auto decode_data = decode_xor(original_datas);
     assert(decode_data.size() == block_size);
-    store_data(file_name, decode_data.data(), decode_data.size());
+    std::string dd(decode_data.begin(), decode_data.end());
+    ELOG(DEBUG) << "generate decode data: " << dd;
+    store_data(repair_file_name, decode_data.data(), decode_data.size());
 }
 
-void Datanode::do_repair(unsigned int stripe_id,
-                         std::vector<DecodeRequest> helpers, size_t block_size,
-                         int w) {
+void Datanode::do_repair(std::vector<DecodeRequest> helpers, size_t block_size,
+                         int w, std::string repair_file_name) {
     assert(block_size % w == 0);
-    std::string file_name = "stripe" + std::to_string(stripe_id);
     // size_t packet_size = block_size / w;
 
     std::vector<std::vector<char>> original_datas(
         helpers.size(), std::vector<char>(block_size));
-
+    ELOG(DEBUG) << "execute repair plan...";
     auto get_from_node = [&](int idx, const DecodeRequest &helper) {
+        ELOG(DEBUG) << "read data form(" << helper.ip + ":" << helper.port
+                    << ")...";
         bool ok = read_from_datanode_with_local_decode(
-            helper.ip, helper.port, file_name, original_datas[idx].data(),
-            block_size, helper.matrix);
+            helper.ip, helper.port, helper.file_name,
+            original_datas[idx].data(), block_size, helper.matrix);
         if (!ok) {
             throw std::runtime_error("Read failed from " + helper.ip);
         }
@@ -437,7 +440,9 @@ void Datanode::do_repair(unsigned int stripe_id,
 
     auto decode_data = decode_xor(original_datas);
     assert(decode_data.size() == block_size);
-    store_data(file_name, decode_data.data(), decode_data.size());
+    std::string dd(decode_data.begin(), decode_data.end());
+    ELOG(DEBUG) << "generate decode data: " << dd;
+    store_data(repair_file_name, decode_data.data(), decode_data.size());
 }
 
 std::vector<char>
@@ -608,7 +613,7 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     //                        coding_ptrs.data(), block_size);
 
     // === 并发写入所有块（含本地）===
-    std::string key = "stripe" + std::to_string(stripe_info.stripe_id);
+
     std::vector<std::future<bool>> futures;
     futures.reserve(k + m);
 
@@ -616,6 +621,8 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     for (int idx = 0; idx < k + m; ++idx) {
         const auto &node = stripe_info.nodes_info[idx];
         char *block_data = (idx < k) ? data_ptrs[idx] : coding_ptrs[idx - k];
+        std::string key = "stripe_" + std::to_string(stripe_info.stripe_id) +
+                          "_" + std::to_string(idx);
         ELOG(DEBUG) << "prepare wirte data to (" << node.node_ip << ":"
                     << std::to_string(node.node_port) << ")";
         // 若是本节点 → 直接 store_data（避免 network loopback）
