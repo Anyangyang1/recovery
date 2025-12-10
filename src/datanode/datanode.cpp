@@ -9,7 +9,7 @@ Datanode::Datanode(std::string ip, int port)
                                  port_for_transfer_data_)) {
     easylog::set_min_severity(easylog::Severity::DEBUG);
     // port is for rpc
-    rpc_server_ = std::make_unique<coro_rpc::coro_rpc_server>(4, port_);
+    rpc_server_ = std::make_unique<coro_rpc::coro_rpc_server>(RPC_NUM, port_);
     rpc_server_->register_handler<&Datanode::handle_set>(this);
     rpc_server_->register_handler<&Datanode::handle_get>(this);
     rpc_server_->register_handler<&Datanode::handle_get_with_local_decode>(
@@ -17,8 +17,11 @@ Datanode::Datanode(std::string ip, int port)
     rpc_server_->register_handler<&Datanode::handle_upload>(this);
     rpc_server_->register_handler<&Datanode::do_repair>(this);
     rpc_server_->register_handler<&Datanode::do_repair_with_opt>(this);
+    rpc_server_->register_handler<&Datanode::handle_delete_stripe>(this);
+    rpc_server_->register_handler<&Datanode::handle_delete_all_file>(this);
 
     std::string targetdir = "./storage/";
+    clear_directory(targetdir);
     if (access(targetdir.c_str(), 0) == -1) {
         mkdir(targetdir.c_str(), S_IRWXU);
     }
@@ -68,8 +71,8 @@ void Datanode::handle_get(const std::string &key, size_t value_size) {
             asio::write(socket, asio::buffer(data_buf.get(), value_size));
             socket.close();
         } catch (std::exception &e) {
-            std::cout << "exception" << std::endl;
-            std::cout << e.what() << std::endl;
+            ELOG(DEBUG) << "exception";
+            ELOG(DEBUG) << e.what();
         }
     };
     std::thread(handler).detach();
@@ -77,32 +80,30 @@ void Datanode::handle_get(const std::string &key, size_t value_size) {
 
 // ====== Datanode::handle_upload (重构后) ======
 void Datanode::handle_upload(unsigned int stripe_id, size_t value_size) {
-    ELOG(DEBUG) << "[RPC] handle_upload(" << stripe_id << ", " << value_size
-                << ")";
     // === Step 1: 读取数据 ===
     auto handler = [this, stripe_id, value_size]() mutable {
         try {
             asio::ip::tcp::socket socket(io_context_);
             std::error_code ec;
             // Sync accept — safe in dedicated RPC thread
-            ELOG(DEBUG) << "prepare reveive data...";
             acceptor_.accept(socket, ec);
             if (ec) {
                 ELOG(ERROR) << "Accept failed: " << ec.message();
                 return;
             }
-            ELOG(DEBUG) << "start reveive data...";
             // Sync read
             auto value_buf = std::make_unique<char[]>(value_size);
             size_t n = asio::read(
                 socket, asio::buffer(value_buf.get(), value_size), ec);
             socket.close();
             if (ec || n != value_size) {
-                ELOG(DEBUG) << "reveive data... error";
+                ELOG(ERROR) << "reveive data error, stripe_id: " << stripe_id;
+                ELOG(ERROR) << ec.message();
                 return;
             }
+            // Sync read
             std::string value_str(value_buf.get(), value_size);
-            ELOG(DEBUG) << "receive data: " << value_str;
+            // ELOG(DEBUG) << "receive data: " << value_str;
 
             // === Step 2: 同步获取元数据 ===
             auto client = std::make_unique<coro_rpc::coro_rpc_client>();
@@ -124,10 +125,64 @@ void Datanode::handle_upload(unsigned int stripe_id, size_t value_size) {
             encode_and_distribute(stripe_info, std::move(value_buf),
                                   value_size);
         } catch (const std::exception &e) {
-            ELOG(ERROR) << "[Datanode] handle_upload failed: " << e.what();
+            ELOG(ERROR) << "handle_upload failed: " << e.what();
         }
     };
     std::thread(handler).detach();
+}
+
+void Datanode::handle_delete_stripe(unsigned int stripe_id,
+                                    unsigned int failed_block_id) {
+    const std::string &path = "./storage/stripe_" + std::to_string(stripe_id) +
+                              "_" + std::to_string(failed_block_id);
+    ELOG(DEBUG) << "delete file " << path;
+    bool success = delete_file(path);
+    if (!success) {
+        ELOG(ERROR) << "Failed to delete " << path;
+    }
+}
+
+bool Datanode::delete_file(const std::string &path) {
+    if (std::remove(path.c_str()) != 0) {
+        // 注意：文件不存在时也可能返回非0（errno=ENOENT）
+        if (errno != ENOENT) {
+            ELOG(ERROR) << "Failed to delete '" << path
+                        << "': " << std::strerror(errno) << '\n';
+            return false;
+        }
+    }
+    return true; // 包括“文件不存在”视为成功删除
+}
+
+void Datanode::handle_delete_all_file() {
+    const std::string dir_path = "./storage";
+    clear_directory(dir_path);
+}
+
+bool Datanode::clear_directory(const std::string &dir_path) {
+    namespace fs = std::filesystem;
+    std::error_code ec;
+
+    if (!fs::exists(dir_path, ec) || !fs::is_directory(dir_path, ec)) {
+        std::cerr << "Invalid directory: " << dir_path << "\n";
+        return false;
+    }
+
+    // 遍历目录下每一项（非递归 iterator 即可）
+    for (const auto &entry : fs::directory_iterator(dir_path, ec)) {
+        if (ec) {
+            std::cerr << "Iterate error: " << ec.message() << "\n";
+            return false;
+        }
+
+        // 递归删除：文件 or 目录都删（remove_all 能删非空目录）
+        if (!fs::remove_all(entry.path(), ec)) {
+            std::cerr << "Failed to remove " << entry.path() << ": "
+                      << ec.message() << "\n";
+            return false; // 或继续删其他项：不 return，仅记录失败
+        }
+    }
+    return true;
 }
 
 void Datanode::handle_get_with_local_decode(const std::string &key,
@@ -155,7 +210,7 @@ void Datanode::handle_get_with_local_decode(const std::string &key,
             socket.close();
 
         } catch (std::exception &e) {
-            std::cout << e.what() << std::endl;
+            ELOG(DEBUG) << e.what();
         }
     };
     std::thread(handler).detach();
@@ -165,8 +220,7 @@ bool Datanode::access_data(const std::string &key, char *value_buf,
                            size_t value_size) {
     std::string readpath = "./storage/" + key;
     if (access(readpath.c_str(), 0) == -1) {
-        std::cout << "[Datanode" << port_ << "][Disk][Get] file does not exist!"
-                  << readpath << std::endl;
+        ELOG(ERROR) << "[Disk][Get] file does not exist!" << readpath;
         return false;
     } else {
         std::ifstream ifs(readpath, std::ios::binary);
@@ -215,8 +269,7 @@ bool Datanode::access_data(const std::string &key, char *value_buf,
 
 bool Datanode::store_data(const std::string &key, const char *value,
                           size_t value_size) {
-    ELOG(DEBUG) << "write data to disk...key = " << key
-                << ",value_size = " << value_size;
+    // ELOG(DEBUG) << "[store_data] write data to disk. key = " << key;
     std::string targetdir = "./storage/";
     std::string writepath = targetdir + key;
     if (access(targetdir.c_str(), 0) == -1) {
@@ -228,7 +281,7 @@ bool Datanode::store_data(const std::string &key, const char *value,
     ofs.flush();
     ofs.close();
     if (!ofs) {
-        std::cout << "[Datanode" << port_ << "][Disk] failed to set!\n";
+        ELOG(DEBUG) << "[Datanode" << port_ << "][Disk] failed to set!\n";
         return false;
     }
     return true;
@@ -318,7 +371,8 @@ bool Datanode::read_from_datanode(const string &ip, int port, const string &key,
 
 bool Datanode::write_to_datanode(const string &ip, int port, const string &key,
                                  char *value, size_t value_size) {
-    ELOG(DEBUG) << "prepare to write to(" << ip << ":" << port << ")";
+    // ELOG(DEBUG) << "[write_to_datanode] prepare write data to (" << ip << ":"
+    // << port << ")";
     try {
         auto client = std::make_unique<coro_rpc::coro_rpc_client>();
         async_simple::coro::syncAwait(
@@ -349,16 +403,19 @@ void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
     assert(block_size % w == 0);
     size_t packet_size = block_size / w;
 
+    std::string helpers_info;
+    for (auto &helper : helpers) {
+        helpers_info += helper.ip + "/" + helper.file_name + ", ";
+    }
+    ELOG(DEBUG) << "repair " << repair_file_name << ", read data from:("
+                << helpers_info << ")";
+
     std::vector<std::vector<char>> original_datas(
         helpers.size(), std::vector<char>(block_size));
-
     auto get_from_node = [&](int idx, const DecodeRequest &helper) {
         auto result = compute_basis_gf2_indices(helper.matrix);
         size_t buf_size = packet_size * result.basis.size();
         std::vector<char> buf(buf_size);
-        ELOG(DEBUG) << "read data form(" << helper.ip + ":" << helper.port
-                    << ")...";
-        ELOG(DEBUG) << "buf_size: " << buf_size;
         bool ok = read_from_datanode_with_local_decode(
             helper.ip, helper.port, helper.file_name, buf.data(), buf_size,
             result.basis);
@@ -393,8 +450,6 @@ void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
 
     auto decode_data = decode_xor(original_datas);
     assert(decode_data.size() == block_size);
-    std::string dd(decode_data.begin(), decode_data.end());
-    ELOG(DEBUG) << "generate decode data: " << dd;
     store_data(repair_file_name, decode_data.data(), decode_data.size());
 }
 
@@ -405,10 +460,13 @@ void Datanode::do_repair(std::vector<DecodeRequest> helpers, size_t block_size,
 
     std::vector<std::vector<char>> original_datas(
         helpers.size(), std::vector<char>(block_size));
-    ELOG(DEBUG) << "execute repair plan...";
+    std::string helpers_info;
+    for (auto &helper : helpers) {
+        helpers_info += helper.ip + "/" + helper.file_name + ", ";
+    }
+    ELOG(DEBUG) << "repair " << repair_file_name << ", read data form:("
+                << helpers_info << ")";
     auto get_from_node = [&](int idx, const DecodeRequest &helper) {
-        ELOG(DEBUG) << "read data form(" << helper.ip + ":" << helper.port
-                    << ")...";
         bool ok = read_from_datanode_with_local_decode(
             helper.ip, helper.port, helper.file_name,
             original_datas[idx].data(), block_size, helper.matrix);
@@ -440,8 +498,6 @@ void Datanode::do_repair(std::vector<DecodeRequest> helpers, size_t block_size,
 
     auto decode_data = decode_xor(original_datas);
     assert(decode_data.size() == block_size);
-    std::string dd(decode_data.begin(), decode_data.end());
-    ELOG(DEBUG) << "generate decode data: " << dd;
     store_data(repair_file_name, decode_data.data(), decode_data.size());
 }
 
@@ -582,6 +638,12 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     int w = stripe_info.w;
     size_t block_size = stripe_info.block_size;
 
+    std::string stripe_info_str;
+    for (auto ip_info : stripe_info.nodes_info) {
+        stripe_info_str += ip_info.node_ip + ", ";
+    }
+    ELOG(DEBUG) << "encode and distribute. data will be stored in (" << stripe_info_str << ")";
+
     // 校验数据完整性
     if (total_size != static_cast<size_t>(k) * block_size) {
         throw std::runtime_error("Invalid object size");
@@ -623,8 +685,6 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
         char *block_data = (idx < k) ? data_ptrs[idx] : coding_ptrs[idx - k];
         std::string key = "stripe_" + std::to_string(stripe_info.stripe_id) +
                           "_" + std::to_string(idx);
-        ELOG(DEBUG) << "prepare wirte data to (" << node.node_ip << ":"
-                    << std::to_string(node.node_port) << ")";
         // 若是本节点 → 直接 store_data（避免 network loopback）
         if (idx == 0) {
             futures.push_back(std::async(

@@ -37,6 +37,10 @@ class Datanode {
 
     void handle_upload(unsigned int stripe_id, size_t value_size);
 
+    void handle_delete_stripe(unsigned int stripe_id,
+                              unsigned int failed_block_id);
+    void handle_delete_all_file();
+
     /**
      * @brief 从指定节点读取进行局部解码后的数据
      * @param ip: 读取节点的ip
@@ -84,7 +88,8 @@ class Datanode {
      * @param block_size: 数据块的大小
      */
     void do_repair_with_opt(std::vector<DecodeRequest> helpers,
-                            size_t block_size, int w, std::string repair_file_name);
+                            size_t block_size, int w,
+                            std::string repair_file_name);
 
     /**
      * @brief 执行修复操作
@@ -109,6 +114,9 @@ class Datanode {
                      size_t value_size);
     bool access_data(const std::string &key, char *value_buf,
                      const vector<int> &idxs);
+
+    bool delete_file(const std::string &path);
+    bool clear_directory(const std::string& dir_path);
 
     void local_decode(const std::vector<std::vector<int>> &matrix,
                       char *data_buf, char *decode_buf, size_t packet_size);

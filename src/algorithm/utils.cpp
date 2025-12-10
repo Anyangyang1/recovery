@@ -199,6 +199,7 @@ vector<unsigned int> ECProject::generateAllRangeN(int N) {
     return result;
 }
 
+
 vector<vector<int>>
 ECProject::cauchy_original_coding_matrix_vector(int K, int M, int W) {
     int *cauchy_mat = cauchy_original_coding_matrix(K, M, W);

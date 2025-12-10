@@ -75,4 +75,30 @@ std::vector<unsigned char> double_to_bytes(double doubler);
 
 void exit_when(bool condition, const std::source_location &location);
 
+
+template <typename T>
+std::string vecToString(const std::vector<T>& vec) {
+    if (vec.empty()) return "";
+    std::ostringstream oss;
+    for (size_t i = 0; i < vec.size(); ++i) {
+        if (i > 0) oss << ' ';
+        oss << vec[i];
+    }
+    return oss.str();
+}
+
+template <typename K, typename V>
+std::string mapToString(const std::unordered_map<K, V>& mp) {
+    if (mp.empty()) return "";
+    std::ostringstream oss;
+    bool first = true;
+    for (const auto& [k, v] : mp) {
+        if (!first) oss << ' ';
+        oss << '(' << k << ',' << v << ')';
+        first = false;
+    }
+    return oss.str();
+}
+
+
 } // namespace ECProject

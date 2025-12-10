@@ -15,6 +15,13 @@ Coordinator::Coordinator(std::string ip, int port, std::string xml_path)
     rpc_server_->register_handler<&Coordinator::request_repair>(this);
     rpc_server_->register_handler<&Coordinator::request_repair_with_opt>(this);
     rpc_server_->register_handler<&Coordinator::get_stripe_info>(this);
+    rpc_server_->register_handler<&Coordinator::print_stripe_info>(this);
+    rpc_server_->register_handler<&Coordinator::print_node_info>(this);
+    rpc_server_->register_handler<&Coordinator::delete_failed_block>(this);
+    rpc_server_->register_handler<&Coordinator::delete_all_file>(this);
+    rpc_server_->register_handler<&Coordinator::request_repair_node>(this);
+    rpc_server_->register_handler<&Coordinator::request_repair_node_with_opt>(this);
+
     cur_stripe_id_ = 0;
     try {
         init_cluster_info();
@@ -23,12 +30,11 @@ Coordinator::Coordinator(std::string ip, int port, std::string xml_path)
         std::abort(); // 或 throw
     }
 
-    const int k = 4, m = 2, w = 4;
-    ec_schema_.ec = std::make_unique<XORCode>(k, m, w);
-    ec_schema_.block_size = 1024;
+    ec_schema_.ec = std::make_unique<XORCode>(RS_K, RS_M, RS_W);
+    ec_schema_.block_size = BLOCK_SIZE;
     ec_schema_.ec_type = XOR;
 
-    SimilarityGreedy sg = SimilarityGreedy(k, m, w);
+    SimilarityGreedy sg = SimilarityGreedy(RS_K, RS_M, RS_W);
     opt_decode_matrix_with_all_failed_mode_ =
         sg.generateOptDecodeBitMatrixWithAllMode(0);
 }
@@ -101,6 +107,22 @@ Stripe &Coordinator::new_stripe() {
     return stripe_table_[temp.stripe_id];
 }
 
+void Coordinator::print_stripe_info() {
+    ELOG(DEBUG) << "stripe info:";
+    for (const auto &[key, value] : stripe_table_) {
+        ELOG(DEBUG) << "stripe_" << value.stripe_id << ": "
+                    << vecToString(value.blocks2nodes);
+    }
+}
+
+void Coordinator::print_node_info() {
+    ELOG(DEBUG) << "nodes info: ";
+    for (const auto &[key, value] : node_table_) {
+        ELOG(DEBUG) << "node_" << value.node_id << ": "
+                    << mapToString(value.nodes2blocks);
+    }
+}
+
 StripeInfo Coordinator::get_stripe_info(unsigned int stripe_id) {
     StripeInfo stripe_info;
     stripe_info.stripe_id = stripe_id;
@@ -121,7 +143,6 @@ StripeInfo Coordinator::get_stripe_info(unsigned int stripe_id) {
 }
 
 UploadInfo Coordinator::request_set(size_t value_size) {
-    ELOG(DEBUG) << "value_size: " << value_size;
     my_assert(value_size == ec_schema_.block_size * ec_schema_.ec->k);
 
     Stripe stripe = new_stripe();
@@ -146,12 +167,15 @@ RepairResp Coordinator::request_repair_with_opt(unsigned int stripe_id,
         datanodes_[node_ip_port]->call<&Datanode::do_repair_with_opt>(
             repair_plan.helpers, ec_schema_.block_size, ec_schema_.ec->w,
             repair_plan.repair_file_name));
+    alter_metadata(stripe_id, failed_block_id, new_node.node_id);
+    ELOG(DEBUG) << "select node_" << new_node.node_id << " to repair stripe_"
+                << stripe_id << "_" << failed_block_id;
     return response;
 }
 
 RepairResp Coordinator::request_repair(unsigned int stripe_id,
                                        unsigned int failed_block_id) {
-    const Stripe stripe = stripe_table_[stripe_id];
+    const Stripe &stripe = stripe_table_[stripe_id];
     RepairResp response;
     RepairPlan repair_plan = generate_repair_plan(stripe, failed_block_id);
     Node new_node = repair_plan.selected_new_node;
@@ -161,7 +185,80 @@ RepairResp Coordinator::request_repair(unsigned int stripe_id,
         datanodes_[node_ip_port]->call<&Datanode::do_repair>(
             repair_plan.helpers, ec_schema_.block_size, ec_schema_.ec->w,
             repair_plan.repair_file_name));
+    alter_metadata(stripe_id, failed_block_id, new_node.node_id);
+    ELOG(DEBUG) << "select node_" << new_node.node_id << " to repair stripe_"
+                << stripe_id << "_" << failed_block_id;
     return response;
+}
+
+RepairResp Coordinator::request_repair_node(unsigned int node_id) {
+    Node node = node_table_[node_id];
+    RepairResp response;
+    std::vector<std::future<RepairResp>> futures;
+    for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+        futures.push_back(
+            std::async(std::launch::async, [this, stripe_id, block_id] {
+                return request_repair(stripe_id, block_id);
+            }));
+    }
+    for (auto &f : futures) {
+        auto r = f.get(); // 会 rethrow 异常
+        // resp.success &= r.success;  // 按需合并
+    }
+    // for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+    //     request_repair(stripe_id, block_id);
+    // }
+    return response;
+}
+
+RepairResp Coordinator::request_repair_node_with_opt(unsigned int node_id) {
+    Node node = node_table_[node_id];
+    RepairResp response;
+    std::vector<std::future<RepairResp>> futures;
+    for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+        futures.push_back(
+            std::async(std::launch::async, [this, stripe_id, block_id] {
+                return request_repair_with_opt(stripe_id, block_id);
+            }));
+    }
+    for (auto &f : futures) {
+        auto r = f.get(); // 会 rethrow 异常
+        // resp.success &= r.success;  // 按需合并
+    }
+    // for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+    //     request_repair_with_opt(stripe_id, block_id);
+    // }
+    return response;
+}
+
+
+void Coordinator::alter_metadata(unsigned int stripe_id,
+                                 unsigned int failed_block_id,
+                                 unsigned int new_node_id) {
+    unsigned int old_node_id =
+        stripe_table_[stripe_id].blocks2nodes[failed_block_id];
+    stripe_table_[stripe_id].blocks2nodes[failed_block_id] = new_node_id;
+    node_table_[old_node_id].nodes2blocks.erase(stripe_id);
+    node_table_[new_node_id].nodes2blocks[stripe_id] = failed_block_id;
+}
+
+void Coordinator::delete_failed_block(unsigned int stripe_id,
+                                      unsigned int failed_block_id) {
+    Stripe &stripe = stripe_table_[stripe_id];
+    unsigned int node_id = stripe.blocks2nodes[failed_block_id];
+    Node &node = node_table_[node_id];
+    std::string node_ip_port =
+        node.node_ip + ":" + std::to_string(node.node_port);
+    async_simple::coro::syncAwait(
+        datanodes_[node_ip_port]->call<&Datanode::handle_delete_stripe>(
+            stripe_id, failed_block_id));
+}
+void Coordinator::delete_all_file(unsigned int node_id) {
+    Node &node = node_table_[node_id];
+    std::string node_ip_port =
+        node.node_ip + ":" + std::to_string(node.node_port);
+    async_simple::coro::syncAwait(
+        datanodes_[node_ip_port]->call<&Datanode::handle_delete_all_file>());
 }
 
 void Coordinator::request_get(unsigned int stripe_id) {}
@@ -172,8 +269,8 @@ Coordinator::generate_repair_plan_with_opt(const Stripe &stripe,
     unsigned int stripe_id = stripe.stripe_id;
     std::vector<std::vector<int>> &decode_matrix =
         opt_decode_matrix_with_all_failed_mode_[failed_block_id];
-    cout << "decode matrix: " << endl;
-    cout << decode_matrix << endl;
+    // cout << "decode matrix: " << endl;
+    // cout << decode_matrix << endl;
     std::vector<unsigned int> node_ids = stripe.blocks2nodes;
     RepairPlan repair_plan;
     for (size_t block_id = 0; block_id < node_ids.size(); block_id++) {
@@ -208,8 +305,8 @@ RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
     const int w = ec_schema_.ec->w;
     std::vector<std::vector<int>> codingMatrix =
         cauchy_original_coding_matrix_vector(k, m, w);
-    cout << "codingMatrix: " << endl;
-    cout << codingMatrix << endl;
+    // cout << "codingMatrix: " << endl;
+    // cout << codingMatrix << endl;
     std::vector<unsigned int> node_ids = stripe.blocks2nodes;
     unsigned int stripe_id = stripe.stripe_id;
     RepairPlan repair_plan;
@@ -243,20 +340,20 @@ RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
         vector<int> dmIds(k);
         jerasure_make_decoding_matrix(k, m, w, codingFlat.data(), erased.data(),
                                       decodeMatrix.data(), dmIds.data());
-        cout << "decodeMatrix: " << endl;
-        for (int i = 0; i < k; i++) {
-            for (int j = 0; j < k; j++) {
-                cout << decodeMatrix[i * k + j] << " ";
-            }
-            cout << endl;
-        }
+        // cout << "decodeMatrix: " << endl;
+        // for (int i = 0; i < k; i++) {
+        //     for (int j = 0; j < k; j++) {
+        //         cout << decodeMatrix[i * k + j] << " ";
+        //     }
+        //     cout << endl;
+        // }
         for (int i = 0; i < k; i++) {
             recoveryCoeffs[0][i] = decodeMatrix[failed_block_id * k + i];
             recoveryIds[i] = dmIds[i];
         }
     }
-    cout << "recoveryIds:" << recoveryIds << endl;
-    cout << "recoveryCoeffs:" << recoveryCoeffs << endl;
+    // cout << "recoveryIds:" << recoveryIds << endl;
+    // cout << "recoveryCoeffs:" << recoveryCoeffs << endl;
     std::vector<std::vector<int>> bitmatrix =
         matrix2Bitmatrix(recoveryCoeffs, w);
 
@@ -269,10 +366,10 @@ RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
         helper.ip = helper_node.node_ip;
         helper.port = helper_node.node_port;
         helper.matrix = local_decode_matrix;
-        
+
         helper.file_name = "stripe_" + std::to_string(stripe_id) + "_" +
                            std::to_string(recoveryIds[i]);
-        
+
         repair_plan.helpers.push_back(helper);
     }
     return repair_plan;

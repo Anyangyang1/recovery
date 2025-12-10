@@ -36,6 +36,13 @@ class Coordinator {
     RepairResp request_repair(unsigned int stripe_id,
                               unsigned int failed_block_id);
     StripeInfo get_stripe_info(unsigned int stripe_id);
+    void print_stripe_info();
+    void print_node_info();
+    void delete_failed_block(unsigned int stripe_id,
+                             unsigned int failed_block_id);
+    void delete_all_file(unsigned int node_id);
+    RepairResp request_repair_node(unsigned int node_id);
+    RepairResp request_repair_node_with_opt(unsigned int node_id);
 
   private:
     void init_cluster_info();
@@ -66,6 +73,9 @@ class Coordinator {
                                     unsigned int failed_block_id);
 
     unsigned int select_node(const std::vector<unsigned int> &block2node);
+
+    void alter_metadata(unsigned int stripe_id, unsigned int failed_block_id,
+                        unsigned int new_node_id);
 
   private:
     std::unordered_map<std::string, std::unique_ptr<coro_rpc::coro_rpc_client>>

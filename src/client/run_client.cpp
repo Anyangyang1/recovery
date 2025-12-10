@@ -20,25 +20,45 @@ std::string generate_random_string(size_t length) {
 }
 int main(int argc, char **argv) {
     Client client("0.0.0.0", CLIENT_PORT, "192.168.1.12", COORDINATOR_PORT);
-    const int k = 4;
-    const int block_size = 1024;
-    const int value_size = k * block_size;
-    string cmd = argv[1];
-    if (cmd == "set") {
-        std::string value = generate_random_string(value_size);
-        ELOG(DEBUG) << "value: " << value;
-        client.set(value);
-    } else if (cmd == "repair") {
-        unsigned int stripe_id = stoi(argv[2]);
-        unsigned int block_id = stoi(argv[3]);
-        client.request_repair(stripe_id, block_id);
-
-    } else if (cmd == "repair_opt") {
-        unsigned int stripe_id = stoi(argv[2]);
-        unsigned int block_id = stoi(argv[3]);
-        client.request_repair_with_opt(stripe_id, block_id);
-    } else {
-        ELOG(ERROR) << "cmd error";
+    const int value_size = RS_K * BLOCK_SIZE;
+    try {
+        string cmd = argv[1];
+        if (cmd == "set") {
+            unsigned int stripe_num = stoi(argv[2]);
+            for (unsigned int i = 0; i < stripe_num; i++) {
+                std::string value = generate_random_string(value_size);
+                client.set(value);
+            }
+        } else if (cmd == "repair") {
+            unsigned int stripe_id = stoi(argv[2]);
+            unsigned int block_id = stoi(argv[3]);
+            client.request_repair(stripe_id, block_id);
+        } else if (cmd == "repair_opt") {
+            unsigned int stripe_id = stoi(argv[2]);
+            unsigned int block_id = stoi(argv[3]);
+            client.request_repair_with_opt(stripe_id, block_id);
+        } else if (cmd == "print_stripe_info") {
+            client.print_stripe_info();
+        } else if (cmd == "print_node_info") {
+            client.print_node_info();
+        } else if (cmd == "delete_stripe") {
+            unsigned int stripe_id = stoi(argv[2]);
+            unsigned int block_id = stoi(argv[3]);
+            client.delete_file(stripe_id, block_id);
+        } else if (cmd == "delete_node") {
+            unsigned int node_id = stoi(argv[2]);
+            client.delete_all_file(node_id);
+        } else if (cmd == "repair_node") {
+            unsigned int node_id = stoi(argv[2]);
+            client.request_repair_node(node_id);
+        } else if (cmd == "repair_node_opt") {
+            unsigned int node_id = stoi(argv[2]);
+            client.request_repair_node_with_opt(node_id);
+        } else {
+            ELOG(ERROR) << "cmd error";
+        }
+    } catch (const std::exception &e) {
+        std::cerr << e.what() << '\n';
     }
 
     return 0;

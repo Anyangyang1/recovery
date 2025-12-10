@@ -13000,11 +13000,3 @@ datanode.h
 coordinator.h
 /home/anyangyang/study/recovery/src/datanode/coordinator.h
 
-/home/anyangyang/study/recovery/src/datanode/run_datanode.cpp
-datanode.h
-/home/anyangyang/study/recovery/src/datanode/datanode.h
-ylt/easylog.hpp
-/home/anyangyang/study/recovery/src/datanode/ylt/easylog.hpp
-iostream
--
-

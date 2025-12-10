@@ -20,6 +20,14 @@
 #define COORDINATOR_PORT 12121
 #define CLIENT_PORT 21212
 
+
+#define RS_K 4
+#define RS_M 2
+#define RS_W 4
+#define BLOCK_SIZE 64
+#define RPC_NUM 50
+
+
 namespace ECProject {
 
 

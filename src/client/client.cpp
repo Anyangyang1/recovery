@@ -70,104 +70,53 @@ void Client::set(std::string value) {
     }
 }
 
-void Client::request_repair(unsigned int stripe_id, unsigned int failed_block_id) {
+void Client::request_repair(unsigned int stripe_id,
+                            unsigned int failed_block_id) {
     async_simple::coro::syncAwait(
         rpc_coordinator_->call_for<&Coordinator::request_repair>(
             std::chrono::seconds{3}, stripe_id, failed_block_id));
 }
 
-void Client::request_repair_with_opt(unsigned int stripe_id, unsigned int failed_block_id) {
+void Client::request_repair_with_opt(unsigned int stripe_id,
+                                     unsigned int failed_block_id) {
     async_simple::coro::syncAwait(
         rpc_coordinator_->call_for<&Coordinator::request_repair_with_opt>(
             std::chrono::seconds{3}, stripe_id, failed_block_id));
 }
 
-// std::string Client::get(std::string key) {
-//     size_t value_len =
-//         async_simple::coro::syncAwait(
-//             rpc_coordinator_->call<&Coordinator::request_get>(key, ip_,
-//             port_)) .value();
+void Client::print_node_info() {
+    async_simple::coro::syncAwait(
+        rpc_coordinator_->call_for<&Coordinator::print_node_info>(
+            std::chrono::seconds{3}));
+}
 
-//     std::string key_buf(key.size(), 0);
-//     std::string value_buf(value_len, 0);
+void Client::print_stripe_info() {
+    async_simple::coro::syncAwait(
+        rpc_coordinator_->call_for<&Coordinator::print_stripe_info>(
+            std::chrono::seconds{3}));
+}
 
-//     if (!IF_SIMULATION) {
-//         asio::ip::tcp::socket socket_(io_context_);
-//         acceptor_.accept(socket_);
+void Client::delete_file(unsigned int stripe_id, unsigned int failed_block_id) {
+    async_simple::coro::syncAwait(
+        rpc_coordinator_->call_for<&Coordinator::delete_failed_block>(
+            std::chrono::seconds{3}, stripe_id, failed_block_id));
+}
 
-//         std::vector<unsigned char> size_buf(sizeof(int));
-//         asio::read(socket_, asio::buffer(size_buf, size_buf.size()));
-//         int key_size = bytes_to_int(size_buf);
-//         asio::read(socket_, asio::buffer(size_buf, size_buf.size()));
-//         int value_size = bytes_to_int(size_buf);
-//         if (value_size > 0) {
-//             size_t read_len_of_key = asio::read(
-//                 socket_, asio::buffer(key_buf.data(), key_buf.size()));
-//             my_assert(read_len_of_key == key.size() && key_buf == key);
+void Client::delete_all_file(unsigned int node_id) {
+    async_simple::coro::syncAwait(
+        rpc_coordinator_->call_for<&Coordinator::delete_all_file>(
+            std::chrono::seconds{3}, node_id));
+}
+void Client::request_repair_node(unsigned int node_id) {
+    async_simple::coro::syncAwait(
+        rpc_coordinator_->call_for<&Coordinator::request_repair_node>(
+            std::chrono::seconds{3}, node_id));
+}
 
-//             size_t read_len_of_value = asio::read(
-//                 socket_, asio::buffer(value_buf.data(), value_buf.size()));
-//             my_assert(read_len_of_value == value_len);
+void Client::request_repair_node_with_opt(unsigned int node_id) {
+    async_simple::coro::syncAwait(
+        rpc_coordinator_->call_for<&Coordinator::request_repair_node_with_opt>(
+            std::chrono::seconds{3}, node_id));
+}
 
-//             asio::error_code ignore_ec;
-//             socket_.shutdown(asio::ip::tcp::socket::shutdown_both,
-//             ignore_ec); socket_.close(ignore_ec);
-
-//             std::cout << "[GET] get key: " << key_buf.data()
-//                       << ", valuesize: " << value_len << std::endl;
-//         } else {
-//             std::cout << "[GET] can not get value of " << key_buf.data()
-//                       << std::endl;
-//         }
-//     }
-
-//     return value_buf;
-// }
-
-// void Client::delete_stripe(unsigned int stripe_id) {
-//     std::vector<unsigned int> stripe_ids;
-//     stripe_ids.push_back(stripe_id);
-//     async_simple::coro::syncAwait(
-//         rpc_coordinator_->call<&Coordinator::request_delete_by_stripe>(
-//             stripe_ids));
-//     std::cout << "[DEL] deleting Stripe " << stripe_id << std::endl;
-// }
-
-// void Client::delete_all_stripes() {
-//     auto stripe_ids = async_simple::coro::syncAwait(
-//                           rpc_coordinator_->call<&Coordinator::list_stripes>())
-//                           .value();
-//     async_simple::coro::syncAwait(
-//         rpc_coordinator_->call<&Coordinator::request_delete_by_stripe>(
-//             stripe_ids));
-//     for (auto it = stripe_ids.begin(); it != stripe_ids.end(); it++) {
-//         std::cout << "[DEL] deleting Stripe " << *it << std::endl;
-//     }
-// }
-
-// RepairResp Client::nodes_repair(std::vector<unsigned int> failed_node_ids) {
-//     auto response =
-//         async_simple::coro::syncAwait(
-//             rpc_coordinator_->call_for<&Coordinator::request_repair>(
-//                 std::chrono::seconds{0}, failed_node_ids, -1))
-//             .value();
-//     return response;
-// }
-
-// RepairResp Client::blocks_repair(std::vector<unsigned int> failed_block_ids,
-//                                  int stripe_id) {
-//     auto response =
-//         async_simple::coro::syncAwait(
-//             rpc_coordinator_->call_for<&Coordinator::request_repair>(
-//                 std::chrono::seconds{0}, failed_block_ids, stripe_id))
-//             .value();
-//     return response;
-// }
-
-// std::vector<unsigned int> Client::list_stripes() {
-//     auto response = async_simple::coro::syncAwait(
-//                         rpc_coordinator_->call<&Coordinator::list_stripes>())
-//                         .value();
-//     return response;
-// }
 } // namespace ECProject

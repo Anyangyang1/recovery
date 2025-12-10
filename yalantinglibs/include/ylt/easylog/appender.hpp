@@ -37,7 +37,7 @@ constexpr inline std::string_view BOM_STR = "\xEF\xBB\xBF";
 constexpr char digits[10] = {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9'};
 
 template <size_t N, char c>
-inline void to_int(int num, char *p, int &size) {
+inline void to_int(int num, char* p, int& size) {
   for (int i = 0; i < N; i++) {
     p[--size] = digits[num % 10];
     num = num / 10;
@@ -61,7 +61,7 @@ inline std::tm localtime_safe(std::time_t timer) {
   return bt;
 }
 
-inline char *get_time_str(const auto &now) {
+inline char* get_time_str(const auto& now) {
   static thread_local char buf[36];
   static thread_local std::chrono::seconds last_sec_{};
 
@@ -78,7 +78,7 @@ inline char *get_time_str(const auto &now) {
   last_sec_ = s;
   auto tm = std::chrono::system_clock::to_time_t(now);
   auto ltm = localtime_safe(tm);
-  std::tm *gmt = &ltm;
+  std::tm* gmt = &ltm;
 
   to_int<6, '.'>(usec, buf, size);
   to_int<2, ':'>(gmt->tm_sec, buf, size);
@@ -94,7 +94,7 @@ inline char *get_time_str(const auto &now) {
 class appender {
  public:
   appender() = default;
-  appender(const std::string &filename, bool async, bool enable_console,
+  appender(const std::string& filename, bool async, bool enable_console,
            size_t max_file_size, size_t max_files, bool flush_every_time)
       : has_init_(true),
         flush_every_time_(flush_every_time),
@@ -168,7 +168,7 @@ class appender {
   }
 
   template <bool sync>
-  auto &get_mutex() {
+  auto& get_mutex() {
     if constexpr (sync) {
       return mtx_;
     }
@@ -178,7 +178,7 @@ class appender {
   }
 
   template <bool sync = false, bool enable_console = false>
-  void write_record(record_t &record) {
+  void write_record(record_t& record) {
     std::unique_lock guard(get_mutex<sync>());
     if constexpr (sync == true) {
       if (max_files_ > 0 && file_size_ > max_file_size_ &&
@@ -266,6 +266,8 @@ class appender {
       windows_set_color(color_type::white_bright, color_type::red);
 #elif __APPLE__
 #else
+    if (severity == Severity::DEBUG)
+      std::cout << "\033[97m\033[44m";
     if (severity == Severity::WARN)
       std::cout << "\x1B[93m";
     if (severity == Severity::ERROR)
@@ -281,12 +283,12 @@ class appender {
       windows_set_color(color_type::white, color_type::black);
 #elif __APPLE__
 #else
-    if (severity >= Severity::WARN)
+    if (severity >= Severity::WARN || severity == Severity::DEBUG)
       std::cout << "\x1B[0m\x1B[0K";
 #endif
   }
 
-  void write(record_t &&r) {
+  void write(record_t&& r) {
     queue_.enqueue(std::move(r));
     cnd_.notify_one();
   }
