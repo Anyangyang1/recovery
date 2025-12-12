@@ -20,7 +20,8 @@ Coordinator::Coordinator(std::string ip, int port, std::string xml_path)
     rpc_server_->register_handler<&Coordinator::delete_failed_block>(this);
     rpc_server_->register_handler<&Coordinator::delete_all_file>(this);
     rpc_server_->register_handler<&Coordinator::request_repair_node>(this);
-    rpc_server_->register_handler<&Coordinator::request_repair_node_with_opt>(this);
+    rpc_server_->register_handler<&Coordinator::request_repair_node_with_opt>(
+        this);
 
     cur_stripe_id_ = 0;
     try {
@@ -96,7 +97,7 @@ Stripe &Coordinator::new_stripe() {
     Stripe temp;
     temp.stripe_id = cur_stripe_id_++;
     temp.blocks2nodes = generateUniqueRandom(
-        num_of_nodes_, ec_schema_.ec->k + ec_schema_.ec->m);
+        num_of_nodes_, ec_schema_.ec->k + ec_schema_.ec->m, temp.stripe_id);
     stripe_table_[temp.stripe_id] = temp;
 
     for (size_t i = 0; i < temp.blocks2nodes.size(); i++) {
@@ -163,10 +164,16 @@ RepairResp Coordinator::request_repair_with_opt(unsigned int stripe_id,
     Node new_node = repair_plan.selected_new_node;
     std::string node_ip_port =
         new_node.node_ip + ":" + std::to_string(new_node.node_port);
-    async_simple::coro::syncAwait(
-        datanodes_[node_ip_port]->call<&Datanode::do_repair_with_opt>(
-            repair_plan.helpers, ec_schema_.block_size, ec_schema_.ec->w,
-            repair_plan.repair_file_name));
+
+    {
+        SCOPED_TIMER("repair_opt stripe_" + std::to_string(stripe_id) + "_" +
+                     std::to_string(failed_block_id));
+        async_simple::coro::syncAwait(
+            datanodes_[node_ip_port]->call<&Datanode::do_repair_with_opt>(
+                repair_plan.helpers, ec_schema_.block_size, ec_schema_.ec->w,
+                repair_plan.repair_file_name));
+    }
+
     alter_metadata(stripe_id, failed_block_id, new_node.node_id);
     ELOG(DEBUG) << "select node_" << new_node.node_id << " to repair stripe_"
                 << stripe_id << "_" << failed_block_id;
@@ -181,10 +188,16 @@ RepairResp Coordinator::request_repair(unsigned int stripe_id,
     Node new_node = repair_plan.selected_new_node;
     std::string node_ip_port =
         new_node.node_ip + ":" + std::to_string(new_node.node_port);
-    async_simple::coro::syncAwait(
-        datanodes_[node_ip_port]->call<&Datanode::do_repair>(
-            repair_plan.helpers, ec_schema_.block_size, ec_schema_.ec->w,
-            repair_plan.repair_file_name));
+
+    {
+        SCOPED_TIMER("repair stripe_" + std::to_string(stripe_id) + "_"
+                                      + std::to_string(failed_block_id));
+        async_simple::coro::syncAwait(
+            datanodes_[node_ip_port]->call<&Datanode::do_repair>(
+                repair_plan.helpers, ec_schema_.block_size, ec_schema_.ec->w,
+                repair_plan.repair_file_name));
+    }
+
     alter_metadata(stripe_id, failed_block_id, new_node.node_id);
     ELOG(DEBUG) << "select node_" << new_node.node_id << " to repair stripe_"
                 << stripe_id << "_" << failed_block_id;
@@ -195,19 +208,22 @@ RepairResp Coordinator::request_repair_node(unsigned int node_id) {
     Node node = node_table_[node_id];
     RepairResp response;
     std::vector<std::future<RepairResp>> futures;
-    for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
-        futures.push_back(
-            std::async(std::launch::async, [this, stripe_id, block_id] {
-                return request_repair(stripe_id, block_id);
-            }));
+    {
+        SCOPED_TIMER("repair node_" + std::to_string(node_id));
+        for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+            futures.push_back(
+                std::async(std::launch::async, [this, stripe_id, block_id] {
+                    return request_repair(stripe_id, block_id);
+                }));
+        }
+        for (auto &f : futures) {
+            auto r = f.get(); // 会 rethrow 异常
+            // resp.success &= r.success;  // 按需合并
+        }
+        // for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+        //     request_repair(stripe_id, block_id);
+        // }
     }
-    for (auto &f : futures) {
-        auto r = f.get(); // 会 rethrow 异常
-        // resp.success &= r.success;  // 按需合并
-    }
-    // for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
-    //     request_repair(stripe_id, block_id);
-    // }
     return response;
 }
 
@@ -215,22 +231,24 @@ RepairResp Coordinator::request_repair_node_with_opt(unsigned int node_id) {
     Node node = node_table_[node_id];
     RepairResp response;
     std::vector<std::future<RepairResp>> futures;
-    for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
-        futures.push_back(
-            std::async(std::launch::async, [this, stripe_id, block_id] {
-                return request_repair_with_opt(stripe_id, block_id);
-            }));
+    {
+        SCOPED_TIMER("repair with opt node_" + std::to_string(node_id));
+        for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+            futures.push_back(
+                std::async(std::launch::async, [this, stripe_id, block_id] {
+                    return request_repair_with_opt(stripe_id, block_id);
+                }));
+        }
+        for (auto &f : futures) {
+            auto r = f.get(); // 会 rethrow 异常
+            // resp.success &= r.success;  // 按需合并
+        }
+        // for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+        //     request_repair_with_opt(stripe_id, block_id);
+        // }
     }
-    for (auto &f : futures) {
-        auto r = f.get(); // 会 rethrow 异常
-        // resp.success &= r.success;  // 按需合并
-    }
-    // for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
-    //     request_repair_with_opt(stripe_id, block_id);
-    // }
     return response;
 }
-
 
 void Coordinator::alter_metadata(unsigned int stripe_id,
                                  unsigned int failed_block_id,
@@ -291,7 +309,7 @@ Coordinator::generate_repair_plan_with_opt(const Stripe &stripe,
         }
     }
     repair_plan.stripe_id = stripe_id;
-    unsigned int new_node_id = select_node(node_ids);
+    unsigned int new_node_id = select_node(node_ids, stripe_id);
     repair_plan.selected_new_node = node_table_[new_node_id];
     repair_plan.repair_file_name = "stripe_" + std::to_string(stripe_id) + "_" +
                                    std::to_string(failed_block_id);
@@ -311,7 +329,7 @@ RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
     unsigned int stripe_id = stripe.stripe_id;
     RepairPlan repair_plan;
     repair_plan.stripe_id = stripe_id;
-    unsigned int new_node_id = select_node(node_ids);
+    unsigned int new_node_id = select_node(node_ids, stripe_id);
     repair_plan.selected_new_node = node_table_[new_node_id];
     repair_plan.repair_file_name = "stripe_" + std::to_string(stripe_id) + "_" +
                                    std::to_string(failed_block_id);
@@ -421,7 +439,8 @@ Coordinator::get_submatrix(const std::vector<std::vector<int>> &decode_matrix,
 }
 
 unsigned int
-Coordinator::select_node(const std::vector<unsigned int> &block2node) {
+Coordinator::select_node(const std::vector<unsigned int>& block2node,
+                         std::optional<unsigned int> seed /* = std::nullopt */) {
     int num_node = num_of_nodes_;
     std::vector<bool> used(num_node, false);
     for (int id : block2node) {
@@ -439,13 +458,21 @@ Coordinator::select_node(const std::vector<unsigned int> &block2node) {
     }
 
     if (candidates.empty()) {
-        return -1; // 无可用节点（按需可 throw 或 assert）
+        return static_cast<unsigned int>(-1); // 或 throw/LOG_FATAL，依策略而定
     }
 
-    static std::random_device rd;
-    static std::mt19937 gen(rd());
-    std::uniform_int_distribution<int> dis(0, (int)candidates.size() - 1);
-    return candidates[dis(gen)];
+    // 使用局部 RNG，避免 static 状态污染与线程竞争
+    std::mt19937 gen;
+    if (seed.has_value()) {
+        gen.seed(seed.value());
+    } else {
+        // 无种子时使用随机设备初始化（每次调用独立，非 static）
+        static std::random_device rd; // rd 只用于初始化，可 static
+        gen.seed(rd());
+    }
+
+    std::uniform_int_distribution<int> dis(0, static_cast<int>(candidates.size() - 1));
+    return static_cast<unsigned int>(candidates[dis(gen)]);
 }
 
 } // namespace ECProject

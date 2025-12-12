@@ -6,6 +6,7 @@ CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../Jerasure-1.2A/galois.
 CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../Jerasure-1.2A/reed_sol.h
 CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../include/algorithm/loadbalance.h
+CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../include/algorithm/scoped_timer.hpp
 CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../include/algorithm/sggh.h
 CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../include/algorithm/utils.h
 CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../include/jerasure_wrapper.h
@@ -25,6 +26,7 @@ CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../Jerasure-1.2A/cauchy.h
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../Jerasure-1.2A/reed_sol.h
+CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../include/algorithm/scoped_timer.hpp
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../include/algorithm/sggh.h
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../include/algorithm/utils.h
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../include/jerasure_wrapper.h
@@ -44,6 +46,7 @@ CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../Jerasure-1.2A/cauchy.h
 CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../Jerasure-1.2A/reed_sol.h
+CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../include/algorithm/scoped_timer.hpp
 CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../include/algorithm/utils.h
 CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../include/jerasure_wrapper.h
 CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../yalantinglibs/include/ylt/easylog.hpp

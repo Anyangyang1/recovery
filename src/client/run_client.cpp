@@ -54,6 +54,12 @@ int main(int argc, char **argv) {
         } else if (cmd == "repair_node_opt") {
             unsigned int node_id = stoi(argv[2]);
             client.request_repair_node_with_opt(node_id);
+        }else if(cmd == "data_test") {
+            unsigned int stripe_num = stoi(argv[2]);
+            for (unsigned int i = 0; i < stripe_num; i++) {
+                std::string value = generate_random_string(value_size);
+                client.set_data_test(value);
+            }
         } else {
             ELOG(ERROR) << "cmd error";
         }

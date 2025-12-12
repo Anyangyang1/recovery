@@ -20,6 +20,16 @@ galois.h
 
 ../Jerasure-1.2A/reed_sol.h
 
+../include/algorithm/scoped_timer.hpp
+ylt/easylog.hpp
+../include/algorithm/ylt/easylog.hpp
+ylt/easylog/record.hpp
+../include/algorithm/ylt/easylog/record.hpp
+chrono
+-
+string
+-
+
 ../include/algorithm/utils.h
 algorithm
 -
@@ -39,12 +49,16 @@ random
 -
 vector
 -
+chrono
+-
 ../jerasure_wrapper.h
 ../include/jerasure_wrapper.h
 ylt/easylog.hpp
 ../include/algorithm/ylt/easylog.hpp
 source_location
 -
+scoped_timer.hpp
+../include/algorithm/scoped_timer.hpp
 
 ../include/client.h
 coordinator.h

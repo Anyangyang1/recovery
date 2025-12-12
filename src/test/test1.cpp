@@ -122,6 +122,45 @@ void loadBalanceTest(int K, int M, int W, int N, int S, int failedNodeId) {
     std::cout << "duration: " << time1 << " ms\n";
 }
 
+void xorTimeTest(unsigned int value_size, bool use_jerasure) {
+
+    // auto aligned_alloc_char = [](size_t n) {
+    //     void *p = aligned_alloc(32, n); // C11£¬POSIX ±£Ö¤
+    //     if (!p)
+    //         throw std::bad_alloc();
+    //     return std::unique_ptr<char[], decltype(&free)>(static_cast<char
+    //     *>(p),
+    //                                                     free);
+    // };
+
+    // auto value1 = aligned_alloc_char(value_size);
+    // std::fill_n(value1.get(), value_size, 'a');
+
+    // auto value2 = aligned_alloc_char(value_size);
+    // std::fill_n(value2.get(), value_size, 'b');
+
+    // auto value3 = aligned_alloc_char(value_size);
+    std::vector<char> value1(value_size, 'a');
+    std::vector<char> value2(value_size, 'b');
+    std::vector<char> value3(value_size, 0);
+    // printf("v1 align: %ld, v2 align: %ld, v3 align: %ld\n",
+    // (uintptr_t)value1.data() % 32,
+    // (uintptr_t)value2.data() % 32,
+    // (uintptr_t)value3.data() % 32);
+    {
+
+        SCOPED_TIMER("test");
+        if (use_jerasure) {
+            galois_region_xor(value1.data(), value2.data(), value3.data(),
+                              value_size);
+        } else {
+            for (size_t i = 0; i < value_size; i++) {
+                value3[i] = value1[i] ^ value2[i];
+            }
+        }
+    }
+}
+
 int add(int a, int b) {
     cout << a + b << endl;
     return a + b;

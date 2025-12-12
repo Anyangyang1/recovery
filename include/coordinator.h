@@ -72,7 +72,8 @@ class Coordinator {
     RepairPlan generate_repair_plan(const Stripe &stripe,
                                     unsigned int failed_block_id);
 
-    unsigned int select_node(const std::vector<unsigned int> &block2node);
+    unsigned int select_node(const std::vector<unsigned int> &block2node,
+                             std::optional<unsigned int> seed);
 
     void alter_metadata(unsigned int stripe_id, unsigned int failed_block_id,
                         unsigned int new_node_id);

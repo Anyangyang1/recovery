@@ -36,6 +36,7 @@ class Datanode {
     void handle_set(const std::string &key, size_t value_size);
 
     void handle_upload(unsigned int stripe_id, size_t value_size);
+    void handle_upload_test(unsigned int stripe_id, size_t value_size);
 
     void handle_delete_stripe(unsigned int stripe_id,
                               unsigned int failed_block_id);
@@ -136,7 +137,7 @@ class Datanode {
      * @return: 返回异或后的数据
      */
     std::vector<char>
-    decode_xor(const std::vector<std::vector<char>> &original_datas);
+    decode_xor(std::vector<std::vector<char>> &original_datas);
 
     /**
      * @brief 根据局部解码的数据，计算出解码需要的原始数据

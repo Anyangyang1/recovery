@@ -7,6 +7,7 @@ CMakeFiles/test.dir/src/test/main.cpp.o
  ../Jerasure-1.2A/jerasure.h
  ../Jerasure-1.2A/reed_sol.h
  ../include/algorithm/loadbalance.h
+ ../include/algorithm/scoped_timer.hpp
  ../include/algorithm/sggh.h
  ../include/algorithm/utils.h
  ../include/jerasure_wrapper.h
@@ -730,6 +731,7 @@ CMakeFiles/test.dir/src/test/test1.cpp.o
  ../Jerasure-1.2A/jerasure.h
  ../Jerasure-1.2A/reed_sol.h
  ../include/algorithm/loadbalance.h
+ ../include/algorithm/scoped_timer.hpp
  ../include/algorithm/sggh.h
  ../include/algorithm/utils.h
  ../include/jerasure_wrapper.h

@@ -6,6 +6,7 @@ CMakeFiles/test.dir/src/test/main.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/test.dir/src/test/main.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/test.dir/src/test/main.cpp.o: ../Jerasure-1.2A/reed_sol.h
 CMakeFiles/test.dir/src/test/main.cpp.o: ../include/algorithm/loadbalance.h
+CMakeFiles/test.dir/src/test/main.cpp.o: ../include/algorithm/scoped_timer.hpp
 CMakeFiles/test.dir/src/test/main.cpp.o: ../include/algorithm/sggh.h
 CMakeFiles/test.dir/src/test/main.cpp.o: ../include/algorithm/utils.h
 CMakeFiles/test.dir/src/test/main.cpp.o: ../include/jerasure_wrapper.h
@@ -729,6 +730,7 @@ CMakeFiles/test.dir/src/test/test1.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/test.dir/src/test/test1.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/test.dir/src/test/test1.cpp.o: ../Jerasure-1.2A/reed_sol.h
 CMakeFiles/test.dir/src/test/test1.cpp.o: ../include/algorithm/loadbalance.h
+CMakeFiles/test.dir/src/test/test1.cpp.o: ../include/algorithm/scoped_timer.hpp
 CMakeFiles/test.dir/src/test/test1.cpp.o: ../include/algorithm/sggh.h
 CMakeFiles/test.dir/src/test/test1.cpp.o: ../include/algorithm/utils.h
 CMakeFiles/test.dir/src/test/test1.cpp.o: ../include/jerasure_wrapper.h

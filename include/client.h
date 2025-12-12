@@ -20,6 +20,7 @@ class Client {
     void delete_all_file(unsigned int node_id);
     void request_repair_node(unsigned int node_id);
     void request_repair_node_with_opt(unsigned int node_id);
+    void set_data_test(std::string value);
     
 
   private:

@@ -9,9 +9,11 @@
 #include <numeric>
 #include <random>
 #include <vector>
+#include <chrono>
 #include "../jerasure_wrapper.h"
 #include "ylt/easylog.hpp"
 #include <source_location>
+#include "scoped_timer.hpp"
 
 
 #define my_assert(condition)                                                   \

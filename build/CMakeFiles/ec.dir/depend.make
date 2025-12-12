@@ -5,6 +5,7 @@ CMakeFiles/ec.dir/src/ec/erasure_code.cpp.o: ../Jerasure-1.2A/cauchy.h
 CMakeFiles/ec.dir/src/ec/erasure_code.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/ec.dir/src/ec/erasure_code.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/ec.dir/src/ec/erasure_code.cpp.o: ../Jerasure-1.2A/reed_sol.h
+CMakeFiles/ec.dir/src/ec/erasure_code.cpp.o: ../include/algorithm/scoped_timer.hpp
 CMakeFiles/ec.dir/src/ec/erasure_code.cpp.o: ../include/algorithm/utils.h
 CMakeFiles/ec.dir/src/ec/erasure_code.cpp.o: ../include/ec/erasure_code.h
 CMakeFiles/ec.dir/src/ec/erasure_code.cpp.o: ../include/jerasure_wrapper.h
@@ -24,6 +25,7 @@ CMakeFiles/ec.dir/src/ec/rs.cpp.o: ../Jerasure-1.2A/cauchy.h
 CMakeFiles/ec.dir/src/ec/rs.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/ec.dir/src/ec/rs.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/ec.dir/src/ec/rs.cpp.o: ../Jerasure-1.2A/reed_sol.h
+CMakeFiles/ec.dir/src/ec/rs.cpp.o: ../include/algorithm/scoped_timer.hpp
 CMakeFiles/ec.dir/src/ec/rs.cpp.o: ../include/algorithm/utils.h
 CMakeFiles/ec.dir/src/ec/rs.cpp.o: ../include/ec/erasure_code.h
 CMakeFiles/ec.dir/src/ec/rs.cpp.o: ../include/ec/rs.h
@@ -44,6 +46,7 @@ CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o: ../Jerasure-1.2A/cauchy.h
 CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o: ../Jerasure-1.2A/reed_sol.h
+CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o: ../include/algorithm/scoped_timer.hpp
 CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o: ../include/algorithm/utils.h
 CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o: ../include/ec/erasure_code.h
 CMakeFiles/ec.dir/src/ec/rs_xor.cpp.o: ../include/ec/rs_xor.h

@@ -16,6 +16,23 @@ set(THREADS_PREFER_PTHREAD_FLAG ON)
 # ? 关键：生成 compile_commands.json（解决 VSCode 头文件跳转问题）
 set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
+
+# ====== 开启SIMD编译 ======
+# execute_process(
+#     COMMAND bash -c "grep -q avx2 /proc/cpuinfo && echo 1 || echo 0"
+#     OUTPUT_VARIABLE HAS_AVX2 OUTPUT_STRIP_TRAILING_WHITESPACE
+# )
+# if(HAS_AVX2 EQUAL 1)
+#     add_compile_definitions(VEC256)
+#     add_compile_options(-mavx2)
+# else()
+    # add_compile_definitions(VEC128)
+    # add_compile_options(-msse4.1)
+# endif()
+
+
+
+
 # ====== 设置可执行文件输出目录 ======
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/exec)
 
