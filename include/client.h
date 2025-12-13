@@ -17,7 +17,8 @@ class Client {
     void print_stripe_info();
     void print_node_info();
     void delete_file(unsigned int stripe_id, unsigned int failed_block_id);
-    void delete_all_file(unsigned int node_id);
+    void delete_node(unsigned int node_id);
+    void clear();
     void request_repair_node(unsigned int node_id);
     void request_repair_node_with_opt(unsigned int node_id);
     void set_data_test(std::string value);

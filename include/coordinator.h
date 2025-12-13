@@ -40,7 +40,8 @@ class Coordinator {
     void print_node_info();
     void delete_failed_block(unsigned int stripe_id,
                              unsigned int failed_block_id);
-    void delete_all_file(unsigned int node_id);
+    void delete_node(unsigned int node_id);
+    void clear();
     RepairResp request_repair_node(unsigned int node_id);
     RepairResp request_repair_node_with_opt(unsigned int node_id);
 

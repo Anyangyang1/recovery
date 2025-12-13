@@ -7,7 +7,7 @@ Datanode::Datanode(std::string ip, int port)
       acceptor_(io_context_, asio::ip::tcp::endpoint(
                                  asio::ip::address::from_string(ip.c_str()),
                                  port_for_transfer_data_)) {
-    easylog::set_min_severity(easylog::Severity::DEBUG);
+    easylog::set_min_severity(easylog::Severity::WARNING);
     // port is for rpc
     rpc_server_ = std::make_unique<coro_rpc::coro_rpc_server>(RPC_NUM, port_);
     rpc_server_->register_handler<&Datanode::handle_set>(this);
@@ -60,7 +60,7 @@ void Datanode::handle_set(const std::string &key, size_t value_size) {
             socket.close();
 
         } catch (const std::exception &e) {
-            std::cerr << e.what() << '\n';
+            ELOG(ERROR) << e.what() << '\n';
         }
     };
     std::thread(handler).detach();
@@ -78,7 +78,7 @@ void Datanode::handle_get(const std::string &key, size_t value_size) {
                              " value_size: " + std::to_string(value_size));
                 bool ret = access_data(key, data_buf.get(), value_size);
                 if (!ret) {
-                    ELOG(ERROR) << "access_data error";
+                    ELOG(ERROR) << "access_data error, file_name: " << key;
                 }
             }
             {
@@ -89,8 +89,8 @@ void Datanode::handle_get(const std::string &key, size_t value_size) {
 
             socket.close();
         } catch (std::exception &e) {
-            ELOG(DEBUG) << "exception";
-            ELOG(DEBUG) << e.what();
+            ELOG(WARNING) << "exception";
+            ELOG(WARNING) << e.what();
         }
     };
     std::thread(handler).detach();
@@ -128,29 +128,21 @@ void Datanode::handle_upload(unsigned int stripe_id, size_t value_size) {
 
             // Sync read
             std::string value_str(value_buf.get(), value_size);
-            // ELOG(DEBUG) << "receive data: " << value_str;
+            // ELOG(WARNING) << "receive data: " << value_str;
 
             // === Step 2: 同步获取元数据 ===
-            auto client = std::make_unique<coro_rpc::coro_rpc_client>();
-            auto conn_res = async_simple::coro::syncAwait(client->connect(
-                coordinator_ip_, std::to_string(coordinator_port_)));
-            if (conn_res) {
-                ELOG(ERROR)
-                    << "Failed to connect coordinator RPC (" << coordinator_ip_
-                    << ":" << coordinator_port_ << "): " << conn_res.message();
-            }
+            auto client = get_rpc_client(coordinator_ip_, coordinator_port_);
             StripeInfo stripe_info =
                 async_simple::coro::syncAwait(
                     client->call<&Coordinator::get_stripe_info>(stripe_id))
                     .value();
-            client.reset();
 
             // === Step 3: 同步执行编码 +
             // 分发（可改为协程异步，但先保正确性）===
             {
                 SCOPED_TIMER("encode and distribute. stripe_" +
                              std::to_string(stripe_id) +
-                             " value_size: " + std::to_string(value_size));
+                             ", value_size: " + std::to_string(value_size));
                 encode_and_distribute(stripe_info, std::move(value_buf),
                                       value_size);
             }
@@ -212,7 +204,7 @@ void Datanode::handle_delete_stripe(unsigned int stripe_id,
                                     unsigned int failed_block_id) {
     const std::string &path = "./storage/stripe_" + std::to_string(stripe_id) +
                               "_" + std::to_string(failed_block_id);
-    ELOG(DEBUG) << "delete file " << path;
+    ELOG(WARNING) << "delete file " << path;
     bool success = delete_file(path);
     if (!success) {
         ELOG(ERROR) << "Failed to delete " << path;
@@ -241,21 +233,21 @@ bool Datanode::clear_directory(const std::string &dir_path) {
     std::error_code ec;
 
     if (!fs::exists(dir_path, ec) || !fs::is_directory(dir_path, ec)) {
-        std::cerr << "Invalid directory: " << dir_path << "\n";
+        ELOG(ERROR) << "Invalid directory: " << dir_path << "\n";
         return false;
     }
 
     // 遍历目录下每一项（非递归 iterator 即可）
     for (const auto &entry : fs::directory_iterator(dir_path, ec)) {
         if (ec) {
-            std::cerr << "Iterate error: " << ec.message() << "\n";
+            ELOG(ERROR) << "Iterate error: " << ec.message() << "\n";
             return false;
         }
 
         // 递归删除：文件 or 目录都删（remove_all 能删非空目录）
         if (!fs::remove_all(entry.path(), ec)) {
-            std::cerr << "Failed to remove " << entry.path() << ": "
-                      << ec.message() << "\n";
+            ELOG(ERROR) << "Failed to remove " << entry.path() << ": "
+                        << ec.message() << "\n";
             return false; // 或继续删其他项：不 return，仅记录失败
         }
     }
@@ -278,7 +270,7 @@ void Datanode::handle_get_with_local_decode(const std::string &key,
             auto data_buf = std::make_unique<char[]>(data_size);
             bool ret = access_data(key, data_buf.get(), data_size);
             if (!ret) {
-                ELOG(ERROR) << "access_data error";
+                ELOG(ERROR) << "access_data error, file_name: " << key;
             }
             auto decode_buf = std::make_unique<char[]>(value_size);
             local_decode(matrix, data_buf.get(), decode_buf.get(), packet_size);
@@ -287,7 +279,7 @@ void Datanode::handle_get_with_local_decode(const std::string &key,
             socket.close();
 
         } catch (std::exception &e) {
-            ELOG(DEBUG) << e.what();
+            ELOG(ERROR) << e.what();
         }
     };
     std::thread(handler).detach();
@@ -346,7 +338,7 @@ bool Datanode::access_data(const std::string &key, char *value_buf,
 
 bool Datanode::store_data(const std::string &key, const char *value,
                           size_t value_size) {
-    // ELOG(DEBUG) << "[store_data] write data to disk. key = " << key;
+    // ELOG(WARNING) << "[store_data] write data to disk. key = " << key;
     std::string targetdir = "./storage/";
     std::string writepath = targetdir + key;
     if (access(targetdir.c_str(), 0) == -1) {
@@ -358,7 +350,7 @@ bool Datanode::store_data(const std::string &key, const char *value,
     ofs.flush();
     ofs.close();
     if (!ofs) {
-        ELOG(DEBUG) << "[Datanode" << port_ << "][Disk] failed to set!\n";
+        ELOG(WARNING) << "[Datanode" << port_ << "][Disk] failed to set!\n";
         return false;
     }
     return true;
@@ -397,13 +389,11 @@ bool Datanode::read_from_datanode_with_local_decode(
     size_t value_size, const vector<vector<int>> &matrix) {
 
     try {
-        auto client = std::make_unique<coro_rpc::coro_rpc_client>();
-        async_simple::coro::syncAwait(
-            client->connect(ip, std::to_string(port)));
+        auto client = get_rpc_client(ip, port);
+
         async_simple::coro::syncAwait(
             client->call<&Datanode::handle_get_with_local_decode>(
                 key, value_size, matrix));
-        client.reset();
 
         asio::ip::tcp::socket socket(io_context_);
         asio::ip::tcp::resolver resolver(io_context_);
@@ -415,7 +405,7 @@ bool Datanode::read_from_datanode_with_local_decode(
         socket.close();
         return true;
     } catch (const std::exception &e) {
-        std::cerr << e.what() << '\n';
+        ELOG(ERROR) << e.what() << '\n';
         return false;
     }
 }
@@ -423,12 +413,9 @@ bool Datanode::read_from_datanode_with_local_decode(
 bool Datanode::read_from_datanode(const string &ip, int port, const string &key,
                                   char *value, size_t value_size) {
     try {
-        auto client = std::make_unique<coro_rpc::coro_rpc_client>();
-        async_simple::coro::syncAwait(
-            client->connect(ip, std::to_string(port)));
+        auto client = get_rpc_client(ip, port);
         async_simple::coro::syncAwait(
             client->call<&Datanode::handle_get>(key, value_size));
-        client.reset();
 
         asio::ip::tcp::socket socket(io_context_);
         asio::ip::tcp::resolver resolver(io_context_);
@@ -441,22 +428,20 @@ bool Datanode::read_from_datanode(const string &ip, int port, const string &key,
         socket.close();
         return true;
     } catch (const std::exception &e) {
-        std::cerr << e.what() << '\n';
+        ELOG(ERROR) << e.what() << '\n';
         return false;
     }
 }
 
 bool Datanode::write_to_datanode(const string &ip, int port, const string &key,
                                  char *value, size_t value_size) {
-    // ELOG(DEBUG) << "[write_to_datanode] prepare write data to (" << ip << ":"
+    // ELOG(WARNING) << "[write_to_datanode] prepare write data to (" << ip <<
+    // ":"
     // << port << ")";
     try {
-        auto client = std::make_unique<coro_rpc::coro_rpc_client>();
-        async_simple::coro::syncAwait(
-            client->connect(ip, std::to_string(port)));
+        auto client = get_rpc_client(ip, port);
         async_simple::coro::syncAwait(
             client->call<&Datanode::handle_set>(key, value_size));
-        client.reset();
 
         asio::ip::tcp::socket socket(io_context_);
         asio::ip::tcp::resolver resolver(io_context_);
@@ -469,7 +454,7 @@ bool Datanode::write_to_datanode(const string &ip, int port, const string &key,
         socket.close();
         return true;
     } catch (const std::exception &e) {
-        std::cerr << e.what() << '\n';
+        ELOG(ERROR) << e.what() << '\n';
         return false;
     }
 }
@@ -477,76 +462,84 @@ bool Datanode::write_to_datanode(const string &ip, int port, const string &key,
 void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
                                   size_t block_size, int w,
                                   std::string repair_file_name) {
-    assert(block_size % w == 0);
-    size_t packet_size = block_size / w;
+    try {
+        assert(block_size % w == 0);
+        size_t packet_size = block_size / w;
 
-    std::string helpers_info;
-    for (auto &helper : helpers) {
-        helpers_info += helper.ip + "/" + helper.file_name + ", ";
-    }
-    ELOG(DEBUG) << "repair " << repair_file_name << ", read data from:("
-                << helpers_info << ")";
-    std::vector<std::vector<char>> original_datas(
-        helpers.size(), std::vector<char>(block_size));
-    {
-        SCOPED_TIMER("read all data from survivor for repair " +
-                     repair_file_name);
+        std::string helpers_info;
+        for (auto &helper : helpers) {
+            helpers_info += helper.ip + "/" + helper.file_name + ", ";
+        }
+        ELOG(WARNING) << "repair " << repair_file_name << ", read data from:("
+                      << helpers_info << ")";
+        std::vector<std::vector<char>> original_datas(
+            helpers.size(), std::vector<char>(block_size));
+        {
+            SCOPED_TIMER("read all data from survivor for repair " +
+                         repair_file_name);
 
-        auto get_from_node = [&](int idx, const DecodeRequest &helper) {
-            auto result = compute_basis_gf2_indices(helper.matrix);
-            size_t buf_size = packet_size * result.basis.size();
-            std::vector<char> buf(buf_size);
+            auto get_from_node = [&](int idx, const DecodeRequest &helper) {
+                auto result = compute_basis_gf2_indices(helper.matrix);
+                size_t buf_size = packet_size * result.basis.size();
+                std::vector<char> buf(buf_size);
 
-            {
-                SCOPED_TIMER("read local decode data " + helper.file_name +
-                             ", value_size: " + std::to_string(buf_size));
-                bool ok = read_from_datanode_with_local_decode(
-                    helper.ip, helper.port, helper.file_name, buf.data(),
-                    buf_size, result.basis);
-                if (!ok) {
-                    throw std::runtime_error("Read failed from " + helper.ip);
+                {
+                    SCOPED_TIMER("read local decode data " + helper.file_name +
+                                 ", value_size: " + std::to_string(buf_size));
+                    bool ok = read_from_datanode_with_local_decode(
+                        helper.ip, helper.port, helper.file_name, buf.data(),
+                        buf_size, result.basis);
+                    if (!ok) {
+                        throw std::runtime_error("Read failed from " +
+                                                 helper.ip);
+                        ELOG(ERROR) << "Read failed from " << helper.ip;
+                    }
                 }
+
+                {
+                    SCOPED_TIMER("compute original data " + helper.file_name);
+                    compute_original_data(buf.data(), result.reps,
+                                          original_datas[idx].data(),
+                                          packet_size);
+                }
+            };
+
+            std::vector<std::thread> readers;
+            std::vector<std::exception_ptr> exceptions(helpers.size());
+
+            for (size_t i = 0; i < helpers.size(); ++i) {
+                readers.emplace_back([&, i]() {
+                    try {
+                        get_from_node(i, helpers[i]);
+                    } catch (...) {
+                        exceptions[i] = std::current_exception();
+                    }
+                });
             }
 
-            {
-                SCOPED_TIMER("compute original data " + helper.file_name);
-                compute_original_data(buf.data(), result.reps,
-                                      original_datas[idx].data(), packet_size);
+            for (auto &t : readers)
+                t.join();
+
+            for (auto &e : exceptions) {
+                if (e)
+                    std::rethrow_exception(e);
             }
-        };
-
-        std::vector<std::thread> readers;
-        std::vector<std::exception_ptr> exceptions(helpers.size());
-
-        for (size_t i = 0; i < helpers.size(); ++i) {
-            readers.emplace_back([&, i]() {
-                try {
-                    get_from_node(i, helpers[i]);
-                } catch (...) {
-                    exceptions[i] = std::current_exception();
-                }
-            });
         }
 
-        for (auto &t : readers)
-            t.join();
-
-        for (auto &e : exceptions) {
-            if (e)
-                std::rethrow_exception(e);
+        std::vector<char> decode_data;
+        {
+            SCOPED_TIMER("recompute...");
+            decode_data = decode_xor(original_datas);
+            assert(decode_data.size() == block_size);
         }
-    }
 
-    std::vector<char> decode_data;
-    {
-        SCOPED_TIMER("recompute...");
-        decode_data = decode_xor(original_datas);
-        assert(decode_data.size() == block_size);
-    }
-
-    {
-        SCOPED_TIMER("store into disk");
-        store_data(repair_file_name, decode_data.data(), decode_data.size());
+        {
+            SCOPED_TIMER("store into disk");
+            store_data(repair_file_name, decode_data.data(),
+                       decode_data.size());
+        }
+    } catch (const std::exception &e) {
+        ELOG(ERROR) << e.what() << '\n';
     }
 }
 
@@ -561,8 +554,8 @@ void Datanode::do_repair(std::vector<DecodeRequest> helpers, size_t block_size,
     for (auto &helper : helpers) {
         helpers_info += helper.ip + "/" + helper.file_name + ", ";
     }
-    ELOG(DEBUG) << "repair " << repair_file_name << ", read data form:("
-                << helpers_info << ")";
+    ELOG(WARNING) << "repair " << repair_file_name << ", read data form:("
+                  << helpers_info << ")";
     {
         SCOPED_TIMER("read all data from survivor for repair " +
                      repair_file_name);
@@ -576,6 +569,7 @@ void Datanode::do_repair(std::vector<DecodeRequest> helpers, size_t block_size,
                 if (!ok) {
                     throw std::runtime_error("Read failed from " + helper.ip);
                 }
+                // ELOG(WARNING) << "read file: " << helper.file_name;
             }
         };
 
@@ -739,6 +733,20 @@ Datanode::compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
     return {basis, reps};
 }
 
+std::shared_ptr<coro_rpc::coro_rpc_client>
+Datanode::get_rpc_client(std::string ip, int port) {
+    std::string node_ip_port = ip + ":" + std::to_string(port);
+    mutex_.lock();
+    if (datanodes_.find(node_ip_port) == datanodes_.end()) {
+        datanodes_[node_ip_port] =
+            std::make_shared<coro_rpc::coro_rpc_client>();
+        async_simple::coro::syncAwait(
+            datanodes_[node_ip_port]->connect(ip, std::to_string(port)));
+    }
+    mutex_.unlock();
+    return datanodes_[node_ip_port];
+}
+
 // ====== 新增：Datanode::encode_and_distribute ======
 void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
                                      std::unique_ptr<char[]> object_data,
@@ -752,8 +760,8 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     for (auto ip_info : stripe_info.nodes_info) {
         stripe_info_str += ip_info.node_ip + ", ";
     }
-    ELOG(DEBUG) << "encode and distribute. data will be stored in ("
-                << stripe_info_str << ")";
+    ELOG(WARNING) << "encode and distribute. stripe_" << stripe_info.stripe_id
+                  << " will be stored in (" << stripe_info_str << ")";
 
     // 校验数据完整性
     if (total_size != static_cast<size_t>(k) * block_size) {
@@ -782,8 +790,7 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     }
 
     {
-        SCOPED_TIMER("encode stripe_" +
-                     std::to_string(stripe_info.stripe_id));
+        SCOPED_TIMER("encode stripe_" + std::to_string(stripe_info.stripe_id));
         ec->encode(data_ptrs.data(), coding_ptrs.data(), block_size);
     }
 
@@ -793,7 +800,7 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     futures.reserve(k + m);
 
     {
-        SCOPED_TIMER("[distribute] stripe_" +
+        SCOPED_TIMER("distribute stripe_" +
                      std::to_string(stripe_info.stripe_id));
         // 提交所有写任务（含本地存储）
         for (int idx = 0; idx < k + m; ++idx) {
@@ -843,8 +850,8 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     //         client->call<&Coordinator::mark_stripe_written>(stripe_info.stripe_id));
     // } catch (...) {
     //     // 可容忍：Coordinator 可通过心跳/修复发现缺失条带
-    //     std::cerr << "[Datanode] Failed to notify Coordinator, but data
-    //     is stored." << std::endl;
+    //     ELOG(ERROR) << "[Datanode] Failed to notify Coordinator, but data
+    //     is stored.";
     // }
 }
 

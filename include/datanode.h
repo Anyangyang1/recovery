@@ -117,7 +117,7 @@ class Datanode {
                      const vector<int> &idxs);
 
     bool delete_file(const std::string &path);
-    bool clear_directory(const std::string& dir_path);
+    bool clear_directory(const std::string &dir_path);
 
     void local_decode(const std::vector<std::vector<int>> &matrix,
                       char *data_buf, char *decode_buf, size_t packet_size);
@@ -153,6 +153,8 @@ class Datanode {
     void encode_and_distribute(const StripeInfo &stripe_info,
                                std::unique_ptr<char[]> object_data,
                                size_t total_size);
+    std::shared_ptr<coro_rpc::coro_rpc_client> get_rpc_client(std::string ip,
+                                                              int port);
 
   private:
     std::string ip_;
@@ -168,6 +170,11 @@ class Datanode {
 
     // RPC
     std::unique_ptr<coro_rpc::coro_rpc_server> rpc_server_{nullptr};
+
+    // RPC client
+    std::unordered_map<std::string, std::shared_ptr<coro_rpc::coro_rpc_client>>
+        datanodes_;
+    std::mutex mutex_;
 
     // ¸¨Öú¹þÏ££¨C++11 ¼æÈÝ£©
     struct VecIntHash {

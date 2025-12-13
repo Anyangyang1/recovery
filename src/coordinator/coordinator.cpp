@@ -8,7 +8,7 @@ namespace ECProject {
 
 Coordinator::Coordinator(std::string ip, int port, std::string xml_path)
     : ip_(ip), port_(port), xml_path_(xml_path) {
-    easylog::set_min_severity(easylog::Severity::DEBUG);
+    easylog::set_min_severity(easylog::Severity::WARNING);
     rpc_server_ = std::make_unique<coro_rpc::coro_rpc_server>(4, port_);
     rpc_server_->register_handler<&Coordinator::request_set>(this);
     rpc_server_->register_handler<&Coordinator::request_get>(this);
@@ -18,7 +18,8 @@ Coordinator::Coordinator(std::string ip, int port, std::string xml_path)
     rpc_server_->register_handler<&Coordinator::print_stripe_info>(this);
     rpc_server_->register_handler<&Coordinator::print_node_info>(this);
     rpc_server_->register_handler<&Coordinator::delete_failed_block>(this);
-    rpc_server_->register_handler<&Coordinator::delete_all_file>(this);
+    rpc_server_->register_handler<&Coordinator::delete_node>(this);
+    rpc_server_->register_handler<&Coordinator::clear>(this);
     rpc_server_->register_handler<&Coordinator::request_repair_node>(this);
     rpc_server_->register_handler<&Coordinator::request_repair_node_with_opt>(
         this);
@@ -27,7 +28,7 @@ Coordinator::Coordinator(std::string ip, int port, std::string xml_path)
     try {
         init_cluster_info();
     } catch (const std::exception &e) {
-        std::cerr << "init_cluster_info failed: " << e.what() << std::endl;
+        ELOG(ERROR) << "init_cluster_info failed: " << e.what();
         std::abort(); // »ò throw
     }
 
@@ -80,8 +81,8 @@ void Coordinator::init_cluster_info() {
         auto ec = async_simple::coro::syncAwait(
             datanodes_[uri]->connect(ip, std::to_string(port)));
         if (ec) {
-            std::cerr << "Failed to connect to " << uri << ": " << ec.message()
-                      << std::endl;
+            ELOG(ERROR) << "Failed to connect to " << uri << ": "
+                        << ec.message();
         }
         Node temp;
         temp.node_id = node_id;
@@ -109,17 +110,17 @@ Stripe &Coordinator::new_stripe() {
 }
 
 void Coordinator::print_stripe_info() {
-    ELOG(DEBUG) << "stripe info:";
+    ELOG(WARNING) << "stripe info:";
     for (const auto &[key, value] : stripe_table_) {
-        ELOG(DEBUG) << "stripe_" << value.stripe_id << ": "
+        ELOG(WARNING) << "stripe_" << value.stripe_id << ": "
                     << vecToString(value.blocks2nodes);
     }
 }
 
 void Coordinator::print_node_info() {
-    ELOG(DEBUG) << "nodes info: ";
+    ELOG(WARNING) << "nodes info: ";
     for (const auto &[key, value] : node_table_) {
-        ELOG(DEBUG) << "node_" << value.node_id << ": "
+        ELOG(WARNING) << "node_" << value.node_id << ": "
                     << mapToString(value.nodes2blocks);
     }
 }
@@ -157,6 +158,7 @@ UploadInfo Coordinator::request_set(size_t value_size) {
 
 RepairResp Coordinator::request_repair_with_opt(unsigned int stripe_id,
                                                 unsigned int failed_block_id) {
+
     const Stripe stripe = stripe_table_[stripe_id];
     RepairResp response;
     RepairPlan repair_plan =
@@ -164,19 +166,23 @@ RepairResp Coordinator::request_repair_with_opt(unsigned int stripe_id,
     Node new_node = repair_plan.selected_new_node;
     std::string node_ip_port =
         new_node.node_ip + ":" + std::to_string(new_node.node_port);
+    try {
+        {
+            SCOPED_TIMER("repair_opt stripe_" + std::to_string(stripe_id) +
+                         "_" + std::to_string(failed_block_id));
+            async_simple::coro::syncAwait(
+                datanodes_[node_ip_port]->call<&Datanode::do_repair_with_opt>(
+                    repair_plan.helpers, ec_schema_.block_size,
+                    ec_schema_.ec->w, repair_plan.repair_file_name));
+        }
 
-    {
-        SCOPED_TIMER("repair_opt stripe_" + std::to_string(stripe_id) + "_" +
-                     std::to_string(failed_block_id));
-        async_simple::coro::syncAwait(
-            datanodes_[node_ip_port]->call<&Datanode::do_repair_with_opt>(
-                repair_plan.helpers, ec_schema_.block_size, ec_schema_.ec->w,
-                repair_plan.repair_file_name));
+        alter_metadata(stripe_id, failed_block_id, new_node.node_id);
+        ELOG(WARNING) << "select node_" << new_node.node_id
+                    << " to repair stripe_" << stripe_id << "_"
+                    << failed_block_id;
+    } catch (const std::exception &e) {
+        ELOG(ERROR) << e.what() << '\n';
     }
-
-    alter_metadata(stripe_id, failed_block_id, new_node.node_id);
-    ELOG(DEBUG) << "select node_" << new_node.node_id << " to repair stripe_"
-                << stripe_id << "_" << failed_block_id;
     return response;
 }
 
@@ -190,8 +196,8 @@ RepairResp Coordinator::request_repair(unsigned int stripe_id,
         new_node.node_ip + ":" + std::to_string(new_node.node_port);
 
     {
-        SCOPED_TIMER("repair stripe_" + std::to_string(stripe_id) + "_"
-                                      + std::to_string(failed_block_id));
+        SCOPED_TIMER("repair stripe_" + std::to_string(stripe_id) + "_" +
+                     std::to_string(failed_block_id));
         async_simple::coro::syncAwait(
             datanodes_[node_ip_port]->call<&Datanode::do_repair>(
                 repair_plan.helpers, ec_schema_.block_size, ec_schema_.ec->w,
@@ -199,7 +205,7 @@ RepairResp Coordinator::request_repair(unsigned int stripe_id,
     }
 
     alter_metadata(stripe_id, failed_block_id, new_node.node_id);
-    ELOG(DEBUG) << "select node_" << new_node.node_id << " to repair stripe_"
+    ELOG(WARNING) << "select node_" << new_node.node_id << " to repair stripe_"
                 << stripe_id << "_" << failed_block_id;
     return response;
 }
@@ -253,11 +259,13 @@ RepairResp Coordinator::request_repair_node_with_opt(unsigned int node_id) {
 void Coordinator::alter_metadata(unsigned int stripe_id,
                                  unsigned int failed_block_id,
                                  unsigned int new_node_id) {
+    mutex_.lock();
     unsigned int old_node_id =
         stripe_table_[stripe_id].blocks2nodes[failed_block_id];
     stripe_table_[stripe_id].blocks2nodes[failed_block_id] = new_node_id;
     node_table_[old_node_id].nodes2blocks.erase(stripe_id);
     node_table_[new_node_id].nodes2blocks[stripe_id] = failed_block_id;
+    mutex_.unlock();
 }
 
 void Coordinator::delete_failed_block(unsigned int stripe_id,
@@ -271,12 +279,23 @@ void Coordinator::delete_failed_block(unsigned int stripe_id,
         datanodes_[node_ip_port]->call<&Datanode::handle_delete_stripe>(
             stripe_id, failed_block_id));
 }
-void Coordinator::delete_all_file(unsigned int node_id) {
+void Coordinator::delete_node(unsigned int node_id) {
     Node &node = node_table_[node_id];
     std::string node_ip_port =
         node.node_ip + ":" + std::to_string(node.node_port);
     async_simple::coro::syncAwait(
         datanodes_[node_ip_port]->call<&Datanode::handle_delete_all_file>());
+}
+
+void Coordinator::clear() {
+    for (int i = 0; i < num_of_nodes_; ++i) {
+        delete_node(i);
+    }
+    stripe_table_.clear();
+    cur_stripe_id_ = 0;
+    for (auto &[node_id, node] : node_table_) {
+        node.nodes2blocks.clear();
+    }
 }
 
 void Coordinator::request_get(unsigned int stripe_id) {}
@@ -438,9 +457,9 @@ Coordinator::get_submatrix(const std::vector<std::vector<int>> &decode_matrix,
     return result;
 }
 
-unsigned int
-Coordinator::select_node(const std::vector<unsigned int>& block2node,
-                         std::optional<unsigned int> seed /* = std::nullopt */) {
+unsigned int Coordinator::select_node(
+    const std::vector<unsigned int> &block2node,
+    std::optional<unsigned int> seed /* = std::nullopt */) {
     int num_node = num_of_nodes_;
     std::vector<bool> used(num_node, false);
     for (int id : block2node) {
@@ -471,7 +490,8 @@ Coordinator::select_node(const std::vector<unsigned int>& block2node,
         gen.seed(rd());
     }
 
-    std::uniform_int_distribution<int> dis(0, static_cast<int>(candidates.size() - 1));
+    std::uniform_int_distribution<int> dis(
+        0, static_cast<int>(candidates.size() - 1));
     return static_cast<unsigned int>(candidates[dis(gen)]);
 }
 

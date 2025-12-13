@@ -9,7 +9,7 @@ Client::Client(std::string ip, int port, std::string coordinator_ip,
       acceptor_(io_context_,
                 asio::ip::tcp::endpoint(
                     asio::ip::address::from_string(ip.c_str()), port_)) {
-    easylog::set_min_severity(easylog::Severity::DEBUG);
+    easylog::set_min_severity(easylog::Severity::WARNING);
     rpc_coordinator_ = std::make_unique<coro_rpc::coro_rpc_client>();
     async_simple::coro::syncAwait(rpc_coordinator_->connect(
         coordinator_ip_, std::to_string(coordinator_port_)));
@@ -55,7 +55,7 @@ void Client::set(std::string value) {
 
     // Step 4: Send raw data via socket (data port = node_port + offset)
     int data_port = response.node_port + SOCKET_PORT_OFFSET;
-    ELOG(DEBUG) << "[SET] Sending data (" << value.size() << "B) to "
+    ELOG(WARNING) << "[SET] Sending data (" << value.size() << "B) to "
                 << response.node_ip << ":" << data_port;
     try {
         asio::ip::tcp::socket socket(io_context_);
@@ -64,7 +64,7 @@ void Client::set(std::string value) {
         socket.connect(endpoint);
         asio::write(socket, asio::buffer(value, value.size()));
         socket.close();
-        ELOG(DEBUG) << "Send data completely.";
+        ELOG(WARNING) << "Send data completely.";
     } catch (const std::exception &e) {
         ELOG(ERROR) << "[SET] Data transfer failed: " << e.what();
     }
@@ -102,10 +102,16 @@ void Client::delete_file(unsigned int stripe_id, unsigned int failed_block_id) {
             std::chrono::seconds{3}, stripe_id, failed_block_id));
 }
 
-void Client::delete_all_file(unsigned int node_id) {
+void Client::delete_node(unsigned int node_id) {
     async_simple::coro::syncAwait(
-        rpc_coordinator_->call_for<&Coordinator::delete_all_file>(
+        rpc_coordinator_->call_for<&Coordinator::delete_node>(
             std::chrono::seconds{3}, node_id));
+}
+
+void Client::clear() {
+    async_simple::coro::syncAwait(
+        rpc_coordinator_->call_for<&Coordinator::clear>(
+            std::chrono::seconds{3}));
 }
 void Client::request_repair_node(unsigned int node_id) {
     async_simple::coro::syncAwait(
@@ -122,8 +128,8 @@ void Client::set_data_test(std::string value) {
     // Step 2: Connect to target datanode (RPC port)
     auto rpc_client = std::make_unique<coro_rpc::coro_rpc_client>();
     {
-        auto conn_res = async_simple::coro::syncAwait(rpc_client->connect(
-            "192.168.1.14", "8888"));
+        auto conn_res = async_simple::coro::syncAwait(
+            rpc_client->connect("192.168.1.14", "8888"));
         if (conn_res) {
             ELOG(ERROR) << "Failed to connect datanode RPC";
             return;
@@ -133,8 +139,7 @@ void Client::set_data_test(std::string value) {
     // Step 3: Notify datanode to prepare for upload
     {
         auto call_res = async_simple::coro::syncAwait(
-            rpc_client->call<&Datanode::handle_upload_test>(0,
-                                                       value.size()));
+            rpc_client->call<&Datanode::handle_upload_test>(0, value.size()));
         if (!call_res) {
             ELOG(ERROR) << "RPC handle_upload failed: " << call_res.error();
             return;
@@ -143,15 +148,15 @@ void Client::set_data_test(std::string value) {
 
     // Step 4: Send raw data via socket (data port = node_port + offset)
     int data_port = 8888 + SOCKET_PORT_OFFSET;
-    ELOG(DEBUG) << "[SET] Sending data (" << value.size() << "B) to";
+    ELOG(WARNING) << "[SET] Sending data (" << value.size() << "B) to";
     try {
         asio::ip::tcp::socket socket(io_context_);
-        asio::ip::tcp::endpoint endpoint(
-            asio::ip::make_address("192.168.1.14"), data_port);
+        asio::ip::tcp::endpoint endpoint(asio::ip::make_address("192.168.1.14"),
+                                         data_port);
         socket.connect(endpoint);
         asio::write(socket, asio::buffer(value, value.size()));
         socket.close();
-        ELOG(DEBUG) << "Send data completely.";
+        ELOG(WARNING) << "Send data completely.";
     } catch (const std::exception &e) {
         ELOG(ERROR) << "[SET] Data transfer failed: " << e.what();
     }

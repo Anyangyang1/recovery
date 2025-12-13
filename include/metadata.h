@@ -21,12 +21,12 @@
 #define CLIENT_PORT 21212
 
 
-#define RS_K 6
-#define RS_M 3
+#define RS_K 4
+#define RS_M 2
 #define RS_W 4
 #define KB 1024
 #define MB (1024 * 1024)
-#define BLOCK_SIZE (4 * 1024 * 1024)
+#define BLOCK_SIZE (1 * 1024 * 1024)
 #define RPC_NUM 100
 
 

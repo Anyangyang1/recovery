@@ -18,6 +18,22 @@ std::string generate_random_string(size_t length) {
     }
     return str;
 }
+
+std::string generateBlocks(int k, int block_size) {
+    // 要求：k ≥ 1, block_size ≥ 0；且 k ≤ 9（避免数字字符溢出）
+    assert(k >= 1 && "k must be at least 1");
+    assert(block_size >= 0 && "block_size must be non-negative");
+    assert(k <= 9 && "k > 9 not supported for digit characters; use letters or custom mapping");
+
+    std::string result;
+    result.reserve(static_cast<size_t>(k) * block_size); // 预分配避免多次 realloc
+
+    for (int i = 1; i <= k; ++i) {
+        char c = '0' + i;  // '1', '2', ..., '9'
+        result.append(block_size, c);  // append `block_size` copies of `c`
+    }
+    return result;
+}
 int main(int argc, char **argv) {
     Client client("0.0.0.0", CLIENT_PORT, "192.168.1.12", COORDINATOR_PORT);
     const int value_size = RS_K * BLOCK_SIZE;
@@ -47,7 +63,9 @@ int main(int argc, char **argv) {
             client.delete_file(stripe_id, block_id);
         } else if (cmd == "delete_node") {
             unsigned int node_id = stoi(argv[2]);
-            client.delete_all_file(node_id);
+            client.delete_node(node_id);
+        } else if(cmd == "clear") {
+            client.clear();
         } else if (cmd == "repair_node") {
             unsigned int node_id = stoi(argv[2]);
             client.request_repair_node(node_id);
