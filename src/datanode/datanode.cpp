@@ -120,10 +120,13 @@ void Datanode::handle_upload(unsigned int stripe_id, size_t value_size) {
                 socket.close();
                 if (ec || n != value_size) {
                     ELOG(ERROR)
-                        << "reveive data error, stripe_id: " << stripe_id;
-                    ELOG(ERROR) << ec.message();
+                        << "reveive data error, stripe_id: " << stripe_id
+                        << ", value_size: " << value_size << " n: " << n
+                        << ", error: " << ec.message();
                     return;
                 }
+                std::string str(value_buf.get(), value_buf.get() + 1024);
+                ELOG(WARNING) << "first data: " << str;
             }
 
             // Sync read
@@ -275,6 +278,17 @@ void Datanode::handle_get_with_local_decode(const std::string &key,
             auto decode_buf = std::make_unique<char[]>(value_size);
             local_decode(matrix, data_buf.get(), decode_buf.get(), packet_size);
 
+            // // 获取本地地址（本机绑定的 IP:Port）
+            // auto local_ep = socket.local_endpoint();
+            // // 获取远端地址（对端的 IP:Port）
+            // auto remote_ep = socket.remote_endpoint();
+            // ELOG(WARNING) << key << " socket fd=" << socket.native_handle()
+            //               << ", local=" << local_ep.address().to_string() <<
+            //               ":"
+            //               << local_ep.port()
+            //               << ", remote=" << remote_ep.address().to_string()
+            //               << ":" << remote_ep.port();
+
             asio::write(socket, asio::buffer(decode_buf.get(), value_size));
             socket.close();
 
@@ -390,7 +404,8 @@ bool Datanode::read_from_datanode_with_local_decode(
 
     try {
         auto client = get_rpc_client(ip, port);
-
+        ELOG(WARNING) << "prepare read data " << key << " from " << ip << ":"
+                      << port;
         async_simple::coro::syncAwait(
             client->call<&Datanode::handle_get_with_local_decode>(
                 key, value_size, matrix));
@@ -400,6 +415,17 @@ bool Datanode::read_from_datanode_with_local_decode(
         auto endpoints =
             resolver.resolve(ip, std::to_string(port + SOCKET_PORT_OFFSET));
         asio::connect(socket, endpoints);
+
+        // // 获取本地地址（本机绑定的 IP:Port）
+        // auto local_ep = socket.local_endpoint();
+        // // 获取远端地址（对端的 IP:Port）
+        // auto remote_ep = socket.remote_endpoint();
+        // ELOG(WARNING) << key << " socket fd=" << socket.native_handle()
+        //               << ", local=" << local_ep.address().to_string() << ":"
+        //               << local_ep.port()
+        //               << ", remote=" << remote_ep.address().to_string() <<
+        //               ":"
+        //               << remote_ep.port();
 
         asio::read(socket, asio::buffer(value, value_size));
         socket.close();

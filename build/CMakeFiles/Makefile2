@@ -65,41 +65,80 @@ CMAKE_SOURCE_DIR = /home/anyangyang/study/recovery
 CMAKE_BINARY_DIR = /home/anyangyang/study/recovery/build
 
 #=============================================================================
-# Target rules for target CMakeFiles/test.dir
+# Target rules for target CMakeFiles/test_server.dir
 
 # All Build rule for target.
-CMakeFiles/test.dir/all: CMakeFiles/ec.dir/all
-CMakeFiles/test.dir/all: CMakeFiles/algorithm.dir/all
-CMakeFiles/test.dir/all: CMakeFiles/jerasure.dir/all
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/depend
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=23,24,25 "Built target test"
-.PHONY : CMakeFiles/test.dir/all
+CMakeFiles/test_server.dir/all: CMakeFiles/ec.dir/all
+CMakeFiles/test_server.dir/all: CMakeFiles/algorithm.dir/all
+CMakeFiles/test_server.dir/all: CMakeFiles/jerasure.dir/all
+	$(MAKE) -f CMakeFiles/test_server.dir/build.make CMakeFiles/test_server.dir/depend
+	$(MAKE) -f CMakeFiles/test_server.dir/build.make CMakeFiles/test_server.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=26,27 "Built target test_server"
+.PHONY : CMakeFiles/test_server.dir/all
 
 # Include target in all.
-all: CMakeFiles/test.dir/all
+all: CMakeFiles/test_server.dir/all
 
 .PHONY : all
 
 # Build rule for subdir invocation for target.
-CMakeFiles/test.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 16
-	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/test.dir/all
+CMakeFiles/test_server.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 15
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/test_server.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 0
-.PHONY : CMakeFiles/test.dir/rule
+.PHONY : CMakeFiles/test_server.dir/rule
 
 # Convenience name for target.
-test: CMakeFiles/test.dir/rule
+test_server: CMakeFiles/test_server.dir/rule
 
-.PHONY : test
-
-# clean rule for target.
-CMakeFiles/test.dir/clean:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/clean
-.PHONY : CMakeFiles/test.dir/clean
+.PHONY : test_server
 
 # clean rule for target.
-clean: CMakeFiles/test.dir/clean
+CMakeFiles/test_server.dir/clean:
+	$(MAKE) -f CMakeFiles/test_server.dir/build.make CMakeFiles/test_server.dir/clean
+.PHONY : CMakeFiles/test_server.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/test_server.dir/clean
+
+.PHONY : clean
+
+#=============================================================================
+# Target rules for target CMakeFiles/test_client.dir
+
+# All Build rule for target.
+CMakeFiles/test_client.dir/all: CMakeFiles/ec.dir/all
+CMakeFiles/test_client.dir/all: CMakeFiles/algorithm.dir/all
+CMakeFiles/test_client.dir/all: CMakeFiles/jerasure.dir/all
+	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/depend
+	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/build
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=23,24,25 "Built target test_client"
+.PHONY : CMakeFiles/test_client.dir/all
+
+# Include target in all.
+all: CMakeFiles/test_client.dir/all
+
+.PHONY : all
+
+# Build rule for subdir invocation for target.
+CMakeFiles/test_client.dir/rule: cmake_check_build_system
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 16
+	$(MAKE) -f CMakeFiles/Makefile2 CMakeFiles/test_client.dir/all
+	$(CMAKE_COMMAND) -E cmake_progress_start /home/anyangyang/study/recovery/build/CMakeFiles 0
+.PHONY : CMakeFiles/test_client.dir/rule
+
+# Convenience name for target.
+test_client: CMakeFiles/test_client.dir/rule
+
+.PHONY : test_client
+
+# clean rule for target.
+CMakeFiles/test_client.dir/clean:
+	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/clean
+.PHONY : CMakeFiles/test_client.dir/clean
+
+# clean rule for target.
+clean: CMakeFiles/test_client.dir/clean
 
 .PHONY : clean
 
@@ -303,7 +342,7 @@ clean: CMakeFiles/algorithm.dir/clean
 CMakeFiles/tinyxml2.dir/all:
 	$(MAKE) -f CMakeFiles/tinyxml2.dir/build.make CMakeFiles/tinyxml2.dir/depend
 	$(MAKE) -f CMakeFiles/tinyxml2.dir/build.make CMakeFiles/tinyxml2.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=26,27 "Built target tinyxml2"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=28,29 "Built target tinyxml2"
 .PHONY : CMakeFiles/tinyxml2.dir/all
 
 # Include target in all.

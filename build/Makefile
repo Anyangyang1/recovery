@@ -111,17 +111,30 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named test
+# Target rules for targets named test_server
 
 # Build rule for target.
-test: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 test
-.PHONY : test
+test_server: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_server
+.PHONY : test_server
 
 # fast build rule for target.
-test/fast:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/build
-.PHONY : test/fast
+test_server/fast:
+	$(MAKE) -f CMakeFiles/test_server.dir/build.make CMakeFiles/test_server.dir/build
+.PHONY : test_server/fast
+
+#=============================================================================
+# Target rules for targets named test_client
+
+# Build rule for target.
+test_client: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_client
+.PHONY : test_client
+
+# fast build rule for target.
+test_client/fast:
+	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/build
+.PHONY : test_client/fast
 
 #=============================================================================
 # Target rules for targets named client
@@ -646,59 +659,86 @@ src/ec/rs_xor.cpp.s:
 	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/src/ec/rs_xor.cpp.s
 .PHONY : src/ec/rs_xor.cpp.s
 
-src/test/main.o: src/test/main.cpp.o
+src/test_client/client.o: src/test_client/client.cpp.o
 
-.PHONY : src/test/main.o
-
-# target to build an object file
-src/test/main.cpp.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/test/main.cpp.o
-.PHONY : src/test/main.cpp.o
-
-src/test/main.i: src/test/main.cpp.i
-
-.PHONY : src/test/main.i
-
-# target to preprocess a source file
-src/test/main.cpp.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/test/main.cpp.i
-.PHONY : src/test/main.cpp.i
-
-src/test/main.s: src/test/main.cpp.s
-
-.PHONY : src/test/main.s
-
-# target to generate assembly for a file
-src/test/main.cpp.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/test/main.cpp.s
-.PHONY : src/test/main.cpp.s
-
-src/test/test1.o: src/test/test1.cpp.o
-
-.PHONY : src/test/test1.o
+.PHONY : src/test_client/client.o
 
 # target to build an object file
-src/test/test1.cpp.o:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/test/test1.cpp.o
-.PHONY : src/test/test1.cpp.o
+src/test_client/client.cpp.o:
+	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/src/test_client/client.cpp.o
+.PHONY : src/test_client/client.cpp.o
 
-src/test/test1.i: src/test/test1.cpp.i
+src/test_client/client.i: src/test_client/client.cpp.i
 
-.PHONY : src/test/test1.i
+.PHONY : src/test_client/client.i
 
 # target to preprocess a source file
-src/test/test1.cpp.i:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/test/test1.cpp.i
-.PHONY : src/test/test1.cpp.i
+src/test_client/client.cpp.i:
+	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/src/test_client/client.cpp.i
+.PHONY : src/test_client/client.cpp.i
 
-src/test/test1.s: src/test/test1.cpp.s
+src/test_client/client.s: src/test_client/client.cpp.s
 
-.PHONY : src/test/test1.s
+.PHONY : src/test_client/client.s
 
 # target to generate assembly for a file
-src/test/test1.cpp.s:
-	$(MAKE) -f CMakeFiles/test.dir/build.make CMakeFiles/test.dir/src/test/test1.cpp.s
-.PHONY : src/test/test1.cpp.s
+src/test_client/client.cpp.s:
+	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/src/test_client/client.cpp.s
+.PHONY : src/test_client/client.cpp.s
+
+src/test_client/test1.o: src/test_client/test1.cpp.o
+
+.PHONY : src/test_client/test1.o
+
+# target to build an object file
+src/test_client/test1.cpp.o:
+	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/src/test_client/test1.cpp.o
+.PHONY : src/test_client/test1.cpp.o
+
+src/test_client/test1.i: src/test_client/test1.cpp.i
+
+.PHONY : src/test_client/test1.i
+
+# target to preprocess a source file
+src/test_client/test1.cpp.i:
+	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/src/test_client/test1.cpp.i
+.PHONY : src/test_client/test1.cpp.i
+
+src/test_client/test1.s: src/test_client/test1.cpp.s
+
+.PHONY : src/test_client/test1.s
+
+# target to generate assembly for a file
+src/test_client/test1.cpp.s:
+	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/src/test_client/test1.cpp.s
+.PHONY : src/test_client/test1.cpp.s
+
+src/test_server/server.o: src/test_server/server.cpp.o
+
+.PHONY : src/test_server/server.o
+
+# target to build an object file
+src/test_server/server.cpp.o:
+	$(MAKE) -f CMakeFiles/test_server.dir/build.make CMakeFiles/test_server.dir/src/test_server/server.cpp.o
+.PHONY : src/test_server/server.cpp.o
+
+src/test_server/server.i: src/test_server/server.cpp.i
+
+.PHONY : src/test_server/server.i
+
+# target to preprocess a source file
+src/test_server/server.cpp.i:
+	$(MAKE) -f CMakeFiles/test_server.dir/build.make CMakeFiles/test_server.dir/src/test_server/server.cpp.i
+.PHONY : src/test_server/server.cpp.i
+
+src/test_server/server.s: src/test_server/server.cpp.s
+
+.PHONY : src/test_server/server.s
+
+# target to generate assembly for a file
+src/test_server/server.cpp.s:
+	$(MAKE) -f CMakeFiles/test_server.dir/build.make CMakeFiles/test_server.dir/src/test_server/server.cpp.s
+.PHONY : src/test_server/server.cpp.s
 
 tinyxml2-9.0.0/tinyxml2.o: tinyxml2-9.0.0/tinyxml2.cpp.o
 
@@ -734,7 +774,8 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
-	@echo "... test"
+	@echo "... test_server"
+	@echo "... test_client"
 	@echo "... client"
 	@echo "... datanode"
 	@echo "... ec"
@@ -791,12 +832,15 @@ help:
 	@echo "... src/ec/rs_xor.o"
 	@echo "... src/ec/rs_xor.i"
 	@echo "... src/ec/rs_xor.s"
-	@echo "... src/test/main.o"
-	@echo "... src/test/main.i"
-	@echo "... src/test/main.s"
-	@echo "... src/test/test1.o"
-	@echo "... src/test/test1.i"
-	@echo "... src/test/test1.s"
+	@echo "... src/test_client/client.o"
+	@echo "... src/test_client/client.i"
+	@echo "... src/test_client/client.s"
+	@echo "... src/test_client/test1.o"
+	@echo "... src/test_client/test1.i"
+	@echo "... src/test_client/test1.s"
+	@echo "... src/test_server/server.o"
+	@echo "... src/test_server/server.i"
+	@echo "... src/test_server/server.s"
 	@echo "... tinyxml2-9.0.0/tinyxml2.o"
 	@echo "... tinyxml2-9.0.0/tinyxml2.i"
 	@echo "... tinyxml2-9.0.0/tinyxml2.s"

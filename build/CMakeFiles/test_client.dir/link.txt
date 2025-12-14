@@ -1,0 +1,1 @@
+/opt/rh/devtoolset-11/root/usr/bin/c++     CMakeFiles/test_client.dir/src/test_client/client.cpp.o CMakeFiles/test_client.dir/src/test_client/test1.cpp.o  -o exec/test_client libjerasure.a -lm libec.a -static-libstdc++ -static-libgcc libalgorithm.a libjerasure.a -pthread -lm 

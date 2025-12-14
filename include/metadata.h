@@ -26,7 +26,7 @@
 #define RS_W 4
 #define KB 1024
 #define MB (1024 * 1024)
-#define BLOCK_SIZE (1 * 1024 * 1024)
+#define BLOCK_SIZE (8 * 1024)
 #define RPC_NUM 100
 
 

@@ -188,22 +188,36 @@ target_link_libraries(datanode PRIVATE jerasure Threads::Threads m ec)
 target_link_libraries(datanode PRIVATE -static-libstdc++ -static-libgcc)
 
 
-# —— test 模块 ——
-file(GLOB TEST_SOURCES "src/test/*.cpp")
-add_executable(test ${TEST_SOURCES})
+# —— test_client 模块 ——
+file(GLOB TEST_CLIENT_SOURCES "src/test_client/*.cpp")
+add_executable(test_client ${TEST_CLIENT_SOURCES})
 
-target_include_directories(test PRIVATE
+target_include_directories(test_client PRIVATE
+    ${CMAKE_SOURCE_DIR}/include/ec
+    ${CMAKE_SOURCE_DIR}/include/algorithm
+    ${YLT_ROOT}/include
+    ${YLT_ROOT}/include/ylt/thirdparty
+)
+target_link_libraries(test_client PRIVATE jerasure Threads::Threads m ec)
+target_link_libraries(test_client PRIVATE -static-libstdc++ -static-libgcc)
+
+# —— test_server 模块 ——
+file(GLOB TEST_SERVER_SOURCES "src/test_server/*.cpp")
+add_executable(test_server ${TEST_SERVER_SOURCES})
+
+target_include_directories(test_server PRIVATE
     ${CMAKE_SOURCE_DIR}/include/ec
     ${CMAKE_SOURCE_DIR}/include/algorithm
     ${YLT_ROOT}/include
     ${YLT_ROOT}/include/ylt/thirdparty
 )
 
-target_link_libraries(test PRIVATE jerasure Threads::Threads m ec)
+
+target_link_libraries(test_server PRIVATE jerasure Threads::Threads m ec)
 
 
 # ====== 编译选项（协程等）======
-foreach(TARGET client coordinator datanode test)
+foreach(TARGET client coordinator datanode test_client test_server)
     target_compile_options(${TARGET} PRIVATE
         -O2 -Wall -Wextra
         $<$<COMPILE_LANGUAGE:CXX>:-pthread>

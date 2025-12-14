@@ -18,6 +18,10 @@ if [[ ! -f "$BIN_DIR/client" ]]; then
     echo "Error: $BIN_DIR/client not found"
     exit 1
 fi
+if [[ ! -f "$BIN_DIR/test_client" ]]; then
+    echo "Error: $BIN_DIR/client not found"
+    exit 1
+fi
 
 # ²¿Êð datanode
 echo "Deploying datanode to ${DATANODE_NODES[*]}..."
@@ -38,5 +42,15 @@ for node in "${CLIENT_NODES[@]}"; do
         exit 1
     }
 done
+
+# # ²¿Êð test_client
+# echo "Deploying test_client to ${DATANODE_NODES[*]}..."
+# for node in "${DATANODE_NODES[@]}"; do
+#     echo "$node"
+#     scp "$BIN_DIR/test_client" "$USER@$node:$REMOTE_DIR/" || {
+#         echo "Failed to copy to $node"
+#         exit 1
+#     }
+# done
 
 echo "All binaries deployed successfully."

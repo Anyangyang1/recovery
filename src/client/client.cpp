@@ -55,16 +55,37 @@ void Client::set(std::string value) {
 
     // Step 4: Send raw data via socket (data port = node_port + offset)
     int data_port = response.node_port + SOCKET_PORT_OFFSET;
-    ELOG(WARNING) << "[SET] Sending data (" << value.size() << "B) to "
-                << response.node_ip << ":" << data_port;
+    ELOG(WARNING) << "[SET] Sending stripe_" << response.stripe_id << " ("
+                  << value.size() << "B) to " << response.node_ip << ":"
+                  << data_port;
     try {
         asio::ip::tcp::socket socket(io_context_);
         asio::ip::tcp::endpoint endpoint(
             asio::ip::make_address(response.node_ip), data_port);
-        socket.connect(endpoint);
-        asio::write(socket, asio::buffer(value, value.size()));
-        socket.close();
-        ELOG(WARNING) << "Send data completely.";
+
+        std::error_code ec;
+        socket.connect(endpoint, ec);
+        if (ec) {
+            ELOG(ERROR) << "[SET] Connect failed to " << response.node_ip << ":"
+                        << data_port << ", ec: [" << ec.value() << "] "
+                        << ec.message();
+            return;
+        }
+
+        // 使用 error_code 版本的 write
+        size_t n = asio::write(socket, asio::buffer(value), ec);
+        if (ec || n != value.size()) {
+            ELOG(ERROR) << "[SET] Write failed: expected " << value.size()
+                        << "B, wrote " << n << "B"
+                        << ", ec: [" << ec.value() << "] "
+                        << ec.category().name() << ": " << ec.message();
+            socket.close(); // 显式 close（ec 时可能已失效，但 safe）
+            return;
+        }
+
+        socket.close(ec); // close 也可检查（通常忽略）
+        ELOG(WARNING) << "Send data completely (" << n << "B).";
+        ELOG(WARNING) << "first data: " << value.substr(0, 1024);
     } catch (const std::exception &e) {
         ELOG(ERROR) << "[SET] Data transfer failed: " << e.what();
     }

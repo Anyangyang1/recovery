@@ -1,13 +1,18 @@
 [
 {
   "directory": "/home/anyangyang/study/recovery/build",
-  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/test.dir/src/test/main.cpp.o -c /home/anyangyang/study/recovery/src/test/main.cpp",
-  "file": "/home/anyangyang/study/recovery/src/test/main.cpp"
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/test_server.dir/src/test_server/server.cpp.o -c /home/anyangyang/study/recovery/src/test_server/server.cpp",
+  "file": "/home/anyangyang/study/recovery/src/test_server/server.cpp"
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",
-  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/test.dir/src/test/test1.cpp.o -c /home/anyangyang/study/recovery/src/test/test1.cpp",
-  "file": "/home/anyangyang/study/recovery/src/test/test1.cpp"
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/test_client.dir/src/test_client/client.cpp.o -c /home/anyangyang/study/recovery/src/test_client/client.cpp",
+  "file": "/home/anyangyang/study/recovery/src/test_client/client.cpp"
+},
+{
+  "directory": "/home/anyangyang/study/recovery/build",
+  "command": "/opt/rh/devtoolset-11/root/usr/bin/c++   -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/yalantinglibs/include/ylt/thirdparty -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -isystem /home/anyangyang/study/recovery/yalantinglibs/include    -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-but-set-variable -O2 -Wall -Wextra -pthread -fcoroutines -std=c++2a -o CMakeFiles/test_client.dir/src/test_client/test1.cpp.o -c /home/anyangyang/study/recovery/src/test_client/test1.cpp",
+  "file": "/home/anyangyang/study/recovery/src/test_client/test1.cpp"
 },
 {
   "directory": "/home/anyangyang/study/recovery/build",

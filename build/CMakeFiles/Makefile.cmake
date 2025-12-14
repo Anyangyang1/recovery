@@ -127,7 +127,8 @@ set(CMAKE_MAKEFILE_PRODUCTS
 
 # Dependency information for all targets:
 set(CMAKE_DEPEND_INFO_FILES
-  "CMakeFiles/test.dir/DependInfo.cmake"
+  "CMakeFiles/test_server.dir/DependInfo.cmake"
+  "CMakeFiles/test_client.dir/DependInfo.cmake"
   "CMakeFiles/client.dir/DependInfo.cmake"
   "CMakeFiles/datanode.dir/DependInfo.cmake"
   "CMakeFiles/ec.dir/DependInfo.cmake"
