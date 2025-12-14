@@ -8,6 +8,7 @@ CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o
  ../Jerasure-1.2A/reed_sol.h
  ../include/algorithm/scoped_timer.hpp
  ../include/algorithm/sggh.h
+ ../include/algorithm/thread_pool.hpp
  ../include/algorithm/utils.h
  ../include/coordinator.h
  ../include/datanode.h
@@ -737,6 +738,7 @@ CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o
  ../Jerasure-1.2A/jerasure.h
  ../Jerasure-1.2A/reed_sol.h
  ../include/algorithm/scoped_timer.hpp
+ ../include/algorithm/thread_pool.hpp
  ../include/algorithm/utils.h
  ../include/coordinator.h
  ../include/datanode.h

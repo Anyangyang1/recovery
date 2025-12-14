@@ -7,6 +7,7 @@ CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../Jerasure-1.2A/j
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../Jerasure-1.2A/reed_sol.h
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/algorithm/scoped_timer.hpp
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/algorithm/sggh.h
+CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/algorithm/thread_pool.hpp
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/algorithm/utils.h
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/coordinator.h
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/datanode.h
@@ -736,6 +737,7 @@ CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../Jerasure-1.
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../Jerasure-1.2A/reed_sol.h
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/algorithm/scoped_timer.hpp
+CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/algorithm/thread_pool.hpp
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/algorithm/utils.h
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/coordinator.h
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/datanode.h

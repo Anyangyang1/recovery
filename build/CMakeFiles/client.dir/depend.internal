@@ -7,6 +7,7 @@ CMakeFiles/client.dir/src/client/client.cpp.o
  ../Jerasure-1.2A/jerasure.h
  ../Jerasure-1.2A/reed_sol.h
  ../include/algorithm/scoped_timer.hpp
+ ../include/algorithm/thread_pool.hpp
  ../include/algorithm/utils.h
  ../include/client.h
  ../include/coordinator.h
@@ -737,6 +738,7 @@ CMakeFiles/client.dir/src/client/run_client.cpp.o
  ../Jerasure-1.2A/jerasure.h
  ../Jerasure-1.2A/reed_sol.h
  ../include/algorithm/scoped_timer.hpp
+ ../include/algorithm/thread_pool.hpp
  ../include/algorithm/utils.h
  ../include/client.h
  ../include/coordinator.h
