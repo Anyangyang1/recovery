@@ -89,11 +89,15 @@ ylt/coro_rpc/coro_rpc_server.hpp
 -
 
 ../include/datanode.h
+coordinator.h
+../include/coordinator.h
 jerasure_wrapper.h
 ../include/jerasure_wrapper.h
 metadata.h
 ../include/metadata.h
 asio.hpp
+-
+condition_variable
 -
 coroutine
 -
@@ -101,7 +105,11 @@ fstream
 -
 map
 -
+mutex
+-
 queue
+-
+string_view
 -
 thread
 -

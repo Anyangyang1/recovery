@@ -79,11 +79,15 @@ ylt/coro_rpc/coro_rpc_server.hpp
 -
 
 ../include/datanode.h
+coordinator.h
+../include/coordinator.h
 jerasure_wrapper.h
 ../include/jerasure_wrapper.h
 metadata.h
 ../include/metadata.h
 asio.hpp
+-
+condition_variable
 -
 coroutine
 -
@@ -91,7 +95,11 @@ fstream
 -
 map
 -
+mutex
+-
 queue
+-
+string_view
 -
 thread
 -
@@ -13011,6 +13019,12 @@ ylt/struct_pack/md5_constexpr.hpp
 /home/anyangyang/study/recovery/src/datanode/datanode.cpp
 datanode.h
 /home/anyangyang/study/recovery/src/datanode/datanode.h
-coordinator.h
-/home/anyangyang/study/recovery/src/datanode/coordinator.h
+
+/home/anyangyang/study/recovery/src/datanode/run_datanode.cpp
+datanode.h
+/home/anyangyang/study/recovery/src/datanode/datanode.h
+ylt/easylog.hpp
+/home/anyangyang/study/recovery/src/datanode/ylt/easylog.hpp
+iostream
+-
 
