@@ -1,206 +1,284 @@
 #include "datanode.h"
-#include "coordinator.h"
+
 namespace ECProject {
-Datanode::Datanode(std::string ip, int port)
-    : ip_(ip), port_(port), port_for_transfer_data_(port + SOCKET_PORT_OFFSET),
-      coordinator_ip_("192.168.1.12"), coordinator_port_(COORDINATOR_PORT),
-      acceptor_(io_context_, asio::ip::tcp::endpoint(
-                                 asio::ip::address::from_string(ip.c_str()),
-                                 port_for_transfer_data_)) {
+
+Datanode::Datanode(std::string ip, int port, size_t io_thread_num)
+    : ip_(ip), port_(port),
+      io_pool_(std::make_unique<ThreadPool>(io_thread_num)) {
     easylog::set_min_severity(easylog::Severity::WARNING);
     // port is for rpc
     rpc_server_ = std::make_unique<coro_rpc::coro_rpc_server>(RPC_NUM, port_);
-    rpc_server_->register_handler<&Datanode::handle_set>(this);
-    rpc_server_->register_handler<&Datanode::handle_get>(this);
-    rpc_server_->register_handler<&Datanode::handle_get_with_local_decode>(
-        this);
-    rpc_server_->register_handler<&Datanode::handle_upload>(this);
-    rpc_server_->register_handler<&Datanode::handle_upload_test>(this);
+
     rpc_server_->register_handler<&Datanode::do_repair>(this);
     rpc_server_->register_handler<&Datanode::do_repair_with_opt>(this);
     rpc_server_->register_handler<&Datanode::handle_delete_stripe>(this);
     rpc_server_->register_handler<&Datanode::handle_delete_all_file>(this);
+    rpc_server_->register_handler<&Datanode::print_download_data_packet_num>(
+        this);
+    rpc_server_->register_handler<&Datanode::do_repair_no_local_decode>(this);
 
     std::string targetdir = "./storage/";
     clear_directory(targetdir);
     if (access(targetdir.c_str(), 0) == -1) {
         mkdir(targetdir.c_str(), S_IRWXU);
     }
+    start_data_service();
 }
 
 Datanode::~Datanode() {
-    acceptor_.close();
+    running_ = false;
+    data_cv_.notify_all();
+    if (data_accept_thread_.joinable())
+        data_accept_thread_.join();
+    if (data_worker_thread_.joinable())
+        data_worker_thread_.join();
     rpc_server_->stop();
+    if (io_pool_)
+        io_pool_->stop(); // 确保任务完成或取消
 }
 
 void Datanode::run() { auto ret = rpc_server_->start(); }
 
-void Datanode::handle_set(const std::string &key, size_t value_size) {
-    auto handler = [this, key, value_size]() mutable {
-        try {
-            asio::ip::tcp::socket socket(io_context_);
-            acceptor_.accept(socket);
+// ====== datanode.cpp —— 新增 ======
+void Datanode::start_data_service() {
+    int data_port = port_ + SOCKET_PORT_OFFSET;
 
-            auto value_buf = std::make_unique<char[]>(value_size);
+    // 启动 accept 线程
+    data_accept_thread_ = std::thread([this, data_port]() {
+        asio::io_context ioc;
+        asio::ip::tcp::acceptor acceptor(
+            ioc, asio::ip::tcp::endpoint(asio::ip::tcp::v4(), data_port));
+        ELOG(WARNING) << "Data service listening on :" << data_port;
 
-            {
-                SCOPED_TIMER("[NET] read file " + key +
-                             " value_size: " + std::to_string(value_size));
-                asio::read(socket, asio::buffer(value_buf.get(), value_size));
-            }
+        while (running_) {
+            try {
+                auto socket = std::make_shared<asio::ip::tcp::socket>(ioc);
+                acceptor.accept(*socket);
 
-            {
-                SCOPED_TIMER("[DISK] write file " + key +
-                             " value_size: " + std::to_string(value_size));
-                bool ret = store_data(key, value_buf.get(), value_size);
-                if (!ret) {
-                    ELOG(ERROR) << "store_data error";
+                // 读 1B op
+                uint8_t op_byte;
+                asio::read(*socket, asio::buffer(&op_byte, 1));
+                DataOp op = static_cast<DataOp>(op_byte);
+
+                DataTask task;
+                task.op = op;
+                task.socket = socket;
+
+                switch (op) {
+                case DataOp::UPLOAD: {
+                    std::array<uint32_t, 2> hdr;
+                    asio::read(*socket, asio::buffer(hdr));
+                    task.stripe_id = ntohl(hdr[0]);
+                    task.value_size = ntohl(hdr[1]);
+                    break;
                 }
-            }
-            socket.close();
+                case DataOp::SET:
+                case DataOp::GET:
+                case DataOp::GET_WITH_DECODE: {
+                    // 读 key_len + key + value_size
+                    uint32_t key_len;
+                    asio::read(*socket, asio::buffer(&key_len, 4));
+                    key_len = ntohl(key_len);
+                    task.key.resize(key_len);
+                    asio::read(*socket, asio::buffer(task.key));
+                    uint32_t value_size;
+                    asio::read(*socket, asio::buffer(&value_size, 4));
+                    task.value_size = ntohl(value_size);
 
-        } catch (const std::exception &e) {
-            ELOG(ERROR) << e.what() << '\n';
+                    if (op == DataOp::GET_WITH_DECODE) {
+                        uint32_t rows, cols;
+                        asio::read(*socket, asio::buffer(&rows, 4));
+                        rows = ntohl(rows);
+                        asio::read(*socket, asio::buffer(&cols, 4));
+                        cols = ntohl(cols);
+                        task.matrix_rows = rows;
+                        task.matrix_cols = cols;
+                        task.matrix_01.resize(rows * cols);
+                        asio::read(*socket, asio::buffer(task.matrix_01));
+                    }
+                    break;
+                }
+                default:
+                    ELOG(ERROR) << "Unknown op: " << static_cast<int>(op_byte);
+                    socket->close();
+                    continue;
+                }
+
+                {
+                    std::lock_guard lock(data_mutex_);
+                    data_queue_.emplace(std::move(task));
+                }
+                data_cv_.notify_one();
+
+            } catch (const std::exception &e) {
+                // if (running_)
+                ELOG(ERROR) << "Accept loop: " << e.what();
+            }
         }
-    };
-    std::thread(handler).detach();
+    });
+
+    // 启动 worker 线程
+    data_worker_thread_ = std::thread([this]() { data_worker_loop(); });
 }
 
-void Datanode::handle_get(const std::string &key, size_t value_size) {
-    auto handler = [this, key, value_size]() mutable {
-        try {
-            asio::ip::tcp::socket socket(io_context_);
-            acceptor_.accept(socket);
-
-            auto data_buf = std::make_unique<char[]>(value_size);
-            {
-                SCOPED_TIMER("[NET] read file " + key +
-                             " value_size: " + std::to_string(value_size));
-                bool ret = access_data(key, data_buf.get(), value_size);
-                if (!ret) {
-                    ELOG(ERROR) << "access_data error, file_name: " << key;
-                }
+void Datanode::data_worker_loop() {
+    while (running_) {
+        DataTask task;
+        {
+            std::unique_lock lock(data_mutex_);
+            data_cv_.wait(lock,
+                          [this] { return !data_queue_.empty() || !running_; });
+            if (!running_ && data_queue_.empty())
+                break;
+            if (!data_queue_.empty()) {
+                task = std::move(data_queue_.front());
+                data_queue_.pop();
             }
-            {
-                SCOPED_TIMER("[DISK] read file " + key +
-                             " value_size: " + std::to_string(value_size));
-                asio::write(socket, asio::buffer(data_buf.get(), value_size));
-            }
-
-            socket.close();
-        } catch (std::exception &e) {
-            ELOG(WARNING) << "exception";
-            ELOG(WARNING) << e.what();
         }
-    };
-    std::thread(handler).detach();
-}
 
-// ====== Datanode::handle_upload (重构后) ======
-void Datanode::handle_upload(unsigned int stripe_id, size_t value_size) {
-    // === Step 1: 读取数据 ===
-    auto handler = [this, stripe_id, value_size]() mutable {
+        if (!task.socket)
+            continue;
+        auto &socket = *task.socket;
+
         try {
-            asio::ip::tcp::socket socket(io_context_);
-            std::error_code ec;
-            // Sync accept — safe in dedicated RPC thread
-            acceptor_.accept(socket, ec);
-            if (ec) {
-                ELOG(ERROR) << "Accept failed: " << ec.message();
-                return;
-            }
-            // Sync read
-            auto value_buf = std::make_unique<char[]>(value_size);
-
-            {
-                SCOPED_TIMER("[NET] read stripe_" + std::to_string(stripe_id) +
-                             ", value_size: " + std::to_string(value_size));
-                size_t n = asio::read(
-                    socket, asio::buffer(value_buf.get(), value_size), ec);
-                socket.close();
-                if (ec || n != value_size) {
-                    ELOG(ERROR)
-                        << "reveive data error, stripe_id: " << stripe_id
-                        << ", value_size: " << value_size << " n: " << n
-                        << ", error: " << ec.message();
+            switch (task.op) {
+            case DataOp::UPLOAD: {
+                char *buf = nullptr;
+                int ret = posix_memalign(reinterpret_cast<void **>(&buf),
+                                         SIMD_ALIGNMENT, task.value_size);
+                if (ret != 0) {
+                    ELOG(ERROR) << "posix_memalign failed";
                     return;
                 }
-                std::string str(value_buf.get(), value_buf.get() + 1024);
-                ELOG(WARNING) << "first data: " << str;
+                {
+                    SCOPED_TIMER("read data from client...");
+                    asio::read(socket, asio::buffer(buf, task.value_size),
+                               asio::transfer_exactly(task.value_size));
+                    socket.close();
+                }
+
+                StripeInfo info;
+                {
+                    SCOPED_TIMER("request metadata...");
+                    auto coordinator_client =
+                        std::make_unique<coro_rpc::coro_rpc_client>();
+                    async_simple::coro::syncAwait(coordinator_client->connect(
+                        COORDINATOR_IP, std::to_string(COORDINATOR_PORT)));
+                    auto result = async_simple::coro::syncAwait(
+                        coordinator_client->call<&Coordinator::get_stripe_info>(
+                            task.stripe_id));
+
+                    if (!result)
+                        throw std::runtime_error("get_stripe_info failed");
+                    info = std::move(result).value();
+                }
+                {
+                    SCOPED_TIMER("encode and distribute...");
+                    encode_and_distribute(info, buf, task.value_size);
+                }
+                ELOG(WARNING) << "Stripe " << task.stripe_id << " processed.";
+                free(buf);
+                break;
             }
-
-            // Sync read
-            std::string value_str(value_buf.get(), value_size);
-            // ELOG(WARNING) << "receive data: " << value_str;
-
-            // === Step 2: 同步获取元数据 ===
-            auto client = get_rpc_client(coordinator_ip_, coordinator_port_);
-            StripeInfo stripe_info =
-                async_simple::coro::syncAwait(
-                    client->call<&Coordinator::get_stripe_info>(stripe_id))
-                    .value();
-
-            // === Step 3: 同步执行编码 +
-            // 分发（可改为协程异步，但先保正确性）===
-            {
-                SCOPED_TIMER("encode and distribute. stripe_" +
-                             std::to_string(stripe_id) +
-                             ", value_size: " + std::to_string(value_size));
-                encode_and_distribute(stripe_info, std::move(value_buf),
-                                      value_size);
-            }
-
-        } catch (const std::exception &e) {
-            ELOG(ERROR) << "handle_upload failed: " << e.what();
-        }
-    };
-    std::thread(handler).detach();
-}
-
-void Datanode::handle_upload_test(unsigned int stripe_id, size_t value_size) {
-    // === Step 1: 读取数据 ===
-    auto handler = [this, stripe_id, value_size]() mutable {
-        try {
-            asio::ip::tcp::socket socket(io_context_);
-            std::error_code ec;
-            // Sync accept — safe in dedicated RPC thread
-            acceptor_.accept(socket, ec);
-            if (ec) {
-                ELOG(ERROR) << "Accept failed: " << ec.message();
-                return;
-            }
-            // Sync read
-            auto value_buf = std::make_unique<char[]>(value_size);
-
-            {
-                SCOPED_TIMER("[NET] read stripe_ " + std::to_string(stripe_id) +
-                             " value_size: " + std::to_string(value_size));
-                size_t n = asio::read(
-                    socket, asio::buffer(value_buf.get(), value_size), ec);
-                socket.close();
-                if (ec || n != value_size) {
-                    ELOG(ERROR)
-                        << "reveive data error, stripe_id: " << stripe_id;
-                    ELOG(ERROR) << ec.message();
+            case DataOp::SET: {
+                download_data_packet_num_ += task.value_size / PACKET_SIZE;
+                char *buf = nullptr;
+                int ret = posix_memalign(reinterpret_cast<void **>(&buf),
+                                         SIMD_ALIGNMENT, task.value_size);
+                if (ret != 0) {
+                    ELOG(ERROR) << "posix_memalign failed";
                     return;
                 }
+                {
+                    SCOPED_TIMER("[NET]read data " + task.key);
+                    asio::read(socket, asio::buffer(buf, task.value_size),
+                               asio::transfer_exactly(task.value_size));
+                }
+                {
+                    SCOPED_TIMER("[DISK]write data " + task.key);
+                    bool ok = store_data(task.key, buf, task.value_size);
+                    if (!ok)
+                        throw std::runtime_error("store_data failed");
+                }
+                socket.close();
+                free(buf);
+                break;
             }
-
-            // === Step 3: 同步执行编码 +
-            // 分发（可改为协程异步，但先保正确性）===
-
-            {
-                SCOPED_TIMER("store data " + std::to_string(stripe_id) +
-                             " value_size: " + std::to_string(value_size));
-                store_data("test_data" + std::to_string(random()),
-                           value_buf.get(), value_size);
+            case DataOp::GET: {
+                upload_data_packet_num_ += task.value_size / PACKET_SIZE;
+                char *buf = nullptr;
+                int ret = posix_memalign(reinterpret_cast<void **>(&buf),
+                                         SIMD_ALIGNMENT, task.value_size);
+                if (ret != 0) {
+                    ELOG(ERROR) << "posix_memalign failed";
+                    return;
+                }
+                {
+                    SCOPED_TIMER("[DISK]read data " + task.key);
+                    bool ok = access_data(task.key, buf, task.value_size);
+                    if (!ok)
+                        throw std::runtime_error("access_data failed");
+                }
+                {
+                    SCOPED_TIMER("[NET]write data " + task.key);
+                    asio::write(socket, asio::buffer(buf, task.value_size));
+                }
+                socket.close();
+                free(buf);
+                break;
             }
+            case DataOp::GET_WITH_DECODE: {
+                size_t w = task.matrix_cols;
+                size_t need_packets = task.matrix_rows;
+                size_t packet_size = task.value_size / need_packets;
+                size_t data_size = w * packet_size;
+                upload_data_packet_num_ += need_packets;
+                char *data_buf = nullptr;
+                int ret = posix_memalign(reinterpret_cast<void **>(&data_buf),
+                                         SIMD_ALIGNMENT, data_size);
+                if (ret != 0) {
+                    ELOG(ERROR) << "posix_memalign failed";
+                    return;
+                }
 
+                {
+                    SCOPED_TIMER("[DISK]read data " + task.key);
+                    bool ok = access_data(task.key, data_buf, data_size);
+                    if (!ok)
+                        throw std::runtime_error("access_data failed");
+                }
+
+                auto matrix = string_to_matrix(task.matrix_01, task.matrix_rows,
+                                               task.matrix_cols);
+                char *decode_buf = nullptr;
+                ret = posix_memalign(reinterpret_cast<void **>(&decode_buf),
+                                     SIMD_ALIGNMENT, task.value_size);
+                if (ret != 0) {
+                    ELOG(ERROR) << "posix_memalign failed";
+                    return;
+                }
+                {
+                    SCOPED_TIMER("local decode...");
+                    local_decode(matrix, data_buf, decode_buf, packet_size);
+                }
+                {
+                    SCOPED_TIMER("[NET]send data to node...");
+                    asio::write(socket,
+                                asio::buffer(decode_buf, task.value_size));
+                }
+                socket.close();
+                free(data_buf);
+                free(decode_buf);
+                break;
+            }
+            }
         } catch (const std::exception &e) {
-            ELOG(ERROR) << "handle_upload failed: " << e.what();
+            ELOG(ERROR) << "Data worker error (op=" << static_cast<int>(task.op)
+                        << "): " << e.what();
+            if (socket.is_open())
+                socket.close();
         }
-    };
-    std::thread(handler).detach();
+    }
 }
 
 void Datanode::handle_delete_stripe(unsigned int stripe_id,
@@ -229,6 +307,8 @@ bool Datanode::delete_file(const std::string &path) {
 void Datanode::handle_delete_all_file() {
     const std::string dir_path = "./storage";
     clear_directory(dir_path);
+    upload_data_packet_num_ = 0;
+    download_data_packet_num_ = 0;
 }
 
 bool Datanode::clear_directory(const std::string &dir_path) {
@@ -257,47 +337,19 @@ bool Datanode::clear_directory(const std::string &dir_path) {
     return true;
 }
 
-void Datanode::handle_get_with_local_decode(const std::string &key,
-                                            size_t value_size,
-                                            const vector<vector<int>> &matrix) {
-    auto handler = [this, key, value_size, matrix]() mutable {
-        try {
-            asio::ip::tcp::socket socket(io_context_);
-            acceptor_.accept(socket);
-
-            size_t need_packets = matrix.size();
-            size_t packet_size = value_size / need_packets;
-            size_t w = matrix[0].size();
-
-            size_t data_size = w * packet_size;
-            auto data_buf = std::make_unique<char[]>(data_size);
-            bool ret = access_data(key, data_buf.get(), data_size);
-            if (!ret) {
-                ELOG(ERROR) << "access_data error, file_name: " << key;
-            }
-            auto decode_buf = std::make_unique<char[]>(value_size);
-            local_decode(matrix, data_buf.get(), decode_buf.get(), packet_size);
-
-            // // 获取本地地址（本机绑定的 IP:Port）
-            // auto local_ep = socket.local_endpoint();
-            // // 获取远端地址（对端的 IP:Port）
-            // auto remote_ep = socket.remote_endpoint();
-            // ELOG(WARNING) << key << " socket fd=" << socket.native_handle()
-            //               << ", local=" << local_ep.address().to_string() <<
-            //               ":"
-            //               << local_ep.port()
-            //               << ", remote=" << remote_ep.address().to_string()
-            //               << ":" << remote_ep.port();
-
-            asio::write(socket, asio::buffer(decode_buf.get(), value_size));
-            socket.close();
-
-        } catch (std::exception &e) {
-            ELOG(ERROR) << e.what();
-        }
-    };
-    std::thread(handler).detach();
-}
+// // 获取本地地址（本机绑定的 IP:Port）
+// auto local_ep = socket.local_endpoint();
+// // 获取远端地址（对端的 IP:Port）
+// auto remote_ep = socket.remote_endpoint();
+// ELOG(WARNING) << key << " socket fd=" <<
+// socket.native_handle()
+//               << ", local=" << local_ep.address().to_string()
+// <<
+//               ":"
+//               << local_ep.port()
+//               << ", remote=" <<
+// remote_ep.address().to_string()
+//               << ":" << remote_ep.port();
 
 bool Datanode::access_data(const std::string &key, char *value_buf,
                            size_t value_size) {
@@ -318,8 +370,7 @@ bool Datanode::access_data(const std::string &key, char *value_buf,
 
 bool Datanode::access_data(const std::string &key, char *value_buf,
                            const vector<int> &idxs) {
-    std::string targetdir = "./storage/" + std::to_string(port_) + "/";
-    std::string readpath = targetdir + key;
+    std::string readpath = "./storage/" + key;
     std::ifstream file(readpath, std::ios::binary);
     if (!file)
         return false;
@@ -398,89 +449,105 @@ void Datanode::local_decode(const std::vector<std::vector<int>> &matrix,
     }
 }
 
+void Datanode::print_download_data_packet_num() {
+    ELOG(WARNING) << "download data packets: " << download_data_packet_num_;
+    ELOG(WARNING) << "upload data packets: " << upload_data_packet_num_;
+}
+// ====== datanode.cpp —— 替换 read_from_datanode_with_local_decode ======
 bool Datanode::read_from_datanode_with_local_decode(
     const string &ip, int port, const string &key, char *value,
     size_t value_size, const vector<vector<int>> &matrix) {
-
+    download_data_packet_num_ += matrix.size();
     try {
-        auto client = get_rpc_client(ip, port);
-        ELOG(WARNING) << "prepare read data " << key << " from " << ip << ":"
-                      << port;
-        async_simple::coro::syncAwait(
-            client->call<&Datanode::handle_get_with_local_decode>(
-                key, value_size, matrix));
-
+        int data_port = port + SOCKET_PORT_OFFSET;
         asio::ip::tcp::socket socket(io_context_);
         asio::ip::tcp::resolver resolver(io_context_);
-        auto endpoints =
-            resolver.resolve(ip, std::to_string(port + SOCKET_PORT_OFFSET));
+        auto endpoints = resolver.resolve(ip, std::to_string(data_port));
         asio::connect(socket, endpoints);
 
-        // // 获取本地地址（本机绑定的 IP:Port）
-        // auto local_ep = socket.local_endpoint();
-        // // 获取远端地址（对端的 IP:Port）
-        // auto remote_ep = socket.remote_endpoint();
-        // ELOG(WARNING) << key << " socket fd=" << socket.native_handle()
-        //               << ", local=" << local_ep.address().to_string() << ":"
-        //               << local_ep.port()
-        //               << ", remote=" << remote_ep.address().to_string() <<
-        //               ":"
-        //               << remote_ep.port();
+        // 发 header: op + key + size + matrix
+        uint8_t op = static_cast<uint8_t>(DataOp::GET_WITH_DECODE);
+        asio::write(socket, asio::buffer(&op, 1));
 
+        uint32_t key_len = htonl(key.size());
+        asio::write(socket, asio::buffer(&key_len, 4));
+        asio::write(socket, asio::buffer(key));
+
+        uint32_t sz = htonl(value_size);
+        asio::write(socket, asio::buffer(&sz, 4));
+
+        // 发 matrix: rows + cols + 01 string
+        uint32_t rows = htonl(matrix.size());
+        uint32_t cols = htonl(matrix.empty() ? 0 : matrix[0].size());
+        asio::write(socket, asio::buffer(&rows, 4));
+        asio::write(socket, asio::buffer(&cols, 4));
+        std::string mat_str = matrix_to_01_string(matrix);
+        asio::write(socket, asio::buffer(mat_str));
+
+        // 读结果
         asio::read(socket, asio::buffer(value, value_size));
+
         socket.close();
         return true;
     } catch (const std::exception &e) {
-        ELOG(ERROR) << e.what() << '\n';
+        ELOG(ERROR) << "read_from_datanode_with_local_decode failed: "
+                    << e.what();
         return false;
     }
 }
 
+// ====== read_from_datanode (GET) ======
 bool Datanode::read_from_datanode(const string &ip, int port, const string &key,
                                   char *value, size_t value_size) {
     try {
-        auto client = get_rpc_client(ip, port);
-        async_simple::coro::syncAwait(
-            client->call<&Datanode::handle_get>(key, value_size));
-
+        int data_port = port + SOCKET_PORT_OFFSET;
         asio::ip::tcp::socket socket(io_context_);
-        asio::ip::tcp::resolver resolver(io_context_);
-        auto endpoints =
-            resolver.resolve(ip, std::to_string(port + SOCKET_PORT_OFFSET));
-        asio::connect(socket, endpoints);
+        asio::connect(socket, asio::ip::tcp::resolver(io_context_)
+                                  .resolve(ip, std::to_string(data_port)));
 
+        uint8_t op = static_cast<uint8_t>(DataOp::GET);
+        asio::write(socket, asio::buffer(&op, 1));
+        uint32_t key_len = htonl(key.size());
+        asio::write(socket, asio::buffer(&key_len, 4));
+        asio::write(socket, asio::buffer(key));
+        uint32_t sz = htonl(value_size);
+        asio::write(socket, asio::buffer(&sz, 4));
+        
+        // 读结果
         asio::read(socket, asio::buffer(value, value_size));
-
+        
         socket.close();
         return true;
-    } catch (const std::exception &e) {
-        ELOG(ERROR) << e.what() << '\n';
+    } catch (...) {
         return false;
     }
 }
 
+// ====== write_to_datanode (SET) ======
 bool Datanode::write_to_datanode(const string &ip, int port, const string &key,
                                  char *value, size_t value_size) {
-    // ELOG(WARNING) << "[write_to_datanode] prepare write data to (" << ip <<
-    // ":"
-    // << port << ")";
     try {
-        auto client = get_rpc_client(ip, port);
-        async_simple::coro::syncAwait(
-            client->call<&Datanode::handle_set>(key, value_size));
-
+        int data_port = port + SOCKET_PORT_OFFSET;
         asio::ip::tcp::socket socket(io_context_);
-        asio::ip::tcp::resolver resolver(io_context_);
-        auto endpoints =
-            resolver.resolve({ip, std::to_string(port + SOCKET_PORT_OFFSET)});
-        asio::connect(socket, endpoints);
+        asio::connect(socket, asio::ip::tcp::resolver(io_context_)
+                                  .resolve(ip, std::to_string(data_port)));
 
-        asio::write(socket, asio::buffer(value, value_size));
+        uint8_t op = static_cast<uint8_t>(DataOp::SET);
+        asio::write(socket, asio::buffer(&op, 1));
+        uint32_t key_len = htonl(key.size());
+        asio::write(socket, asio::buffer(&key_len, 4));
+        asio::write(socket, asio::buffer(key));
+        uint32_t sz = htonl(value_size);
+        asio::write(socket, asio::buffer(&sz, 4));
+
+        {
+            SCOPED_TIMER("[NET]write to datanode");
+            asio::write(socket, asio::buffer(value, value_size));
+        }
 
         socket.close();
         return true;
-    } catch (const std::exception &e) {
-        ELOG(ERROR) << e.what() << '\n';
+    } catch (...) {
         return false;
     }
 }
@@ -488,205 +555,352 @@ bool Datanode::write_to_datanode(const string &ip, int port, const string &key,
 void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
                                   size_t block_size, int w,
                                   std::string repair_file_name) {
-    try {
+    {
+        SCOPED_TIMER("repair " + repair_file_name);
         assert(block_size % w == 0);
         size_t packet_size = block_size / w;
-
+        // === 日志 ===
         std::string helpers_info;
-        for (auto &helper : helpers) {
-            helpers_info += helper.ip + "/" + helper.file_name + ", ";
+        for (const auto &h : helpers)
+            helpers_info += h.ip + "/" + h.file_name + ", ";
+        ELOG(WARNING) << "do_repair_with_opt: " << repair_file_name
+                      << " read from [" << helpers_info << "]";
+
+        std::vector<char *> original_datas(helpers.size());
+
+        // === 分配数据 buffer（shared_ptr 保活）===
+        for (size_t i = 0; i < helpers.size(); ++i) {
+            int ret =
+                posix_memalign(reinterpret_cast<void **>(&original_datas[i]),
+                               SIMD_ALIGNMENT, block_size);
+            if (ret != 0) {
+                ELOG(ERROR) << "posix_memalign failed";
+                return;
+            }
         }
-        ELOG(WARNING) << "repair " << repair_file_name << ", read data from:("
-                      << helpers_info << ")";
-        std::vector<std::vector<char>> original_datas(
-            helpers.size(), std::vector<char>(block_size));
+
         {
-            SCOPED_TIMER("read all data from survivor for repair " +
+            SCOPED_TIMER("read & compute originals from survivors for repair " +
                          repair_file_name);
-
-            auto get_from_node = [&](int idx, const DecodeRequest &helper) {
-                auto result = compute_basis_gf2_indices(helper.matrix);
-                size_t buf_size = packet_size * result.basis.size();
-                std::vector<char> buf(buf_size);
-
-                {
-                    SCOPED_TIMER("read local decode data " + helper.file_name +
-                                 ", value_size: " + std::to_string(buf_size));
-                    bool ok = read_from_datanode_with_local_decode(
-                        helper.ip, helper.port, helper.file_name, buf.data(),
-                        buf_size, result.basis);
-                    if (!ok) {
-                        throw std::runtime_error("Read failed from " +
-                                                 helper.ip);
-                        ELOG(ERROR) << "Read failed from " << helper.ip;
+            std::vector<std::future<void>> futures;
+            futures.reserve(helpers.size());
+            for (size_t i = 0; i < helpers.size(); ++i) {
+                const auto &helper = helpers[i];
+                futures.push_back(io_pool_->submit([this, i, helper,
+                                                    original_datas, packet_size,
+                                                    block_size]() {
+                    GF2BasisResult basis_result =
+                        compute_basis_gf2_indices(helper.matrix);
+                    size_t buf_size = packet_size * basis_result.basis.size();
+                    char *buf = nullptr;
+                    int ret = posix_memalign(reinterpret_cast<void **>(&buf),
+                                             SIMD_ALIGNMENT, buf_size);
+                    if (ret != 0) {
+                        ELOG(ERROR) << "posix_memalign failed";
+                        return;
                     }
-                }
+                    ELOG(WARNING) << "allocate successfully";
+                    // Step 2: 读 basis 数据
+                    {
+                        SCOPED_TIMER("read basis " + helper.file_name + " (" +
+                                     std::to_string(buf_size) + "B)");
+                        bool ok = read_from_datanode_with_local_decode(
+                            helper.ip, helper.port, helper.file_name, buf,
+                            buf_size, basis_result.basis);
+                        if (!ok)
+                            throw std::runtime_error("Read basis failed from " +
+                                                     helper.ip);
+                    }
+                    // Step 3: 还原原始块
+                    {
+                        SCOPED_TIMER("compute original " + helper.file_name);
+                        compute_original_data(buf, basis_result.reps,
+                                              original_datas[i], packet_size);
+                    }
+                    free(buf);
+                }));
+            }
 
-                {
-                    SCOPED_TIMER("compute original data " + helper.file_name);
-                    compute_original_data(buf.data(), result.reps,
-                                          original_datas[idx].data(),
-                                          packet_size);
+            // 聚合异常
+            std::exception_ptr first_exception = nullptr;
+            for (auto &fut : futures) {
+                try {
+                    fut.get();
+                } catch (...) {
+                    if (!first_exception)
+                        first_exception = std::current_exception();
                 }
-            };
+            }
+            if (first_exception)
+                std::rethrow_exception(first_exception);
+        }
 
-            std::vector<std::thread> readers;
-            std::vector<std::exception_ptr> exceptions(helpers.size());
+        // === XOR 修复 ===
+        char *decode_data;
+        int ret = posix_memalign(reinterpret_cast<void **>(&decode_data),
+                                 SIMD_ALIGNMENT, block_size);
+        if (ret != 0) {
+            ELOG(ERROR) << "posix_memalign failed";
+            return;
+        }
+        {
+            SCOPED_TIMER("recompute XOR for " + repair_file_name);
+            decode_xor(original_datas, block_size, decode_data);
+        }
+
+        // === 存盘 ===
+        {
+            SCOPED_TIMER("store repaired data: " + repair_file_name);
+            if (!store_data(repair_file_name, decode_data, block_size)) {
+                throw std::runtime_error("Failed to store repaired file: " +
+                                         repair_file_name);
+            }
+        }
+        free(decode_data);
+        for (char *data_ptr : original_datas) {
+            free(data_ptr);
+        }
+
+        ELOG(WARNING) << "Optimized repair completed: " << repair_file_name;
+    }
+}
+
+void Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
+                                         size_t block_size, int w,
+                                         std::string repair_file_name) {
+    {
+        SCOPED_TIMER("repair " + repair_file_name);
+        assert(block_size % w == 0);
+
+        // === 日志 ===
+        std::string helpers_info;
+        for (const auto &h : helpers)
+            helpers_info += h.ip + "/" + h.file_name + ", ";
+        ELOG(WARNING) << "do_repair: " << repair_file_name
+                      << " read data from [" << helpers_info << "]";
+
+        std::vector<char *> original_datas(helpers.size());
+
+        // === 分配数据 buffer（shared_ptr 保活）===
+        for (size_t i = 0; i < helpers.size(); ++i) {
+            int ret =
+                posix_memalign(reinterpret_cast<void **>(&original_datas[i]),
+                               SIMD_ALIGNMENT, block_size);
+            if (ret != 0) {
+                ELOG(ERROR) << "posix_memalign failed";
+                return;
+            }
+        }
+
+        {
+            SCOPED_TIMER("read all data from survivors for repair " +
+                         repair_file_name);
+            std::vector<std::future<void>> futures;
+            futures.reserve(helpers.size());
 
             for (size_t i = 0; i < helpers.size(); ++i) {
-                readers.emplace_back([&, i]() {
-                    try {
-                        get_from_node(i, helpers[i]);
-                    } catch (...) {
-                        exceptions[i] = std::current_exception();
-                    }
-                });
+                const auto &helper = helpers[i];
+                futures.push_back(io_pool_->submit(
+                    [this, i, helper, original_datas, block_size]() {
+                        {
+                            SCOPED_TIMER("read " + helper.file_name + " (" +
+                                         std::to_string(block_size) + "B)");
+                            bool ok = read_from_datanode(
+                                helper.ip, helper.port, helper.file_name,
+                                original_datas[i], block_size);
+                            if (!ok) {
+                                throw std::runtime_error("Read failed from " +
+                                                         helper.ip + " for " +
+                                                         helper.file_name);
+                            }
+                        }
+                    }));
             }
 
-            for (auto &t : readers)
-                t.join();
+            // 聚合异常（保留首个异常）
+            std::exception_ptr first_exception = nullptr;
+            for (auto &fut : futures) {
+                try {
+                    fut.get();
+                } catch (...) {
+                    if (!first_exception)
+                        first_exception = std::current_exception();
+                }
+            }
+            if (first_exception)
+                std::rethrow_exception(first_exception);
+        }
 
-            for (auto &e : exceptions) {
-                if (e)
-                    std::rethrow_exception(e);
+        // === XOR 修复 ===
+        std::vector<std::vector<int>> bitmatrix = concatMatrices(helpers);
+
+        char *decode_data;
+        int ret = posix_memalign(reinterpret_cast<void **>(&decode_data),
+                                 SIMD_ALIGNMENT, block_size);
+        if (ret != 0) {
+            ELOG(ERROR) << "posix_memalign failed";
+            return;
+        }
+        {
+            SCOPED_TIMER("compute XOR for " + repair_file_name);
+            decode_xor_with_matrix(bitmatrix, original_datas, decode_data,
+                                   block_size, block_size / bitmatrix.size());
+        }
+
+        // === 存盘 ===
+        {
+            SCOPED_TIMER("store repaired data: " + repair_file_name);
+            if (!store_data(repair_file_name, decode_data, block_size)) {
+                throw std::runtime_error("Failed to store repaired file: " +
+                                         repair_file_name);
             }
         }
-
-        std::vector<char> decode_data;
-        {
-            SCOPED_TIMER("recompute...");
-            decode_data = decode_xor(original_datas);
-            assert(decode_data.size() == block_size);
+        free(decode_data);
+        for (char *data_ptr : original_datas) {
+            free(data_ptr);
         }
-
-        {
-            SCOPED_TIMER("store into disk");
-            store_data(repair_file_name, decode_data.data(),
-                       decode_data.size());
-        }
-    } catch (const std::exception &e) {
-        ELOG(ERROR) << e.what() << '\n';
+        ELOG(WARNING) << "Repair completed: " << repair_file_name;
     }
 }
 
 void Datanode::do_repair(std::vector<DecodeRequest> helpers, size_t block_size,
                          int w, std::string repair_file_name) {
-    assert(block_size % w == 0);
-    // size_t packet_size = block_size / w;
-
-    std::vector<std::vector<char>> original_datas(
-        helpers.size(), std::vector<char>(block_size));
-    std::string helpers_info;
-    for (auto &helper : helpers) {
-        helpers_info += helper.ip + "/" + helper.file_name + ", ";
-    }
-    ELOG(WARNING) << "repair " << repair_file_name << ", read data form:("
-                  << helpers_info << ")";
     {
-        SCOPED_TIMER("read all data from survivor for repair " +
-                     repair_file_name);
-        auto get_from_node = [&](int idx, const DecodeRequest &helper) {
-            {
-                SCOPED_TIMER("read local decode data " + helper.file_name +
-                             ", value_size: " + std::to_string(block_size));
-                bool ok = read_from_datanode_with_local_decode(
-                    helper.ip, helper.port, helper.file_name,
-                    original_datas[idx].data(), block_size, helper.matrix);
-                if (!ok) {
-                    throw std::runtime_error("Read failed from " + helper.ip);
-                }
-                // ELOG(WARNING) << "read file: " << helper.file_name;
-            }
-        };
+        SCOPED_TIMER("repair " + repair_file_name);
+        assert(block_size % w == 0);
 
-        std::vector<std::thread> readers;
-        std::vector<std::exception_ptr> exceptions(helpers.size());
+        // === 日志 ===
+        std::string helpers_info;
+        for (const auto &h : helpers)
+            helpers_info += h.ip + "/" + h.file_name + ", ";
+        ELOG(WARNING) << "do_repair: " << repair_file_name
+                      << " read data from [" << helpers_info << "]";
 
+        std::vector<char *> original_datas(helpers.size());
+
+        // === 分配数据 buffer（shared_ptr 保活）===
         for (size_t i = 0; i < helpers.size(); ++i) {
-            readers.emplace_back([&, i]() {
+            int ret =
+                posix_memalign(reinterpret_cast<void **>(&original_datas[i]),
+                               SIMD_ALIGNMENT, block_size);
+            if (ret != 0) {
+                ELOG(ERROR) << "posix_memalign failed";
+                return;
+            }
+        }
+
+        {
+            SCOPED_TIMER("read all data from survivors for repair " +
+                         repair_file_name);
+            std::vector<std::future<void>> futures;
+            futures.reserve(helpers.size());
+
+            for (size_t i = 0; i < helpers.size(); ++i) {
+                const auto &helper = helpers[i];
+                futures.push_back(io_pool_->submit(
+                    [this, i, helper, original_datas, block_size]() {
+                        {
+                            SCOPED_TIMER("read " + helper.file_name + " (" +
+                                         std::to_string(block_size) + "B)");
+                            bool ok = read_from_datanode_with_local_decode(
+                                helper.ip, helper.port, helper.file_name,
+                                original_datas[i], block_size, helper.matrix);
+                            if (!ok) {
+                                throw std::runtime_error("Read failed from " +
+                                                         helper.ip + " for " +
+                                                         helper.file_name);
+                            }
+                        }
+                    }));
+            }
+
+            // 聚合异常（保留首个异常）
+            std::exception_ptr first_exception = nullptr;
+            for (auto &fut : futures) {
                 try {
-                    get_from_node(i, helpers[i]);
+                    fut.get();
                 } catch (...) {
-                    exceptions[i] = std::current_exception();
+                    if (!first_exception)
+                        first_exception = std::current_exception();
                 }
-            });
+            }
+            if (first_exception)
+                std::rethrow_exception(first_exception);
         }
 
-        for (auto &t : readers)
-            t.join();
-
-        for (auto &e : exceptions) {
-            if (e)
-                std::rethrow_exception(e);
+        // === XOR 修复 ===
+        char *decode_data;
+        int ret = posix_memalign(reinterpret_cast<void **>(&decode_data),
+                                 SIMD_ALIGNMENT, block_size);
+        if (ret != 0) {
+            ELOG(ERROR) << "posix_memalign failed";
+            return;
         }
-    }
-    std::vector<char> decode_data;
-    {
-        SCOPED_TIMER("recompute ...");
-        decode_data = decode_xor(original_datas);
-        assert(decode_data.size() == block_size);
-    }
+        {
+            SCOPED_TIMER("recompute XOR for " + repair_file_name);
+            decode_xor(original_datas, block_size, decode_data);
+        }
 
-    {
-        SCOPED_TIMER("store into disk. t");
-        store_data(repair_file_name, decode_data.data(), decode_data.size());
+        // === 存盘 ===
+        {
+            SCOPED_TIMER("store repaired data: " + repair_file_name);
+            if (!store_data(repair_file_name, decode_data, block_size)) {
+                throw std::runtime_error("Failed to store repaired file: " +
+                                         repair_file_name);
+            }
+        }
+        free(decode_data);
+        for (char *data_ptr : original_datas) {
+            free(data_ptr);
+        }
+        ELOG(WARNING) << "Repair completed: " << repair_file_name;
     }
 }
 
-std::vector<char>
-Datanode::decode_xor(std::vector<std::vector<char>> &original_datas) {
+void Datanode::decode_xor(const std::vector<char *> &original_datas,
+                          size_t block_size, char *decode_data) {
     if (original_datas.empty())
-        return {};
-
-    size_t len = original_datas[0].size();
-    for (const auto &d : original_datas) {
-        assert(d.size() == len && "All data blocks must have same length");
+        return;
+    std::memset(decode_data, 0, block_size);
+    for (char *block : original_datas) {
+        galois_region_xor(decode_data, block, decode_data, block_size);
     }
-
-    std::vector<char> result(len, 0);
-    for (auto &block : original_datas) {
-        galois_region_xor(result.data(), block.data(), result.data(), len);
-    }
-    return result;
 }
 
-void Datanode::compute_original_data(const char *buf,
+void Datanode::compute_original_data(char *buf,
                                      const std::vector<std::vector<int>> &reps,
                                      char *original_data, size_t packet_size) {
-
     if (reps.empty() || packet_size == 0)
         return;
-    // 缓存：key = 排序后的索引列表，value = 已计算结果的起始地址（在
-    // original_data 中）
-    std::unordered_map<std::vector<int>, const char *, VecIntHash> cache;
+
+    // key 改为 uint64_t，value 改为 offset（更安全）
+    std::unordered_map<uint64_t, size_t> cache; // offset in original_data
 
     for (size_t i = 0; i < reps.size(); ++i) {
         auto indices = reps[i];
-        std::sort(indices.begin(), indices.end()); // 保证 {0,1} ≡ {1,0}
+        std::sort(indices.begin(), indices.end());
 
-        auto it = cache.find(indices);
-        char *dst = original_data + i * packet_size;
+        uint64_t key = indices_to_bitmask(indices);
+        size_t dst_offset = i * packet_size;
+        char *dst = original_data + dst_offset;
 
+        auto it = cache.find(key);
         if (it != cache.end()) {
-            // 命中：直接 memcpy
-            std::memcpy(dst, it->second, packet_size);
+            // 命中：memcpy from cached offset
+            const char *src_cached = original_data + it->second;
+            std::memcpy(dst, src_cached, packet_size);
         } else {
             // 未命中：计算
             if (indices.empty()) {
                 std::memset(dst, 0, packet_size);
             } else {
-                // 初始化为第一个块
                 std::memcpy(dst, buf + indices[0] * packet_size, packet_size);
-                // 异或其余块
                 for (size_t k = 1; k < indices.size(); ++k) {
-                    const char *src = buf + indices[k] * packet_size;
-                    for (size_t j = 0; j < packet_size; ++j) {
-                        dst[j] ^= src[j];
-                    }
+                    char *src = buf + indices[k] * packet_size;
+                    galois_region_xor(dst, src, dst, packet_size);
                 }
             }
-            cache[indices] = dst; // 缓存当前结果地址（生命周期安全：dst 在
-                                  // original_data 内）
+            cache[key] = dst_offset; // 存 offset，而非指针，绝对安全
         }
     }
 }
@@ -759,24 +973,9 @@ Datanode::compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
     return {basis, reps};
 }
 
-std::shared_ptr<coro_rpc::coro_rpc_client>
-Datanode::get_rpc_client(std::string ip, int port) {
-    std::string node_ip_port = ip + ":" + std::to_string(port);
-    mutex_.lock();
-    if (datanodes_.find(node_ip_port) == datanodes_.end()) {
-        datanodes_[node_ip_port] =
-            std::make_shared<coro_rpc::coro_rpc_client>();
-        async_simple::coro::syncAwait(
-            datanodes_[node_ip_port]->connect(ip, std::to_string(port)));
-    }
-    mutex_.unlock();
-    return datanodes_[node_ip_port];
-}
-
 // ====== 新增：Datanode::encode_and_distribute ======
 void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
-                                     std::unique_ptr<char[]> object_data,
-                                     size_t total_size) {
+                                     char *data_buf, size_t total_size) {
     int k = stripe_info.k;
     int m = stripe_info.m;
     int w = stripe_info.w;
@@ -791,21 +990,28 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
 
     // 校验数据完整性
     if (total_size != static_cast<size_t>(k) * block_size) {
-        throw std::runtime_error("Invalid object size");
+        throw std::runtime_error("Invalid object size: expected" +
+                                 std::to_string(k * block_size) + ", got " +
+                                 std::to_string(total_size));
+    }
+    char *coding_buf = nullptr;
+    int ret = posix_memalign(reinterpret_cast<void **>(&coding_buf),
+                             SIMD_ALIGNMENT, m * block_size);
+    if (ret != 0) {
+        ELOG(ERROR) << "posix_memalign failed";
+        return;
     }
 
-    // 准备数据指针（指向 object_data 内存）
-    std::vector<char *> data_ptrs(k);
-    for (int i = 0; i < k; ++i) {
-        data_ptrs[i] = object_data.get() + i * block_size;
-    }
+    char *data_start = data_buf;
+    char *coding_start = coding_buf;
 
-    // 分配校验块内存（用 shared_ptr 保证生命周期）
-    auto coding_buf = std::make_shared<std::vector<char>>(m * block_size);
-    std::vector<char *> coding_ptrs(m);
-    for (int i = 0; i < m; ++i) {
-        coding_ptrs[i] = coding_buf->data() + i * block_size;
-    }
+    // 准备数据指针（指向 buf 内存）
+    std::vector<char *> data_ptrs(k), coding_ptrs(m);
+    for (int i = 0; i < k; ++i)
+        data_ptrs[i] = data_start + i * block_size;
+
+    for (int i = 0; i < m; ++i)
+        coding_ptrs[i] = coding_start + i * block_size;
 
     // 执行编码
     std::unique_ptr<ErasureCode> ec;
@@ -833,25 +1039,25 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
             const auto &node = stripe_info.nodes_info[idx];
             char *block_data =
                 (idx < k) ? data_ptrs[idx] : coding_ptrs[idx - k];
+            size_t offset = block_data - data_buf;
             std::string key = "stripe_" +
                               std::to_string(stripe_info.stripe_id) + "_" +
                               std::to_string(idx);
             // 若是本节点 → 直接 store_data（避免 network loopback）
             if (idx == 0) {
-                futures.push_back(std::async(
-                    std::launch::async, [this, key, block_data, block_size]() {
-                        return this->store_data(key, block_data, block_size);
-                    }));
+                futures.push_back(io_pool_->submit([this, key, data_buf, offset,
+                                                    block_size]() {
+                    return this->store_data(key, data_buf + offset, block_size);
+                }));
             } else {
                 // 远程节点 → 异步写（注意：coding_buf 需 capture shared_ptr
                 // 延长生命周期）
-                futures.push_back(
-                    std::async(std::launch::async, [this, node, key, block_data,
-                                                    block_size, coding_buf]() {
-                        return this->write_to_datanode(node.node_ip,
-                                                       node.node_port, key,
-                                                       block_data, block_size);
-                    }));
+                futures.push_back(io_pool_->submit([this, node, key, data_buf,
+                                                    offset, block_size]() {
+                    return this->write_to_datanode(node.node_ip, node.node_port,
+                                                   key, data_buf + offset,
+                                                   block_size);
+                }));
             }
         }
 
@@ -866,19 +1072,71 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
             throw std::runtime_error("Failed to write one or more blocks");
         }
     }
+    free(coding_buf);
+}
 
-    // // === Step 4: 通知 Coordinator 写入完成（可选：异步
-    // fire-and-forget）=== try {
-    //     auto client = std::make_unique<coro_rpc::coro_rpc_client>();
-    //     async_simple::coro::syncAwait(
-    //         client->connect(coordinator_ip_, coordinator_port_));
-    //     async_simple::coro::syncAwait(
-    //         client->call<&Coordinator::mark_stripe_written>(stripe_info.stripe_id));
-    // } catch (...) {
-    //     // 可容忍：Coordinator 可通过心跳/修复发现缺失条带
-    //     ELOG(ERROR) << "[Datanode] Failed to notify Coordinator, but data
-    //     is stored.";
-    // }
+void Datanode::decode_xor_with_matrix(
+    const std::vector<std::vector<int>> &matrix,
+    const std::vector<char *> &original_datas, char *decode_data,
+    size_t block_size, size_t packet_size) {
+    size_t k = original_datas.size();
+    size_t w = matrix.size(); // matrix is w x (w * k)
+    if (w == 0 || k == 0)
+        return;
+    if (block_size != w * packet_size) {
+        // 可选：加 assert 或 throw，依工程规范
+        return;
+    }
+
+    // 遍历每个大块（通常仅1个块；若支持 multi-block 可外层加循环）
+    // 此处按 Jerasure 风格：支持 block_size 是 w*packet_size 的整数倍（多个
+    // stripe）
+    for (size_t stripe = 0; stripe < block_size; stripe += w * packet_size) {
+        // 对每一输出 packet j（j in [0, w)）
+        for (size_t j = 0; j < w; ++j) {
+            char *out_ptr = decode_data + stripe + j * packet_size;
+            bool started = false;
+
+            // 遍历所有源块 i 和其内部 packet y
+            for (size_t i = 0; i < k; ++i) {
+                char *src_block = original_datas[i] + stripe;
+                for (size_t y = 0; y < w; ++y) {
+                    if (matrix[j][i * w + y]) { // coefficient == 1
+                        char *in_ptr = src_block + y * packet_size;
+                        if (!started) {
+                            memcpy(out_ptr, in_ptr, packet_size);
+                            started = true;
+                        } else {
+                            galois_region_xor(out_ptr, in_ptr, out_ptr,
+                                              packet_size);
+                        }
+                    }
+                }
+            }
+
+            // 若全为 0 行（理论上不应出现），清零
+            if (!started) {
+                memset(out_ptr, 0, packet_size);
+            }
+        }
+    }
+}
+
+std::vector<std::vector<int>> Datanode::concatMatrices(const std::vector<DecodeRequest>& requests) {
+    if (requests.empty()) return {};
+
+    size_t w = requests[0].matrix.size();
+    size_t k = requests.size();
+    std::vector<std::vector<int>> result(w, std::vector<int>(w * k));
+
+    for (size_t idx = 0; idx < k; ++idx) {
+        const auto& mat = requests[idx].matrix;
+        for (size_t i = 0; i < w; ++i) {
+            std::copy(mat[i].begin(), mat[i].end(),
+                      result[i].begin() + idx * w);
+        }
+    }
+    return result;
 }
 
 } // namespace ECProject

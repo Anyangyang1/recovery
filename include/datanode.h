@@ -1,43 +1,50 @@
 #pragma once
 
+#include "coordinator.h"
 #include "jerasure_wrapper.h"
 #include "metadata.h"
+#include "thread_pool.hpp"
 #include <asio.hpp>
+#include <atomic>
+#include <condition_variable>
 #include <coroutine>
 #include <fstream>
 #include <map>
+#include <mutex>
 #include <queue>
+#include <string_view>
 #include <thread>
+#include <unistd.h>
 #include <ylt/coro_rpc/coro_rpc_client.hpp>
 #include <ylt/coro_rpc/coro_rpc_server.hpp>
-#ifdef IN_MEMORY
-#ifdef MEMCACHED
-#include <libmemcached/memcached.h>
-#endif
-#ifdef REDIS
-#include <sw/redis++/redis++.h>
-#endif
-#else
-#include <unistd.h>
-#endif
 
 namespace ECProject {
+// 协议操作码（Data Port 用）
+enum class DataOp : uint8_t {
+    UPLOAD = 1,
+    SET = 2,
+    GET = 3,
+    GET_WITH_DECODE = 4
+};
+
+// 任务结构
+struct DataTask {
+    DataOp op;
+    std::string key;        // for SET/GET/GET_DECODE
+    unsigned int stripe_id; // for UPLOAD
+    size_t value_size;
+    size_t matrix_rows = 0;
+    size_t matrix_cols = 0;
+    std::string matrix_01; // for GET_WITH_DECODE
+    std::shared_ptr<asio::ip::tcp::socket> socket;
+};
+
 class Datanode {
   public:
-    Datanode(std::string ip, int port);
+    Datanode(std::string ip, int port, size_t io_thread_num = 8);
     ~Datanode();
     void stop();
     void run();
-    void handle_get_with_local_decode(const std::string &key, size_t value_size,
-                                      const vector<vector<int>> &matrix);
-
-    void handle_get(const std::string &key, size_t value_size);
-
-    void handle_set(const std::string &key, size_t value_size);
-
-    void handle_upload(unsigned int stripe_id, size_t value_size);
-    void handle_upload_test(unsigned int stripe_id, size_t value_size);
-
     void handle_delete_stripe(unsigned int stripe_id,
                               unsigned int failed_block_id);
     void handle_delete_all_file();
@@ -101,6 +108,12 @@ class Datanode {
     void do_repair(std::vector<DecodeRequest> helpers, size_t block_size, int w,
                    std::string repair_file_name);
 
+    void do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
+                                   size_t block_size, int w,
+                                   std::string repair_file_name);
+
+    void print_download_data_packet_num();
+
   private:
     /**
      * @brief 将数据写入磁盘中
@@ -121,7 +134,10 @@ class Datanode {
 
     void local_decode(const std::vector<std::vector<int>> &matrix,
                       char *data_buf, char *decode_buf, size_t packet_size);
-
+    void decode_xor_with_matrix(const std::vector<std::vector<int>> &matrix,
+                                const std::vector<char *> &original_datas,
+                                char *decode_data, size_t block_size,
+                                size_t packet_size);
     /**
      * @brief 根据维矩阵，计算基底向量，以及每一行可以由哪些基底向量表示
      * @param matrix: w*w的维矩阵
@@ -136,8 +152,8 @@ class Datanode {
      * @param original_datas: 数据
      * @return: 返回异或后的数据
      */
-    std::vector<char>
-    decode_xor(std::vector<std::vector<char>> &original_datas);
+    void decode_xor(const std::vector<char *> &original_datas,
+                    size_t block_size, char *decode_data);
 
     /**
      * @brief 根据局部解码的数据，计算出解码需要的原始数据
@@ -146,45 +162,48 @@ class Datanode {
      * @param original_data: 解码需要的原始数据
      * @param packet_size: 包的大小
      */
-    void compute_original_data(const char *buf,
+    void compute_original_data(char *buf,
                                const std::vector<std::vector<int>> &reps,
                                char *original_data, size_t packet_size);
 
-    void encode_and_distribute(const StripeInfo &stripe_info,
-                               std::unique_ptr<char[]> object_data,
+    void encode_and_distribute(const StripeInfo &stripe_info, char *data_buf,
                                size_t total_size);
-    std::shared_ptr<coro_rpc::coro_rpc_client> get_rpc_client(std::string ip,
-                                                              int port);
+
+    void start_data_service();
+    void data_worker_loop();
+    std::vector<std::vector<int>> concatMatrices(const std::vector<DecodeRequest>& requests);
 
   private:
     std::string ip_;
     int port_;
-    int port_for_transfer_data_;
-    std::string coordinator_ip_;
-    int coordinator_port_;
+    std::unique_ptr<ThreadPool> io_pool_;
 
     asio::io_context io_context_{};
-
-    // data listener
-    asio::ip::tcp::acceptor acceptor_;
 
     // RPC
     std::unique_ptr<coro_rpc::coro_rpc_server> rpc_server_{nullptr};
 
-    // RPC client
-    std::unordered_map<std::string, std::shared_ptr<coro_rpc::coro_rpc_client>>
-        datanodes_;
-    std::mutex mutex_;
+    // ====== 新增：统一数据服务 ======
+    std::queue<DataTask> data_queue_;
+    std::mutex data_mutex_;
+    std::condition_variable data_cv_;
+    std::thread data_accept_thread_;
+    std::thread data_worker_thread_;
+    std::atomic<bool> running_{true};
 
-    // 辅助哈希（C++11 兼容）
-    struct VecIntHash {
-        size_t operator()(const std::vector<int> &v) const {
-            size_t h = v.size();
-            for (int x : v) {
-                h ^= static_cast<size_t>(x) + 0x9e3779b9 + (h << 6) + (h >> 2);
-            }
-            return h;
-        }
-    };
+    std::atomic<unsigned long long> upload_data_packet_num_{0};
+    std::atomic<unsigned long long> download_data_packet_num_{0};
+
+    // // 辅助哈希（C++11 兼容）
+    // struct VecIntHash {
+    //     size_t operator()(const std::vector<int> &v) const {
+    //         size_t h = v.size();
+    //         for (int x : v) {
+    //             h ^= static_cast<size_t>(x) + 0x9e3779b9 + (h << 6) + (h >>
+    //             2);
+    //         }
+    //         return h;
+    //     }
+    // };
 };
 } // namespace ECProject

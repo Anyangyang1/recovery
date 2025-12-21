@@ -1,0 +1,58 @@
+[93m2025-12-21 00:41:14.154968 WARNING  [0m[0K[439753] [coordinator.cpp:56] init completely...
+[93m2025-12-21 00:43:04.712051 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:357] repair node_0 [time]: 9.11311714E2 ms.
+[93m2025-12-21 00:44:56.488963 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:303] repair node_0 [time]: 1.097097495E3 ms.
+[93m2025-12-21 00:46:47.972732 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:330] repair with opt node_0 [time]: 7.92212093E2 ms.
+[93m2025-12-21 00:48:41.247419 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:277] repair node_0 [time]: 2.928878614E3 ms.
+[93m2025-12-21 00:50:34.324526 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:263] repair node_0 [time]: 2.776641996E3 ms.
+[93m2025-12-21 00:52:26.944121 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:290] repair with opt node_0 [time]: 2.427098748E3 ms.
+[93m2025-12-21 00:54:18.141754 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:357] repair node_1 [time]: 7.42040917E2 ms.
+[93m2025-12-21 00:56:09.495231 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:303] repair node_1 [time]: 9.68983817E2 ms.
+[93m2025-12-21 00:58:01.111170 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:330] repair with opt node_1 [time]: 8.7215573E2 ms.
+[93m2025-12-21 00:59:54.069743 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:277] repair node_1 [time]: 2.661479621E3 ms.
+[93m2025-12-21 01:01:47.041812 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:263] repair node_1 [time]: 2.583392839E3 ms.
+[93m2025-12-21 01:03:39.921267 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:290] repair with opt node_1 [time]: 2.406587901E3 ms.
+[93m2025-12-21 01:05:31.138864 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:357] repair node_4 [time]: 7.64468072E2 ms.
+[93m2025-12-21 01:07:21.983761 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:303] repair node_4 [time]: 8.25601383E2 ms.
+[93m2025-12-21 01:09:10.837668 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:330] repair with opt node_4 [time]: 7.00650341E2 ms.
+[93m2025-12-21 01:11:01.430257 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:277] repair node_4 [time]: 2.882057631E3 ms.
+[93m2025-12-21 01:12:51.882992 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:263] repair node_4 [time]: 2.682107586E3 ms.
+[93m2025-12-21 01:14:42.149386 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:290] repair with opt node_4 [time]: 2.514978215E3 ms.
+[93m2025-12-21 01:16:30.634170 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:357] repair node_6 [time]: 6.69824682E2 ms.
+[93m2025-12-21 01:18:19.839731 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:303] repair node_6 [time]: 8.21918543E2 ms.
+[93m2025-12-21 01:20:09.313526 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:330] repair with opt node_6 [time]: 7.60099638E2 ms.
+[93m2025-12-21 01:22:00.322570 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:277] repair node_6 [time]: 2.491538332E3 ms.
+[93m2025-12-21 01:23:51.419315 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:263] repair node_6 [time]: 2.475816448E3 ms.
+[93m2025-12-21 01:25:42.078590 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:290] repair with opt node_6 [time]: 2.175864995E3 ms.
+[93m2025-12-21 01:29:17.270752 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:357] repair node_0 [time]: 1.401771549E3 ms.
+[93m2025-12-21 01:32:56.163717 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:303] repair node_0 [time]: 1.765578799E3 ms.
+[93m2025-12-21 01:36:34.024874 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:330] repair with opt node_0 [time]: 1.3367188E3 ms.
+[93m2025-12-21 01:40:16.736246 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:277] repair node_0 [time]: 5.780247237E3 ms.
+[93m2025-12-21 01:43:59.194666 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:263] repair node_0 [time]: 5.282716175E3 ms.
+[93m2025-12-21 01:47:41.299176 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:290] repair with opt node_0 [time]: 5.07475752E3 ms.
+[93m2025-12-21 01:51:19.714269 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:357] repair node_1 [time]: 1.432664651E3 ms.
+[93m2025-12-21 01:54:57.858248 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:303] repair node_1 [time]: 1.624363893E3 ms.
+[93m2025-12-21 01:58:36.213665 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:330] repair with opt node_1 [time]: 1.262748748E3 ms.
+[93m2025-12-21 02:02:18.143455 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:277] repair node_1 [time]: 5.427101216E3 ms.
+[93m2025-12-21 02:06:00.492926 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:263] repair node_1 [time]: 5.309514005E3 ms.
+[93m2025-12-21 02:09:41.984116 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:290] repair with opt node_1 [time]: 4.609013808E3 ms.
+[93m2025-12-21 02:13:20.763519 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:357] repair node_4 [time]: 1.427918824E3 ms.
+[93m2025-12-21 02:16:58.739797 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:303] repair node_4 [time]: 1.506202669E3 ms.
+[93m2025-12-21 02:20:36.538222 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:330] repair with opt node_4 [time]: 1.228292117E3 ms.
+[93m2025-12-21 02:24:18.339516 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:277] repair node_4 [time]: 5.125277911E3 ms.
+[93m2025-12-21 02:28:00.386139 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:263] repair node_4 [time]: 5.018939307E3 ms.
+[93m2025-12-21 02:31:40.924812 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:290] repair with opt node_4 [time]: 4.75392238E3 ms.
+[93m2025-12-21 02:35:18.396049 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:357] repair node_6 [time]: 1.312252816E3 ms.
+[93m2025-12-21 02:38:54.665790 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:303] repair node_6 [time]: 1.516806975E3 ms.
+[93m2025-12-21 02:42:30.690799 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:330] repair with opt node_6 [time]: 1.199865892E3 ms.
+[93m2025-12-21 02:46:11.549545 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:277] repair node_6 [time]: 5.270377411E3 ms.
+[93m2025-12-21 02:49:53.433127 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:263] repair node_6 [time]: 4.794835802E3 ms.
+[93m2025-12-21 02:53:34.734961 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:290] repair with opt node_6 [time]: 4.633947492E3 ms.
+[93m2025-12-21 03:00:44.125693 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:357] repair node_0 [time]: 2.599180193E3 ms.
+[93m2025-12-21 03:08:00.609519 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:303] repair node_0 [time]: 3.029695244E3 ms.
+[93m2025-12-21 03:15:16.032015 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:330] repair with opt node_0 [time]: 2.353827463E3 ms.
+[93m2025-12-21 03:22:39.876316 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:277] repair node_0 [time]: 1.0794896595E4 ms.
+[93m2025-12-21 03:30:03.330487 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:263] repair node_0 [time]: 1.0387299653E4 ms.
+[93m2025-12-21 03:37:26.046519 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:290] repair with opt node_0 [time]: 9.797322084E3 ms.
+[93m2025-12-21 03:44:41.808236 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:357] repair node_1 [time]: 2.333194771E3 ms.
+[93m2025-12-21 03:51:58.509702 WARNING  [0m[0K[439830] [scoped_timer.hpp:33] [XXX.cpp:303] repair node_1 [time]: 2.914878477E3 ms.
+------------------------------------------------------------------------------------------------------------

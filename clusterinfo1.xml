@@ -11,4 +11,9 @@
   <datanode uri="192.168.1.21:8888" />
   <datanode uri="192.168.1.22:8888" />
   <datanode uri="192.168.1.23:8888" />
+  <datanode uri="192.168.1.24:8888" />
+  <datanode uri="192.168.1.25:8888" />
+  <datanode uri="192.168.1.27:8888" />
+  <datanode uri="192.168.1.28:8888" />
+  
 </datanodes>

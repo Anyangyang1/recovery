@@ -9,9 +9,22 @@
 #include <ylt/coro_rpc/coro_rpc_server.hpp>
 using namespace std;
 using namespace ECProject;
+
+void test2() {
+    const int K = 4, M = 3, W = 8;
+    SimilarityGreedy sg = SimilarityGreedy(K, M, W);
+    auto matrixs = sg.generateOptDecodeBitMatrixWithAllMode(0);
+    for(auto matrix: matrixs) {
+        auto ranks = SimilarityGreedy::computeBinaryMatrixRank(matrix, W);
+        cout << "ranks: " << ranks << endl;;
+        cout << getSum(ranks) << endl;
+    }
+}
+
+
 void reducePacketsTest() {
-    vector<int> KK{4, 6, 8};
-    vector<int> MM{4};
+    vector<int> KK{12};
+    vector<int> MM{3, 4};
     vector<int> NUM{1};
     const int W = 8, failedBlock = 0;
     for (int num : NUM) {

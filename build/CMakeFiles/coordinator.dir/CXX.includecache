@@ -23,8 +23,6 @@ galois.h
 ../include/algorithm/scoped_timer.hpp
 ylt/easylog.hpp
 ../include/algorithm/ylt/easylog.hpp
-ylt/easylog/record.hpp
-../include/algorithm/ylt/easylog/record.hpp
 chrono
 -
 string
@@ -89,6 +87,8 @@ source_location
 -
 scoped_timer.hpp
 ../include/algorithm/scoped_timer.hpp
+cstdlib
+-
 
 ../include/coordinator.h
 datanode.h
@@ -120,6 +120,8 @@ metadata.h
 thread_pool.hpp
 ../include/thread_pool.hpp
 asio.hpp
+-
+atomic
 -
 condition_variable
 -
@@ -13061,8 +13063,4 @@ random
 -
 vector
 -
-
-/home/anyangyang/study/recovery/src/coordinator/run_coordinator.cpp
-coordinator.h
-/home/anyangyang/study/recovery/src/coordinator/coordinator.h
 

@@ -1,19 +1,24 @@
 #include "coordinator.h"
 #include "metadata.h"
 #include "sggh.h"
+#include "thread_pool.hpp"
 #include <algorithm>
 #include <random>
 #include <vector>
 namespace ECProject {
 
-Coordinator::Coordinator(std::string ip, int port, std::string xml_path)
-    : ip_(ip), port_(port), xml_path_(xml_path) {
+Coordinator::Coordinator(std::string ip, int port, std::string xml_path,
+                         size_t io_thread_num)
+    : ip_(ip), port_(port), xml_path_(xml_path),
+      io_pool_(std::make_unique<ThreadPool>(io_thread_num)) {
     easylog::set_min_severity(easylog::Severity::WARNING);
     rpc_server_ = std::make_unique<coro_rpc::coro_rpc_server>(4, port_);
     rpc_server_->register_handler<&Coordinator::request_set>(this);
     rpc_server_->register_handler<&Coordinator::request_get>(this);
     rpc_server_->register_handler<&Coordinator::request_repair>(this);
     rpc_server_->register_handler<&Coordinator::request_repair_with_opt>(this);
+    rpc_server_->register_handler<&Coordinator::request_repair_no_local_decode>(
+        this);
     rpc_server_->register_handler<&Coordinator::get_stripe_info>(this);
     rpc_server_->register_handler<&Coordinator::print_stripe_info>(this);
     rpc_server_->register_handler<&Coordinator::print_node_info>(this);
@@ -23,6 +28,15 @@ Coordinator::Coordinator(std::string ip, int port, std::string xml_path)
     rpc_server_->register_handler<&Coordinator::request_repair_node>(this);
     rpc_server_->register_handler<&Coordinator::request_repair_node_with_opt>(
         this);
+    rpc_server_->register_handler<&Coordinator::request_repair_node_con>(this);
+    rpc_server_
+        ->register_handler<&Coordinator::request_repair_node_with_opt_con>(
+            this);
+    rpc_server_
+        ->register_handler<&Coordinator::request_repair_node_non_local_decode>(
+            this);
+    rpc_server_->register_handler<
+        &Coordinator::request_repair_node_non_local_decode_con>(this);
 
     cur_stripe_id_ = 0;
     try {
@@ -39,6 +53,7 @@ Coordinator::Coordinator(std::string ip, int port, std::string xml_path)
     SimilarityGreedy sg = SimilarityGreedy(RS_K, RS_M, RS_W);
     opt_decode_matrix_with_all_failed_mode_ =
         sg.generateOptDecodeBitMatrixWithAllMode(0);
+    ELOG(WARNING) << "init completely...";
 }
 Coordinator::~Coordinator() { // 1. 先断开所有 datanodes（同步等待）
     for (auto &[uri, client] : datanodes_) {
@@ -53,6 +68,8 @@ Coordinator::~Coordinator() { // 1. 先断开所有 datanodes（同步等待）
     if (rpc_server_) {
         rpc_server_->stop();
     }
+    if (io_pool_)
+        io_pool_->stop(); // 确保任务完成或取消
 }
 void Coordinator::run() { auto ret = rpc_server_->start(); }
 
@@ -113,7 +130,7 @@ void Coordinator::print_stripe_info() {
     ELOG(WARNING) << "stripe info:";
     for (const auto &[key, value] : stripe_table_) {
         ELOG(WARNING) << "stripe_" << value.stripe_id << ": "
-                    << vecToString(value.blocks2nodes);
+                      << vecToString(value.blocks2nodes);
     }
 }
 
@@ -121,7 +138,7 @@ void Coordinator::print_node_info() {
     ELOG(WARNING) << "nodes info: ";
     for (const auto &[key, value] : node_table_) {
         ELOG(WARNING) << "node_" << value.node_id << ": "
-                    << mapToString(value.nodes2blocks);
+                      << mapToString(value.nodes2blocks);
     }
 }
 
@@ -167,19 +184,19 @@ RepairResp Coordinator::request_repair_with_opt(unsigned int stripe_id,
     std::string node_ip_port =
         new_node.node_ip + ":" + std::to_string(new_node.node_port);
     try {
-        {
-            SCOPED_TIMER("repair_opt stripe_" + std::to_string(stripe_id) +
-                         "_" + std::to_string(failed_block_id));
-            async_simple::coro::syncAwait(
-                datanodes_[node_ip_port]->call<&Datanode::do_repair_with_opt>(
-                    repair_plan.helpers, ec_schema_.block_size,
-                    ec_schema_.ec->w, repair_plan.repair_file_name));
-        }
+        // {
+        //     SCOPED_TIMER("repair_opt stripe_" + std::to_string(stripe_id) +
+        //                  "_" + std::to_string(failed_block_id));
+        async_simple::coro::syncAwait(
+            datanodes_[node_ip_port]->call<&Datanode::do_repair_with_opt>(
+                repair_plan.helpers, ec_schema_.block_size, ec_schema_.ec->w,
+                repair_plan.repair_file_name));
+        // }
 
         alter_metadata(stripe_id, failed_block_id, new_node.node_id);
-        ELOG(WARNING) << "select node_" << new_node.node_id
-                    << " to repair stripe_" << stripe_id << "_"
-                    << failed_block_id;
+        // ELOG(WARNING) << "select node_" << new_node.node_id
+        //               << " to repair stripe_" << stripe_id << "_"
+        //               << failed_block_id;
     } catch (const std::exception &e) {
         ELOG(ERROR) << e.what() << '\n';
     }
@@ -195,18 +212,46 @@ RepairResp Coordinator::request_repair(unsigned int stripe_id,
     std::string node_ip_port =
         new_node.node_ip + ":" + std::to_string(new_node.node_port);
 
+    // {
+    //     SCOPED_TIMER("repair " + repair_plan.repair_file_name);
+    async_simple::coro::syncAwait(
+        datanodes_[node_ip_port]->call<&Datanode::do_repair>(
+            repair_plan.helpers, ec_schema_.block_size, ec_schema_.ec->w,
+            repair_plan.repair_file_name));
+    // }
+
+    alter_metadata(stripe_id, failed_block_id, new_node.node_id);
+    // ELOG(WARNING) << "select node_" << new_node.node_id << " to repair
+    // stripe_"
+    //               << stripe_id << "_" << failed_block_id;
+    return response;
+}
+
+RepairResp
+Coordinator::request_repair_no_local_decode(unsigned int stripe_id,
+                                            unsigned int failed_block_id) {
+    const Stripe &stripe = stripe_table_[stripe_id];
+    RepairResp response;
+    RepairPlan repair_plan;
+   
+    repair_plan = generate_repair_plan(stripe, failed_block_id);
+    
+    Node new_node = repair_plan.selected_new_node;
+    std::string node_ip_port =
+        new_node.node_ip + ":" + std::to_string(new_node.node_port);
+
     {
-        SCOPED_TIMER("repair stripe_" + std::to_string(stripe_id) + "_" +
-                     std::to_string(failed_block_id));
+        // SCOPED_TIMER("repair " + repair_plan.repair_file_name);
         async_simple::coro::syncAwait(
-            datanodes_[node_ip_port]->call<&Datanode::do_repair>(
-                repair_plan.helpers, ec_schema_.block_size, ec_schema_.ec->w,
-                repair_plan.repair_file_name));
+            datanodes_[node_ip_port]
+                ->call<&Datanode::do_repair_no_local_decode>(
+                    repair_plan.helpers, ec_schema_.block_size,
+                    ec_schema_.ec->w, repair_plan.repair_file_name));
     }
 
     alter_metadata(stripe_id, failed_block_id, new_node.node_id);
-    ELOG(WARNING) << "select node_" << new_node.node_id << " to repair stripe_"
-                << stripe_id << "_" << failed_block_id;
+    // ELOG(WARNING) << "select node_" << new_node.node_id << " to repair stripe_"
+    //               << stripe_id << "_" << failed_block_id;
     return response;
 }
 
@@ -217,18 +262,22 @@ RepairResp Coordinator::request_repair_node(unsigned int node_id) {
     {
         SCOPED_TIMER("repair node_" + std::to_string(node_id));
         for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
-            futures.push_back(
-                std::async(std::launch::async, [this, stripe_id, block_id] {
-                    return request_repair(stripe_id, block_id);
-                }));
+            request_repair(stripe_id, block_id);
         }
-        for (auto &f : futures) {
-            auto r = f.get(); // 会 rethrow 异常
-            // resp.success &= r.success;  // 按需合并
+    }
+    return response;
+}
+
+RepairResp
+Coordinator::request_repair_node_non_local_decode(unsigned int node_id) {
+    Node node = node_table_[node_id];
+    RepairResp response;
+    std::vector<std::future<RepairResp>> futures;
+    {
+        SCOPED_TIMER("repair node_" + std::to_string(node_id));
+        for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+            request_repair_no_local_decode(stripe_id, block_id);
         }
-        // for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
-        //     request_repair(stripe_id, block_id);
-        // }
     }
     return response;
 }
@@ -240,19 +289,90 @@ RepairResp Coordinator::request_repair_node_with_opt(unsigned int node_id) {
     {
         SCOPED_TIMER("repair with opt node_" + std::to_string(node_id));
         for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
-            futures.push_back(
-                std::async(std::launch::async, [this, stripe_id, block_id] {
-                    return request_repair_with_opt(stripe_id, block_id);
-                }));
+            request_repair_with_opt(stripe_id, block_id);
+        }
+    }
+    return response;
+}
+
+RepairResp Coordinator::request_repair_node_con(unsigned int node_id) {
+    Node node = node_table_[node_id];
+    RepairResp response;
+    std::vector<std::future<RepairResp>> futures;
+    {
+        SCOPED_TIMER("repair node_" + std::to_string(node_id));
+        for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+            futures.push_back(io_pool_->submit([this, stripe_id, block_id]() {
+                return request_repair(stripe_id, block_id);
+            }));
         }
         for (auto &f : futures) {
             auto r = f.get(); // 会 rethrow 异常
             // resp.success &= r.success;  // 按需合并
         }
-        // for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
-        //     request_repair_with_opt(stripe_id, block_id);
-        // }
     }
+
+    // for (const auto &[node_id, node] : node_table_) {
+    //     std::string node_ip_port =
+    //         node.node_ip + ":" + std::to_string(node.node_port);
+    //     async_simple::coro::syncAwait(
+    //         datanodes_[node_ip_port]
+    //             ->call<&Datanode::print_download_data_packet_num>());
+    // }
+    return response;
+}
+
+RepairResp Coordinator::request_repair_node_with_opt_con(unsigned int node_id) {
+    Node node = node_table_[node_id];
+    RepairResp response;
+    std::vector<std::future<RepairResp>> futures;
+    {
+        SCOPED_TIMER("repair with opt node_" + std::to_string(node_id));
+        for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+            futures.push_back(io_pool_->submit([this, stripe_id, block_id]() {
+                return request_repair_with_opt(stripe_id, block_id);
+            }));
+        }
+        for (auto &f : futures) {
+            auto r = f.get(); // 会 rethrow 异常
+            // resp.success &= r.success;  // 按需合并
+        }
+    }
+    // for (const auto &[node_id, node] : node_table_) {
+    //     std::string node_ip_port =
+    //         node.node_ip + ":" + std::to_string(node.node_port);
+    //     async_simple::coro::syncAwait(
+    //         datanodes_[node_ip_port]
+    //             ->call<&Datanode::print_download_data_packet_num>());
+    // }
+    return response;
+}
+
+RepairResp
+Coordinator::request_repair_node_non_local_decode_con(unsigned int node_id) {
+    Node node = node_table_[node_id];
+    RepairResp response;
+    std::vector<std::future<RepairResp>> futures;
+    {
+        SCOPED_TIMER("repair node_" + std::to_string(node_id));
+        for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+            futures.push_back(io_pool_->submit([this, stripe_id, block_id]() {
+                return request_repair_no_local_decode(stripe_id, block_id);
+            }));
+        }
+        for (auto &f : futures) {
+            auto r = f.get(); // 会 rethrow 异常
+            // resp.success &= r.success;  // 按需合并
+        }
+    }
+
+    // for (const auto &[node_id, node] : node_table_) {
+    //     std::string node_ip_port =
+    //         node.node_ip + ":" + std::to_string(node.node_port);
+    //     async_simple::coro::syncAwait(
+    //         datanodes_[node_ip_port]
+    //             ->call<&Datanode::print_download_data_packet_num>());
+    // }
     return response;
 }
 

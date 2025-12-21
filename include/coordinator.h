@@ -8,11 +8,14 @@
 #include <string>
 #include <ylt/coro_rpc/coro_rpc_client.hpp>
 #include <ylt/coro_rpc/coro_rpc_server.hpp>
+#include "thread_pool.hpp"
 
 namespace ECProject {
+
 class Coordinator {
   public:
-    Coordinator(std::string ip, int port, std::string xml_path);
+    Coordinator(std::string ip, int port, std::string xml_path,
+                size_t io_thread_num = 8);
     ~Coordinator();
     void run();
     UploadInfo request_set(size_t value_size);
@@ -35,6 +38,10 @@ class Coordinator {
      */
     RepairResp request_repair(unsigned int stripe_id,
                               unsigned int failed_block_id);
+    
+    RepairResp request_repair_no_local_decode(unsigned int stripe_id,
+                              unsigned int failed_block_id);
+
     StripeInfo get_stripe_info(unsigned int stripe_id);
     void print_stripe_info();
     void print_node_info();
@@ -44,6 +51,11 @@ class Coordinator {
     void clear();
     RepairResp request_repair_node(unsigned int node_id);
     RepairResp request_repair_node_with_opt(unsigned int node_id);
+    RepairResp request_repair_node_non_local_decode(unsigned int node_id);
+    RepairResp request_repair_node_con(unsigned int node_id);
+    RepairResp request_repair_node_with_opt_con(unsigned int node_id);
+    RepairResp request_repair_node_non_local_decode_con(unsigned int node_id);
+    
 
   private:
     void init_cluster_info();
@@ -99,6 +111,7 @@ class Coordinator {
         opt_decode_matrix_with_all_failed_mode_;
     std::vector<std::vector<std::vector<int>>>
         decode_matrix_with_all_failed_mode_;
+    std::unique_ptr<ThreadPool> io_pool_;
 };
 
 } // namespace ECProject

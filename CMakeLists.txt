@@ -18,17 +18,17 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 
 # ====== 开启SIMD编译 ======
-# execute_process(
-#     COMMAND bash -c "grep -q avx2 /proc/cpuinfo && echo 1 || echo 0"
-#     OUTPUT_VARIABLE HAS_AVX2 OUTPUT_STRIP_TRAILING_WHITESPACE
-# )
-# if(HAS_AVX2 EQUAL 1)
-#     add_compile_definitions(VEC256)
-#     add_compile_options(-mavx2)
-# else()
-    # add_compile_definitions(VEC128)
-    # add_compile_options(-msse4.1)
-# endif()
+execute_process(
+    COMMAND bash -c "grep -q avx2 /proc/cpuinfo && echo 1 || echo 0"
+    OUTPUT_VARIABLE HAS_AVX2 OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+if(HAS_AVX2 EQUAL 1)
+    add_compile_definitions(VEC256)
+    add_compile_options(-mavx2)
+else()
+    add_compile_definitions(VEC128)
+    add_compile_options(-msse4.1)
+endif()
 
 
 
@@ -214,6 +214,7 @@ target_include_directories(test_server PRIVATE
 
 
 target_link_libraries(test_server PRIVATE jerasure Threads::Threads m ec)
+target_link_libraries(test_server PRIVATE -static-libstdc++ -static-libgcc)
 
 
 # ====== 编译选项（协程等）======

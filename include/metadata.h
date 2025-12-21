@@ -18,21 +18,22 @@
 // #define MEMCACHED true
 // #define REDIS true
 #define COORDINATOR_PORT 12121
+// #define COORDINATOR_IP "192.168.1.12"
+#define COORDINATOR_IP "10.0.0.2"
 #define CLIENT_PORT 21212
-
 
 #define RS_K 4
 #define RS_M 2
 #define RS_W 4
 #define KB 1024
 #define MB (1024 * 1024)
-#define BLOCK_SIZE (8 * 1024)
-#define RPC_NUM 100
+#define BLOCK_SIZE (8 * 1024 * 1024)
+#define PACKET_SIZE BLOCK_SIZE / RS_W
+#define RPC_NUM 10
 
+#define SIMD_ALIGNMENT 32 // 64-byte 对齐，兼容 AVX2/AVX-512/cache line
 
 namespace ECProject {
-
-
 
 struct ECSchema {
     size_t block_size = 0;
@@ -103,6 +104,12 @@ struct GF2BasisResult {
                                          // basis[k1] ⊕ basis[k2] ⊕ ...
 };
 
-
+// === 共享数据结构：每个 helper 的 [buf, original_data] ===
+struct HelperData {
+    std::unique_ptr<char[]> buf;           // 从网络读的小 buffer（basis 大小）
+    std::unique_ptr<char[]> original_data; // 恢复出的完整 block_size 数据
+    size_t buf_size = 0;
+    size_t block_size = 0;
+};
 
 } // namespace ECProject

@@ -6,7 +6,7 @@ USER="anyangyang"
 REMOTE_DIR="~/exp"
 
 # 节点列表：datanode 部署到 node3~5，client 部署到 node6
-DATANODE_NODES=("node4" "node5" "node6" "node7" "node8" "node9" "node10" "node11" "node12" "node13")
+DATANODE_NODES=("node4" "node5" "node6" "node7" "node8" "node9" "node10" "node11" "node12" "node13" "node14" "node15" "node17" "node18")
 CLIENT_NODES=("node3")
 
 # 检查本地文件是否存在
@@ -48,6 +48,17 @@ done
 # for node in "${DATANODE_NODES[@]}"; do
 #     echo "$node"
 #     scp "$BIN_DIR/test_client" "$USER@$node:$REMOTE_DIR/" || {
+#         echo "Failed to copy to $node"
+#         exit 1
+#     }
+# done
+
+
+# # 部署 test_server
+# echo "Deploying test_server to ${DATANODE_NODES[*]}..."
+# for node in "${DATANODE_NODES[@]}"; do
+#     echo "$node"
+#     scp "$BIN_DIR/test_server" "$USER@$node:$REMOTE_DIR/" || {
 #         echo "Failed to copy to $node"
 #         exit 1
 #     }

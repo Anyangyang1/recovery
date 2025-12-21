@@ -202,7 +202,9 @@ vector<unsigned int> ECProject::generateAllRangeN(int N) {
 
 vector<vector<int>>
 ECProject::cauchy_original_coding_matrix_vector(int K, int M, int W) {
-    int *cauchy_mat = cauchy_original_coding_matrix(K, M, W);
+    // int *cauchy_mat = cauchy_original_coding_matrix(K, M, W);
+    int *cauchy_mat = reed_sol_vandermonde_coding_matrix(K, M, W);
+    
     vector<vector<int>> codingMatrix(M, vector<int>(K));
     for (int i = 0; i < M; ++i)
         for (int j = 0; j < K; ++j)
@@ -266,3 +268,59 @@ void ECProject::exit_when(bool condition,
         std::exit(EXIT_FAILURE);
     }
 }
+
+
+// ====== 新增工具函数 ======
+std::string ECProject::matrix_to_01_string(const std::vector<std::vector<int>>& mat) {
+    if (mat.empty()) return "";
+    size_t rows = mat.size(), cols = mat[0].size();
+    std::string s;
+    s.reserve(rows * cols);
+    for (size_t i = 0; i < rows; ++i) {
+        for (size_t j = 0; j < cols; ++j) {
+            s.push_back(mat[i][j] ? '1' : '0');
+        }
+    }
+    return s;
+}
+
+std::string ECProject::generate_random_string(size_t length) {
+    static const char charset[] = "0123456789"
+                                  "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                  "abcdefghijklmnopqrstuvwxyz";
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> dis(
+        0, sizeof(charset) - 2); // -2: exclude trailing '\0'
+
+    std::string str(length, 0);
+    for (size_t i = 0; i < length; ++i) {
+        str[i] = charset[dis(gen)];
+    }
+    return str;
+}
+
+
+uint64_t ECProject::indices_to_bitmask(const std::vector<int>& indices) {
+    uint64_t mask = 0;
+    for (int idx : indices) {
+        // 安全检查（可选，release 可关闭）
+        assert(idx >= 0 && idx < 64 && "Index out of 0~63 range");
+        mask |= (1ULL << idx);
+    }
+    return mask;
+}
+
+std::vector<std::vector<int>> ECProject::string_to_matrix(std::string_view s, size_t rows, size_t cols) {
+    if (s.size() != rows * cols) {
+        throw std::runtime_error("Invalid matrix string length");
+    }
+    std::vector<std::vector<int>> mat(rows, std::vector<int>(cols));
+    for (size_t i = 0; i < rows; ++i) {
+        for (size_t j = 0; j < cols; ++j) {
+            mat[i][j] = (s[i * cols + j] == '1');
+        }
+    }
+    return mat;
+}
+

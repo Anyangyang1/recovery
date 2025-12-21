@@ -23,8 +23,6 @@ galois.h
 ../include/algorithm/scoped_timer.hpp
 ylt/easylog.hpp
 ../include/algorithm/ylt/easylog.hpp
-ylt/easylog/record.hpp
-../include/algorithm/ylt/easylog/record.hpp
 chrono
 -
 string
@@ -59,6 +57,8 @@ source_location
 -
 scoped_timer.hpp
 ../include/algorithm/scoped_timer.hpp
+cstdlib
+-
 
 ../include/ec/erasure_code.h
 ../jerasure_wrapper.h

@@ -132,4 +132,61 @@ sudo netstat -tulnp | grep :8080
 # 或（较新系统推荐）
 ss -tulnp | grep :8080
 ```
+# wondershaper使用
++ 直接运行
+```bash
+git clone https://github.com/magnific0/wondershaper.git
+cd wondershaper
+./wondershaper -h   # 查看帮助
+```
++ 系统安装
+```bash
+sudo make install    # 默认安装到 /usr/bin/wondershaper
+which wondershaper   # 验证：应输出 /usr/bin/wondershaper
+```
++ 查看网卡名
+```bash
+ip addr show
+# 常见网卡：ens9（你管理网）、ib0（InfiniBand）、eth0、enpXsY 等
+```
++ 限速（单位Kbps）
 
+|场景|命令|
+|---|---|
+|双向限速：ens9 下行 100Mbps，上行 50Mbps|`sudo wondershaper -a ens9 -d 100000 -u 50000`|
+|仅限上传：ib0 上行 1Gbps|`sudo wondershaper -a ib0 -u 1000000`|
+|仅限下载：ens9 下行 10Mbps|`sudo wondershaper -a ens9 -d 10000`|
+
++ 查看当前限速状态
+```bash
+sudo wondershaper -s -a ens9
+# 输出示例：
+# wondershaper active on ens9:
+#  Download rate: 100000 kbit
+#  Upload rate: 50000 kbit
+```
++ 清除限速
+```bash
+sudo wondershaper -c -a ens9
+```
++ 持久化配置
+```bash
+# 编辑配置文件
+sudo vim /etc/systemd/wondershaper.conf
+
+# 内容示例
+# Interface: ens9, Download: 100Mbps, Upload: 50Mbps
+IFACE="ens9"
+DOWNRATE="100000"
+UPRATE="50000"
+
+# 可加多组（每组用空行隔开）
+# IFACE="ib0"
+# UPRATE="1000000"
+
+# 启动服务
+sudo systemctl enable --now wondershaper.service
+
+# 修改.conf,重启生效
+sudo systemctl restart wondershaper.service
+```

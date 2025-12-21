@@ -14,6 +14,7 @@
 #include "ylt/easylog.hpp"
 #include <source_location>
 #include "scoped_timer.hpp"
+#include <cstdlib>
 
 
 #define my_assert(condition)                                                   \
@@ -102,5 +103,11 @@ std::string mapToString(const std::unordered_map<K, V>& mp) {
     return oss.str();
 }
 
+// 01 矩阵工具函数（声明）
+std::string matrix_to_01_string(const std::vector<std::vector<int>>& mat);
+std::vector<std::vector<int>> string_to_matrix(std::string_view s, size_t rows, size_t cols);
+
+uint64_t indices_to_bitmask(const std::vector<int>& indices);
+std::string generate_random_string(size_t length);
 
 } // namespace ECProject

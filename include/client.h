@@ -14,6 +14,7 @@ class Client {
     void set(std::string value);
     void request_repair(unsigned int stripe_id, unsigned int failed_block_id);
     void request_repair_with_opt(unsigned int stripe_id, unsigned int failed_block_id);
+    void request_repair_no_local_decode(unsigned int stripe_id, unsigned int failed_block_id);
     void print_stripe_info();
     void print_node_info();
     void delete_file(unsigned int stripe_id, unsigned int failed_block_id);
@@ -21,7 +22,12 @@ class Client {
     void clear();
     void request_repair_node(unsigned int node_id);
     void request_repair_node_with_opt(unsigned int node_id);
-    void set_data_test(std::string value);
+    void request_repair_node_con(unsigned int node_id);
+    void request_repair_node_with_opt_con(unsigned int node_id);
+    void request_repair_node_non_local_decode_con(unsigned int node_id);
+    void request_repair_node_non_local_decode(unsigned int node_id);
+    void repair_node_test();
+    void set_stripe(unsigned int stripe_num);
     
 
   private:

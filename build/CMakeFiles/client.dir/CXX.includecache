@@ -23,8 +23,6 @@ galois.h
 ../include/algorithm/scoped_timer.hpp
 ylt/easylog.hpp
 ../include/algorithm/ylt/easylog.hpp
-ylt/easylog/record.hpp
-../include/algorithm/ylt/easylog/record.hpp
 chrono
 -
 string
@@ -79,6 +77,8 @@ source_location
 -
 scoped_timer.hpp
 ../include/algorithm/scoped_timer.hpp
+cstdlib
+-
 
 ../include/client.h
 coordinator.h
@@ -118,6 +118,8 @@ metadata.h
 thread_pool.hpp
 ../include/thread_pool.hpp
 asio.hpp
+-
+atomic
 -
 condition_variable
 -
@@ -13049,14 +13051,6 @@ client.h
 /home/anyangyang/study/recovery/src/client/client.h
 unistd.h
 -
-
-/home/anyangyang/study/recovery/src/client/run_client.cpp
-client.h
-/home/anyangyang/study/recovery/src/client/client.h
-fstream
--
-sstream
--
-unistd.h
+thread
 -
 

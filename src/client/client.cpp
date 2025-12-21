@@ -1,6 +1,6 @@
 #include "client.h"
 #include <unistd.h>
-
+#include <thread>
 namespace ECProject {
 Client::Client(std::string ip, int port, std::string coordinator_ip,
                int coordinator_port)
@@ -17,77 +17,43 @@ Client::Client(std::string ip, int port, std::string coordinator_ip,
 
 Client::~Client() { acceptor_.close(); }
 
+// ====== client.cpp —— 替换 Client::set ======
 void Client::set(std::string value) {
     // Step 1: Request upload target from coordinator
     auto result = async_simple::coro::syncAwait(
         rpc_coordinator_->call_for<&Coordinator::request_set>(
             std::chrono::seconds{3}, value.size()));
-
     if (!result) {
-        ELOG(ERROR) << "RPC request_set failed: " << result.error();
-        return; // 或其他 fallback
+        ELOG(ERROR) << "RPC request_set failed";
+        return;
     }
     auto response = std::move(result).value();
 
-    // Step 2: Connect to target datanode (RPC port)
-    auto rpc_client = std::make_unique<coro_rpc::coro_rpc_client>();
-    {
-        auto conn_res = async_simple::coro::syncAwait(rpc_client->connect(
-            response.node_ip, std::to_string(response.node_port)));
-        if (conn_res) {
-            ELOG(ERROR) << "Failed to connect datanode RPC ("
-                        << response.node_ip << ":" << response.node_port
-                        << "): " << conn_res.message();
-            return;
-        }
-    }
-
-    // Step 3: Notify datanode to prepare for upload
-    {
-        auto call_res = async_simple::coro::syncAwait(
-            rpc_client->call<&Datanode::handle_upload>(response.stripe_id,
-                                                       value.size()));
-        if (!call_res) {
-            ELOG(ERROR) << "RPC handle_upload failed: " << call_res.error();
-            return;
-        }
-    }
-
-    // Step 4: Send raw data via socket (data port = node_port + offset)
+    // Step 2: 直连 datanode data port (NO RPC!)
     int data_port = response.node_port + SOCKET_PORT_OFFSET;
     ELOG(WARNING) << "[SET] Sending stripe_" << response.stripe_id << " ("
                   << value.size() << "B) to " << response.node_ip << ":"
                   << data_port;
+
     try {
         asio::ip::tcp::socket socket(io_context_);
-        asio::ip::tcp::endpoint endpoint(
-            asio::ip::make_address(response.node_ip), data_port);
+        socket.connect(asio::ip::tcp::endpoint(
+            asio::ip::make_address(response.node_ip), data_port));
 
-        std::error_code ec;
-        socket.connect(endpoint, ec);
-        if (ec) {
-            ELOG(ERROR) << "[SET] Connect failed to " << response.node_ip << ":"
-                        << data_port << ", ec: [" << ec.value() << "] "
-                        << ec.message();
-            return;
-        }
+        // 发 header: op + stripe_id + size
+        uint8_t op = static_cast<uint8_t>(DataOp::UPLOAD);
+        asio::write(socket, asio::buffer(&op, 1));
+        uint32_t sid = htonl(response.stripe_id);
+        uint32_t sz = htonl(static_cast<uint32_t>(value.size()));
+        asio::write(socket, asio::buffer(&sid, 4));
+        asio::write(socket, asio::buffer(&sz, 4));
 
-        // 使用 error_code 版本的 write
-        size_t n = asio::write(socket, asio::buffer(value), ec);
-        if (ec || n != value.size()) {
-            ELOG(ERROR) << "[SET] Write failed: expected " << value.size()
-                        << "B, wrote " << n << "B"
-                        << ", ec: [" << ec.value() << "] "
-                        << ec.category().name() << ": " << ec.message();
-            socket.close(); // 显式 close（ec 时可能已失效，但 safe）
-            return;
-        }
-
-        socket.close(ec); // close 也可检查（通常忽略）
-        ELOG(WARNING) << "Send data completely (" << n << "B).";
-        ELOG(WARNING) << "first data: " << value.substr(0, 1024);
+        // 发 body
+        asio::write(socket, asio::buffer(value));
+        socket.close();
+        ELOG(WARNING) << "Send data completely.";
     } catch (const std::exception &e) {
-        ELOG(ERROR) << "[SET] Data transfer failed: " << e.what();
+        ELOG(ERROR) << "[SET] failed: " << e.what();
     }
 }
 
@@ -102,6 +68,12 @@ void Client::request_repair_with_opt(unsigned int stripe_id,
                                      unsigned int failed_block_id) {
     async_simple::coro::syncAwait(
         rpc_coordinator_->call_for<&Coordinator::request_repair_with_opt>(
+            std::chrono::seconds{3}, stripe_id, failed_block_id));
+}
+void Client::request_repair_no_local_decode(unsigned int stripe_id,
+                                     unsigned int failed_block_id) {
+    async_simple::coro::syncAwait(
+        rpc_coordinator_->call_for<&Coordinator::request_repair_no_local_decode>(
             std::chrono::seconds{3}, stripe_id, failed_block_id));
 }
 
@@ -137,49 +109,98 @@ void Client::clear() {
 void Client::request_repair_node(unsigned int node_id) {
     async_simple::coro::syncAwait(
         rpc_coordinator_->call_for<&Coordinator::request_repair_node>(
-            std::chrono::seconds{3}, node_id));
+            std::chrono::seconds{30}, node_id));
 }
 
 void Client::request_repair_node_with_opt(unsigned int node_id) {
     async_simple::coro::syncAwait(
         rpc_coordinator_->call_for<&Coordinator::request_repair_node_with_opt>(
-            std::chrono::seconds{3}, node_id));
+            std::chrono::seconds{30}, node_id));
 }
-void Client::set_data_test(std::string value) {
-    // Step 2: Connect to target datanode (RPC port)
-    auto rpc_client = std::make_unique<coro_rpc::coro_rpc_client>();
-    {
-        auto conn_res = async_simple::coro::syncAwait(
-            rpc_client->connect("192.168.1.14", "8888"));
-        if (conn_res) {
-            ELOG(ERROR) << "Failed to connect datanode RPC";
-            return;
-        }
-    }
 
-    // Step 3: Notify datanode to prepare for upload
-    {
-        auto call_res = async_simple::coro::syncAwait(
-            rpc_client->call<&Datanode::handle_upload_test>(0, value.size()));
-        if (!call_res) {
-            ELOG(ERROR) << "RPC handle_upload failed: " << call_res.error();
-            return;
-        }
-    }
+void Client::request_repair_node_con(unsigned int node_id) {
+    async_simple::coro::syncAwait(
+        rpc_coordinator_->call_for<&Coordinator::request_repair_node_con>(
+            std::chrono::seconds{30}, node_id));
+}
 
-    // Step 4: Send raw data via socket (data port = node_port + offset)
-    int data_port = 8888 + SOCKET_PORT_OFFSET;
-    ELOG(WARNING) << "[SET] Sending data (" << value.size() << "B) to";
-    try {
-        asio::ip::tcp::socket socket(io_context_);
-        asio::ip::tcp::endpoint endpoint(asio::ip::make_address("192.168.1.14"),
-                                         data_port);
-        socket.connect(endpoint);
-        asio::write(socket, asio::buffer(value, value.size()));
-        socket.close();
-        ELOG(WARNING) << "Send data completely.";
-    } catch (const std::exception &e) {
-        ELOG(ERROR) << "[SET] Data transfer failed: " << e.what();
+void Client::request_repair_node_with_opt_con(unsigned int node_id) {
+    async_simple::coro::syncAwait(
+        rpc_coordinator_
+            ->call_for<&Coordinator::request_repair_node_with_opt_con>(
+                std::chrono::seconds{30}, node_id));
+}
+
+void Client::request_repair_node_non_local_decode_con(unsigned int node_id) {
+    async_simple::coro::syncAwait(
+        rpc_coordinator_->call_for<&Coordinator::request_repair_node_non_local_decode_con>(
+            std::chrono::seconds{30}, node_id));
+}
+
+void Client::request_repair_node_non_local_decode(unsigned int node_id) {
+    async_simple::coro::syncAwait(
+        rpc_coordinator_
+            ->call_for<&Coordinator::request_repair_node_non_local_decode>(
+                std::chrono::seconds{30}, node_id));
+}
+
+void Client::set_stripe(unsigned int stripe_num) {
+    const int value_size = RS_K * BLOCK_SIZE;
+    for (unsigned int i = 0; i < stripe_num; i++) {
+        std::string value = generate_random_string(value_size);
+        set(value);
+    }
+}
+
+void Client::repair_node_test() {
+    vector<unsigned int> node_ids{1};
+    vector<unsigned int> stripe_nums{200};
+    for(auto stripe_num: stripe_nums) {
+        // ELOG(ERROR) << "stripe_num: " << stripe_num;
+        for(auto node_id: node_ids) {
+            clear();
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 10));
+            set_stripe(stripe_num);
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 200));
+            request_repair_node_non_local_decode_con(node_id);
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 50));
+
+            clear();
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 10));
+            set_stripe(stripe_num);
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 200));
+            request_repair_node_con(node_id);
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 50));
+
+            clear();
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 10));
+            set_stripe(stripe_num);
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 200));
+            request_repair_node_with_opt_con(node_id);
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 50));
+
+            clear();
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 10));
+            set_stripe(stripe_num);
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 200));
+            request_repair_node_non_local_decode(node_id);
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 50));
+
+            clear();
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 10));
+            set_stripe(stripe_num);
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 200));
+            request_repair_node(node_id);
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 50));
+            
+            clear();
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 10));
+            set_stripe(stripe_num);
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 200));
+            request_repair_node_with_opt(node_id);
+            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 50));
+
+        }
     }
 }
 
