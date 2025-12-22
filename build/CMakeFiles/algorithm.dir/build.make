@@ -83,34 +83,19 @@ CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.s: cmake_force
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.s"
 	/opt/rh/devtoolset-11/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/anyangyang/study/recovery/src/algorithm/sggh.cpp -o CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.s
 
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: CMakeFiles/algorithm.dir/flags.make
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../src/algorithm/utils.cpp
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Building CXX object CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o"
-	/opt/rh/devtoolset-11/root/usr/bin/c++  $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -o CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o -c /home/anyangyang/study/recovery/src/algorithm/utils.cpp
-
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.i: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Preprocessing CXX source to CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.i"
-	/opt/rh/devtoolset-11/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -E /home/anyangyang/study/recovery/src/algorithm/utils.cpp > CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.i
-
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.s: cmake_force
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green "Compiling CXX source to assembly CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.s"
-	/opt/rh/devtoolset-11/root/usr/bin/c++ $(CXX_DEFINES) $(CXX_INCLUDES) $(CXX_FLAGS) -S /home/anyangyang/study/recovery/src/algorithm/utils.cpp -o CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.s
-
 # Object files for target algorithm
 algorithm_OBJECTS = \
 "CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o" \
-"CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o" \
-"CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o"
+"CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o"
 
 # External object files for target algorithm
 algorithm_EXTERNAL_OBJECTS =
 
 libalgorithm.a: CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o
 libalgorithm.a: CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o
-libalgorithm.a: CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o
 libalgorithm.a: CMakeFiles/algorithm.dir/build.make
 libalgorithm.a: CMakeFiles/algorithm.dir/link.txt
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_4) "Linking CXX static library libalgorithm.a"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX static library libalgorithm.a"
 	$(CMAKE_COMMAND) -P CMakeFiles/algorithm.dir/cmake_clean_target.cmake
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/algorithm.dir/link.txt --verbose=$(VERBOSE)
 

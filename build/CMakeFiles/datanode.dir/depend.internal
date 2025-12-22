@@ -6,9 +6,9 @@ CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o
  ../Jerasure-1.2A/galois.h
  ../Jerasure-1.2A/jerasure.h
  ../Jerasure-1.2A/reed_sol.h
- ../include/algorithm/scoped_timer.hpp
- ../include/algorithm/thread_pool.hpp
- ../include/algorithm/utils.h
+ ../include/common/scoped_timer.hpp
+ ../include/common/thread_pool.hpp
+ ../include/common/utils.h
  ../include/coordinator.h
  ../include/datanode.h
  ../include/ec/erasure_code.h
@@ -736,9 +736,9 @@ CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o
  ../Jerasure-1.2A/galois.h
  ../Jerasure-1.2A/jerasure.h
  ../Jerasure-1.2A/reed_sol.h
- ../include/algorithm/scoped_timer.hpp
- ../include/algorithm/thread_pool.hpp
- ../include/algorithm/utils.h
+ ../include/common/scoped_timer.hpp
+ ../include/common/thread_pool.hpp
+ ../include/common/utils.h
  ../include/coordinator.h
  ../include/datanode.h
  ../include/ec/erasure_code.h

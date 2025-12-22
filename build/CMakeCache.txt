@@ -206,6 +206,12 @@ DistributedStorage_BINARY_DIR:STATIC=/home/anyangyang/study/recovery/build
 //Value Computed by CMake
 DistributedStorage_SOURCE_DIR:STATIC=/home/anyangyang/study/recovery
 
+//Path to a file.
+ISAL_INCLUDE_DIR:PATH=/usr/include
+
+//Path to a library.
+ISAL_LIBRARY:FILEPATH=/usr/lib64/libisal.so
+
 
 ########################
 # INTERNAL cache entries

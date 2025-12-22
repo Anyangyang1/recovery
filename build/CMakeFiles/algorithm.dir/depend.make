@@ -6,9 +6,10 @@ CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../Jerasure-1.2A/galois.
 CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../Jerasure-1.2A/reed_sol.h
 CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../include/algorithm/loadbalance.h
-CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../include/algorithm/scoped_timer.hpp
 CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../include/algorithm/sggh.h
-CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../include/algorithm/utils.h
+CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../include/common/scoped_timer.hpp
+CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../include/common/utils.h
+CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../include/ec/erasure_code.h
 CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../include/jerasure_wrapper.h
 CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../yalantinglibs/include/ylt/easylog.hpp
 CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o: ../yalantinglibs/include/ylt/easylog/appender.hpp
@@ -26,9 +27,10 @@ CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../Jerasure-1.2A/cauchy.h
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../Jerasure-1.2A/reed_sol.h
-CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../include/algorithm/scoped_timer.hpp
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../include/algorithm/sggh.h
-CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../include/algorithm/utils.h
+CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../include/common/scoped_timer.hpp
+CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../include/common/utils.h
+CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../include/ec/erasure_code.h
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../include/jerasure_wrapper.h
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../yalantinglibs/include/ylt/easylog.hpp
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../yalantinglibs/include/ylt/easylog/appender.hpp
@@ -41,23 +43,4 @@ CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../yalantinglibs/include/ylt/
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../yalantinglibs/include/ylt/util/time_util.h
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../yalantinglibs/include/ylt/util/type_traits.h
 CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o: ../src/algorithm/sggh.cpp
-
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../Jerasure-1.2A/cauchy.h
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../Jerasure-1.2A/galois.h
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../Jerasure-1.2A/jerasure.h
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../Jerasure-1.2A/reed_sol.h
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../include/algorithm/scoped_timer.hpp
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../include/algorithm/utils.h
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../include/jerasure_wrapper.h
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../yalantinglibs/include/ylt/easylog.hpp
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../yalantinglibs/include/ylt/easylog/appender.hpp
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../yalantinglibs/include/ylt/easylog/record.hpp
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../yalantinglibs/include/ylt/util/b_stacktrace.h
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../yalantinglibs/include/ylt/util/concurrentqueue.h
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../yalantinglibs/include/ylt/util/dragonbox.h
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../yalantinglibs/include/ylt/util/dragonbox_to_chars.h
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../yalantinglibs/include/ylt/util/meta_string.hpp
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../yalantinglibs/include/ylt/util/time_util.h
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../yalantinglibs/include/ylt/util/type_traits.h
-CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o: ../src/algorithm/utils.cpp
 

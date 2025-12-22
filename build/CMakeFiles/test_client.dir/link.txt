@@ -1,1 +1,1 @@
-/opt/rh/devtoolset-11/root/usr/bin/c++     CMakeFiles/test_client.dir/src/test_client/client.cpp.o CMakeFiles/test_client.dir/src/test_client/test1.cpp.o  -o exec/test_client libjerasure.a -lm libec.a -static-libstdc++ -static-libgcc libalgorithm.a libjerasure.a -pthread -lm 
+/opt/rh/devtoolset-11/root/usr/bin/c++     CMakeFiles/test_client.dir/src/test_client/client.cpp.o CMakeFiles/test_client.dir/src/test_client/test1.cpp.o  -o exec/test_client libalgorithm.a -static-libstdc++ -static-libgcc libec.a libjerasure.a /usr/lib64/libisal.so libcommon.a -pthread -lm 

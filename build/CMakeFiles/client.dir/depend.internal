@@ -6,10 +6,10 @@ CMakeFiles/client.dir/src/client/client.cpp.o
  ../Jerasure-1.2A/galois.h
  ../Jerasure-1.2A/jerasure.h
  ../Jerasure-1.2A/reed_sol.h
- ../include/algorithm/scoped_timer.hpp
- ../include/algorithm/thread_pool.hpp
- ../include/algorithm/utils.h
  ../include/client.h
+ ../include/common/scoped_timer.hpp
+ ../include/common/thread_pool.hpp
+ ../include/common/utils.h
  ../include/coordinator.h
  ../include/datanode.h
  ../include/ec/erasure_code.h
@@ -737,10 +737,10 @@ CMakeFiles/client.dir/src/client/run_client.cpp.o
  ../Jerasure-1.2A/galois.h
  ../Jerasure-1.2A/jerasure.h
  ../Jerasure-1.2A/reed_sol.h
- ../include/algorithm/scoped_timer.hpp
- ../include/algorithm/thread_pool.hpp
- ../include/algorithm/utils.h
  ../include/client.h
+ ../include/common/scoped_timer.hpp
+ ../include/common/thread_pool.hpp
+ ../include/common/utils.h
  ../include/coordinator.h
  ../include/datanode.h
  ../include/ec/erasure_code.h

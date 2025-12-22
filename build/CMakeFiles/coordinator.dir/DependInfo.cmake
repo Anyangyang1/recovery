@@ -17,21 +17,22 @@ set(CMAKE_TARGET_DEFINITIONS_CXX
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../include/coordinator"
-  "../include/ec"
-  "../include/algorithm"
-  "../yalantinglibs/include/ylt/thirdparty"
-  "../Jerasure-1.2A"
   "../include"
+  "../yalantinglibs/include/ylt/thirdparty"
+  "../include/algorithm"
+  "../include/ec"
+  "../include/common"
   "../tinyxml2-9.0.0"
   "../yalantinglibs/include"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
-  "/home/anyangyang/study/recovery/build/CMakeFiles/jerasure.dir/DependInfo.cmake"
-  "/home/anyangyang/study/recovery/build/CMakeFiles/ec.dir/DependInfo.cmake"
-  "/home/anyangyang/study/recovery/build/CMakeFiles/tinyxml2.dir/DependInfo.cmake"
   "/home/anyangyang/study/recovery/build/CMakeFiles/algorithm.dir/DependInfo.cmake"
+  "/home/anyangyang/study/recovery/build/CMakeFiles/tinyxml2.dir/DependInfo.cmake"
+  "/home/anyangyang/study/recovery/build/CMakeFiles/ec.dir/DependInfo.cmake"
+  "/home/anyangyang/study/recovery/build/CMakeFiles/jerasure.dir/DependInfo.cmake"
+  "/home/anyangyang/study/recovery/build/CMakeFiles/common.dir/DependInfo.cmake"
   )
 
 # Fortran module output directory.

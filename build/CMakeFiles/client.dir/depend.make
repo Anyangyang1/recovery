@@ -5,10 +5,10 @@ CMakeFiles/client.dir/src/client/client.cpp.o: ../Jerasure-1.2A/cauchy.h
 CMakeFiles/client.dir/src/client/client.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/client.dir/src/client/client.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/client.dir/src/client/client.cpp.o: ../Jerasure-1.2A/reed_sol.h
-CMakeFiles/client.dir/src/client/client.cpp.o: ../include/algorithm/scoped_timer.hpp
-CMakeFiles/client.dir/src/client/client.cpp.o: ../include/algorithm/thread_pool.hpp
-CMakeFiles/client.dir/src/client/client.cpp.o: ../include/algorithm/utils.h
 CMakeFiles/client.dir/src/client/client.cpp.o: ../include/client.h
+CMakeFiles/client.dir/src/client/client.cpp.o: ../include/common/scoped_timer.hpp
+CMakeFiles/client.dir/src/client/client.cpp.o: ../include/common/thread_pool.hpp
+CMakeFiles/client.dir/src/client/client.cpp.o: ../include/common/utils.h
 CMakeFiles/client.dir/src/client/client.cpp.o: ../include/coordinator.h
 CMakeFiles/client.dir/src/client/client.cpp.o: ../include/datanode.h
 CMakeFiles/client.dir/src/client/client.cpp.o: ../include/ec/erasure_code.h
@@ -736,10 +736,10 @@ CMakeFiles/client.dir/src/client/run_client.cpp.o: ../Jerasure-1.2A/cauchy.h
 CMakeFiles/client.dir/src/client/run_client.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/client.dir/src/client/run_client.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/client.dir/src/client/run_client.cpp.o: ../Jerasure-1.2A/reed_sol.h
-CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/algorithm/scoped_timer.hpp
-CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/algorithm/thread_pool.hpp
-CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/algorithm/utils.h
 CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/client.h
+CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/common/scoped_timer.hpp
+CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/common/thread_pool.hpp
+CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/common/utils.h
 CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/coordinator.h
 CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/datanode.h
 CMakeFiles/client.dir/src/client/run_client.cpp.o: ../include/ec/erasure_code.h

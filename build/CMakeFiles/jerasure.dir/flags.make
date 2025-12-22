@@ -6,5 +6,5 @@ C_FLAGS =   -mavx2 -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused-b
 
 C_DEFINES = -DVEC256
 
-C_INCLUDES = -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include -isystem /home/anyangyang/study/recovery/yalantinglibs/include 
+C_INCLUDES = -I/home/anyangyang/study/recovery/Jerasure-1.2A -isystem /home/anyangyang/study/recovery/yalantinglibs/include 
 

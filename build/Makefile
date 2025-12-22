@@ -56,17 +56,6 @@ CMAKE_BINARY_DIR = /home/anyangyang/study/recovery/build
 #=============================================================================
 # Targets provided globally by CMake.
 
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
-	/usr/cmake-3.14.5/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
-
 # Special rule for the target rebuild_cache
 rebuild_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
@@ -77,6 +66,17 @@ rebuild_cache:
 rebuild_cache/fast: rebuild_cache
 
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake cache editor..."
+	/usr/cmake-3.14.5/bin/ccmake -S$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -111,95 +111,17 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named test_server
+# Target rules for targets named jerasure
 
 # Build rule for target.
-test_server: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 test_server
-.PHONY : test_server
+jerasure: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 jerasure
+.PHONY : jerasure
 
 # fast build rule for target.
-test_server/fast:
-	$(MAKE) -f CMakeFiles/test_server.dir/build.make CMakeFiles/test_server.dir/build
-.PHONY : test_server/fast
-
-#=============================================================================
-# Target rules for targets named test_client
-
-# Build rule for target.
-test_client: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 test_client
-.PHONY : test_client
-
-# fast build rule for target.
-test_client/fast:
-	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/build
-.PHONY : test_client/fast
-
-#=============================================================================
-# Target rules for targets named client
-
-# Build rule for target.
-client: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 client
-.PHONY : client
-
-# fast build rule for target.
-client/fast:
-	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/build
-.PHONY : client/fast
-
-#=============================================================================
-# Target rules for targets named datanode
-
-# Build rule for target.
-datanode: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 datanode
-.PHONY : datanode
-
-# fast build rule for target.
-datanode/fast:
-	$(MAKE) -f CMakeFiles/datanode.dir/build.make CMakeFiles/datanode.dir/build
-.PHONY : datanode/fast
-
-#=============================================================================
-# Target rules for targets named ec
-
-# Build rule for target.
-ec: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 ec
-.PHONY : ec
-
-# fast build rule for target.
-ec/fast:
-	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/build
-.PHONY : ec/fast
-
-#=============================================================================
-# Target rules for targets named coordinator
-
-# Build rule for target.
-coordinator: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 coordinator
-.PHONY : coordinator
-
-# fast build rule for target.
-coordinator/fast:
-	$(MAKE) -f CMakeFiles/coordinator.dir/build.make CMakeFiles/coordinator.dir/build
-.PHONY : coordinator/fast
-
-#=============================================================================
-# Target rules for targets named algorithm
-
-# Build rule for target.
-algorithm: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 algorithm
-.PHONY : algorithm
-
-# fast build rule for target.
-algorithm/fast:
-	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/build
-.PHONY : algorithm/fast
+jerasure/fast:
+	$(MAKE) -f CMakeFiles/jerasure.dir/build.make CMakeFiles/jerasure.dir/build
+.PHONY : jerasure/fast
 
 #=============================================================================
 # Target rules for targets named tinyxml2
@@ -215,17 +137,108 @@ tinyxml2/fast:
 .PHONY : tinyxml2/fast
 
 #=============================================================================
-# Target rules for targets named jerasure
+# Target rules for targets named client
 
 # Build rule for target.
-jerasure: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 jerasure
-.PHONY : jerasure
+client: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 client
+.PHONY : client
 
 # fast build rule for target.
-jerasure/fast:
-	$(MAKE) -f CMakeFiles/jerasure.dir/build.make CMakeFiles/jerasure.dir/build
-.PHONY : jerasure/fast
+client/fast:
+	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/build
+.PHONY : client/fast
+
+#=============================================================================
+# Target rules for targets named ec
+
+# Build rule for target.
+ec: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 ec
+.PHONY : ec
+
+# fast build rule for target.
+ec/fast:
+	$(MAKE) -f CMakeFiles/ec.dir/build.make CMakeFiles/ec.dir/build
+.PHONY : ec/fast
+
+#=============================================================================
+# Target rules for targets named common
+
+# Build rule for target.
+common: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 common
+.PHONY : common
+
+# fast build rule for target.
+common/fast:
+	$(MAKE) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/build
+.PHONY : common/fast
+
+#=============================================================================
+# Target rules for targets named datanode
+
+# Build rule for target.
+datanode: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 datanode
+.PHONY : datanode
+
+# fast build rule for target.
+datanode/fast:
+	$(MAKE) -f CMakeFiles/datanode.dir/build.make CMakeFiles/datanode.dir/build
+.PHONY : datanode/fast
+
+#=============================================================================
+# Target rules for targets named algorithm
+
+# Build rule for target.
+algorithm: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 algorithm
+.PHONY : algorithm
+
+# fast build rule for target.
+algorithm/fast:
+	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/build
+.PHONY : algorithm/fast
+
+#=============================================================================
+# Target rules for targets named coordinator
+
+# Build rule for target.
+coordinator: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 coordinator
+.PHONY : coordinator
+
+# fast build rule for target.
+coordinator/fast:
+	$(MAKE) -f CMakeFiles/coordinator.dir/build.make CMakeFiles/coordinator.dir/build
+.PHONY : coordinator/fast
+
+#=============================================================================
+# Target rules for targets named test_client
+
+# Build rule for target.
+test_client: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_client
+.PHONY : test_client
+
+# fast build rule for target.
+test_client/fast:
+	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/build
+.PHONY : test_client/fast
+
+#=============================================================================
+# Target rules for targets named test_server
+
+# Build rule for target.
+test_server: cmake_check_build_system
+	$(MAKE) -f CMakeFiles/Makefile2 test_server
+.PHONY : test_server
+
+# fast build rule for target.
+test_server/fast:
+	$(MAKE) -f CMakeFiles/test_server.dir/build.make CMakeFiles/test_server.dir/build
+.PHONY : test_server/fast
 
 Jerasure-1.2A/cauchy.o: Jerasure-1.2A/cauchy.c.o
 
@@ -389,33 +402,6 @@ src/algorithm/sggh.cpp.s:
 	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.s
 .PHONY : src/algorithm/sggh.cpp.s
 
-src/algorithm/utils.o: src/algorithm/utils.cpp.o
-
-.PHONY : src/algorithm/utils.o
-
-# target to build an object file
-src/algorithm/utils.cpp.o:
-	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o
-.PHONY : src/algorithm/utils.cpp.o
-
-src/algorithm/utils.i: src/algorithm/utils.cpp.i
-
-.PHONY : src/algorithm/utils.i
-
-# target to preprocess a source file
-src/algorithm/utils.cpp.i:
-	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.i
-.PHONY : src/algorithm/utils.cpp.i
-
-src/algorithm/utils.s: src/algorithm/utils.cpp.s
-
-.PHONY : src/algorithm/utils.s
-
-# target to generate assembly for a file
-src/algorithm/utils.cpp.s:
-	$(MAKE) -f CMakeFiles/algorithm.dir/build.make CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.s
-.PHONY : src/algorithm/utils.cpp.s
-
 src/client/client.o: src/client/client.cpp.o
 
 .PHONY : src/client/client.o
@@ -469,6 +455,33 @@ src/client/run_client.s: src/client/run_client.cpp.s
 src/client/run_client.cpp.s:
 	$(MAKE) -f CMakeFiles/client.dir/build.make CMakeFiles/client.dir/src/client/run_client.cpp.s
 .PHONY : src/client/run_client.cpp.s
+
+src/common/utils.o: src/common/utils.cpp.o
+
+.PHONY : src/common/utils.o
+
+# target to build an object file
+src/common/utils.cpp.o:
+	$(MAKE) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/common/utils.cpp.o
+.PHONY : src/common/utils.cpp.o
+
+src/common/utils.i: src/common/utils.cpp.i
+
+.PHONY : src/common/utils.i
+
+# target to preprocess a source file
+src/common/utils.cpp.i:
+	$(MAKE) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/common/utils.cpp.i
+.PHONY : src/common/utils.cpp.i
+
+src/common/utils.s: src/common/utils.cpp.s
+
+.PHONY : src/common/utils.s
+
+# target to generate assembly for a file
+src/common/utils.cpp.s:
+	$(MAKE) -f CMakeFiles/common.dir/build.make CMakeFiles/common.dir/src/common/utils.cpp.s
+.PHONY : src/common/utils.cpp.s
 
 src/coordinator/coordinator.o: src/coordinator/coordinator.cpp.o
 
@@ -773,17 +786,18 @@ help:
 	@echo "... all (the default if no target is provided)"
 	@echo "... clean"
 	@echo "... depend"
-	@echo "... edit_cache"
-	@echo "... test_server"
-	@echo "... test_client"
-	@echo "... client"
-	@echo "... datanode"
-	@echo "... ec"
-	@echo "... coordinator"
-	@echo "... algorithm"
-	@echo "... tinyxml2"
 	@echo "... rebuild_cache"
 	@echo "... jerasure"
+	@echo "... tinyxml2"
+	@echo "... client"
+	@echo "... ec"
+	@echo "... common"
+	@echo "... datanode"
+	@echo "... algorithm"
+	@echo "... coordinator"
+	@echo "... test_client"
+	@echo "... test_server"
+	@echo "... edit_cache"
 	@echo "... Jerasure-1.2A/cauchy.o"
 	@echo "... Jerasure-1.2A/cauchy.i"
 	@echo "... Jerasure-1.2A/cauchy.s"
@@ -802,15 +816,15 @@ help:
 	@echo "... src/algorithm/sggh.o"
 	@echo "... src/algorithm/sggh.i"
 	@echo "... src/algorithm/sggh.s"
-	@echo "... src/algorithm/utils.o"
-	@echo "... src/algorithm/utils.i"
-	@echo "... src/algorithm/utils.s"
 	@echo "... src/client/client.o"
 	@echo "... src/client/client.i"
 	@echo "... src/client/client.s"
 	@echo "... src/client/run_client.o"
 	@echo "... src/client/run_client.i"
 	@echo "... src/client/run_client.s"
+	@echo "... src/common/utils.o"
+	@echo "... src/common/utils.i"
+	@echo "... src/common/utils.s"
 	@echo "... src/coordinator/coordinator.o"
 	@echo "... src/coordinator/coordinator.i"
 	@echo "... src/coordinator/coordinator.s"

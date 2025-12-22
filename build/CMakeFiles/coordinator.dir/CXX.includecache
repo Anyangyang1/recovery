@@ -20,17 +20,11 @@ galois.h
 
 ../Jerasure-1.2A/reed_sol.h
 
-../include/algorithm/scoped_timer.hpp
-ylt/easylog.hpp
-../include/algorithm/ylt/easylog.hpp
-chrono
--
-string
--
-
 ../include/algorithm/sggh.h
 utils.h
 ../include/algorithm/utils.h
+erasure_code.h
+../include/algorithm/erasure_code.h
 random
 -
 set
@@ -38,7 +32,15 @@ set
 vector
 -
 
-../include/algorithm/thread_pool.hpp
+../include/common/scoped_timer.hpp
+ylt/easylog.hpp
+../include/common/ylt/easylog.hpp
+chrono
+-
+string
+-
+
+../include/common/thread_pool.hpp
 atomic
 -
 condition_variable
@@ -58,7 +60,7 @@ thread
 vector
 -
 
-../include/algorithm/utils.h
+../include/common/utils.h
 algorithm
 -
 cassert
@@ -79,14 +81,12 @@ vector
 -
 chrono
 -
-../jerasure_wrapper.h
-../include/jerasure_wrapper.h
 ylt/easylog.hpp
-../include/algorithm/ylt/easylog.hpp
+../include/common/ylt/easylog.hpp
 source_location
 -
 scoped_timer.hpp
-../include/algorithm/scoped_timer.hpp
+../include/common/scoped_timer.hpp
 cstdlib
 -
 
@@ -13063,4 +13063,6 @@ random
 -
 vector
 -
+erasure_code.h
+/home/anyangyang/study/recovery/src/coordinator/erasure_code.h
 

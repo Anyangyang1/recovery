@@ -6,7 +6,6 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/anyangyang/study/recovery/src/algorithm/loadbance.cpp" "/home/anyangyang/study/recovery/build/CMakeFiles/algorithm.dir/src/algorithm/loadbance.cpp.o"
   "/home/anyangyang/study/recovery/src/algorithm/sggh.cpp" "/home/anyangyang/study/recovery/build/CMakeFiles/algorithm.dir/src/algorithm/sggh.cpp.o"
-  "/home/anyangyang/study/recovery/src/algorithm/utils.cpp" "/home/anyangyang/study/recovery/build/CMakeFiles/algorithm.dir/src/algorithm/utils.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 
@@ -18,13 +17,16 @@ set(CMAKE_TARGET_DEFINITIONS_CXX
 # The include file search paths:
 set(CMAKE_CXX_TARGET_INCLUDE_PATH
   "../include/algorithm"
+  "../include/ec"
+  "../include/common"
   "../Jerasure-1.2A"
-  "../include"
   "../yalantinglibs/include"
   )
 
 # Targets to which this target links.
 set(CMAKE_TARGET_LINKED_INFO_FILES
+  "/home/anyangyang/study/recovery/build/CMakeFiles/ec.dir/DependInfo.cmake"
+  "/home/anyangyang/study/recovery/build/CMakeFiles/common.dir/DependInfo.cmake"
   "/home/anyangyang/study/recovery/build/CMakeFiles/jerasure.dir/DependInfo.cmake"
   )
 

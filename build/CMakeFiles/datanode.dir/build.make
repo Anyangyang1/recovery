@@ -94,10 +94,11 @@ datanode_EXTERNAL_OBJECTS =
 exec/datanode: CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o
 exec/datanode: CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o
 exec/datanode: CMakeFiles/datanode.dir/build.make
-exec/datanode: libjerasure.a
-exec/datanode: libec.a
 exec/datanode: libalgorithm.a
+exec/datanode: libec.a
 exec/datanode: libjerasure.a
+exec/datanode: /usr/lib64/libisal.so
+exec/datanode: libcommon.a
 exec/datanode: CMakeFiles/datanode.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable exec/datanode"
 	$(CMAKE_COMMAND) -E cmake_link_script CMakeFiles/datanode.dir/link.txt --verbose=$(VERBOSE)

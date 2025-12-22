@@ -5,9 +5,9 @@ CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../Jerasure-1.2A/cauchy.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../Jerasure-1.2A/reed_sol.h
-CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/algorithm/scoped_timer.hpp
-CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/algorithm/thread_pool.hpp
-CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/algorithm/utils.h
+CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/common/scoped_timer.hpp
+CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/common/thread_pool.hpp
+CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/common/utils.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/coordinator.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/datanode.h
 CMakeFiles/datanode.dir/src/datanode/datanode.cpp.o: ../include/ec/erasure_code.h
@@ -735,9 +735,9 @@ CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../Jerasure-1.2A/cauchy
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../Jerasure-1.2A/reed_sol.h
-CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/algorithm/scoped_timer.hpp
-CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/algorithm/thread_pool.hpp
-CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/algorithm/utils.h
+CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/common/scoped_timer.hpp
+CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/common/thread_pool.hpp
+CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/common/utils.h
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/coordinator.h
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/datanode.h
 CMakeFiles/datanode.dir/src/datanode/run_datanode.cpp.o: ../include/ec/erasure_code.h

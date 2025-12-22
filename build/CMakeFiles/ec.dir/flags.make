@@ -6,5 +6,5 @@ CXX_FLAGS =   -mavx2 -Wno-unused-parameter -Wno-implicit-fallthrough -Wno-unused
 
 CXX_DEFINES = -DVEC256
 
-CXX_INCLUDES = -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/include/algorithm -I/home/anyangyang/study/recovery/Jerasure-1.2A -isystem /home/anyangyang/study/recovery/yalantinglibs/include 
+CXX_INCLUDES = -I/home/anyangyang/study/recovery/include/ec -I/home/anyangyang/study/recovery/Jerasure-1.2A -I/home/anyangyang/study/recovery/include/common -isystem /home/anyangyang/study/recovery/yalantinglibs/include 
 

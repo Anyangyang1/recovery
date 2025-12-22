@@ -6,6 +6,36 @@
 
 #IncludeRegexTransform: 
 
+/home/anyangyang/study/recovery/Jerasure-1.2A/cauchy.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+galois.h
+/home/anyangyang/study/recovery/Jerasure-1.2A/galois.h
+jerasure.h
+/home/anyangyang/study/recovery/Jerasure-1.2A/jerasure.h
+cauchy.h
+/home/anyangyang/study/recovery/Jerasure-1.2A/cauchy.h
+
+/home/anyangyang/study/recovery/Jerasure-1.2A/cauchy.h
+
+/home/anyangyang/study/recovery/Jerasure-1.2A/galois.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+galois.h
+/home/anyangyang/study/recovery/Jerasure-1.2A/galois.h
+x86intrin.h
+-
+assert.h
+-
+
 /home/anyangyang/study/recovery/Jerasure-1.2A/galois.h
 stdio.h
 -
@@ -31,4 +61,20 @@ jerasure.h
 /home/anyangyang/study/recovery/Jerasure-1.2A/jerasure.h
 galois.h
 /home/anyangyang/study/recovery/Jerasure-1.2A/galois.h
+
+/home/anyangyang/study/recovery/Jerasure-1.2A/reed_sol.c
+stdio.h
+-
+stdlib.h
+-
+string.h
+-
+galois.h
+/home/anyangyang/study/recovery/Jerasure-1.2A/galois.h
+jerasure.h
+/home/anyangyang/study/recovery/Jerasure-1.2A/jerasure.h
+reed_sol.h
+/home/anyangyang/study/recovery/Jerasure-1.2A/reed_sol.h
+
+/home/anyangyang/study/recovery/Jerasure-1.2A/reed_sol.h
 

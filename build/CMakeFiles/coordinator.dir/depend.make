@@ -5,10 +5,10 @@ CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../Jerasure-1.2A/c
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../Jerasure-1.2A/reed_sol.h
-CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/algorithm/scoped_timer.hpp
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/algorithm/sggh.h
-CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/algorithm/thread_pool.hpp
-CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/algorithm/utils.h
+CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/common/scoped_timer.hpp
+CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/common/thread_pool.hpp
+CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/common/utils.h
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/coordinator.h
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/datanode.h
 CMakeFiles/coordinator.dir/src/coordinator/coordinator.cpp.o: ../include/ec/erasure_code.h
@@ -736,9 +736,9 @@ CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../Jerasure-1.
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../Jerasure-1.2A/galois.h
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../Jerasure-1.2A/jerasure.h
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../Jerasure-1.2A/reed_sol.h
-CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/algorithm/scoped_timer.hpp
-CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/algorithm/thread_pool.hpp
-CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/algorithm/utils.h
+CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/common/scoped_timer.hpp
+CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/common/thread_pool.hpp
+CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/common/utils.h
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/coordinator.h
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/datanode.h
 CMakeFiles/coordinator.dir/src/coordinator/run_coordinator.cpp.o: ../include/ec/erasure_code.h

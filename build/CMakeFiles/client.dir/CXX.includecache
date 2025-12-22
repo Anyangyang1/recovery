@@ -20,15 +20,23 @@ galois.h
 
 ../Jerasure-1.2A/reed_sol.h
 
-../include/algorithm/scoped_timer.hpp
+../include/client.h
+coordinator.h
+../include/coordinator.h
+metadata.h
+../include/metadata.h
+ylt/coro_rpc/coro_rpc_client.hpp
+-
+
+../include/common/scoped_timer.hpp
 ylt/easylog.hpp
-../include/algorithm/ylt/easylog.hpp
+../include/common/ylt/easylog.hpp
 chrono
 -
 string
 -
 
-../include/algorithm/thread_pool.hpp
+../include/common/thread_pool.hpp
 atomic
 -
 condition_variable
@@ -48,7 +56,7 @@ thread
 vector
 -
 
-../include/algorithm/utils.h
+../include/common/utils.h
 algorithm
 -
 cassert
@@ -69,23 +77,13 @@ vector
 -
 chrono
 -
-../jerasure_wrapper.h
-../include/jerasure_wrapper.h
 ylt/easylog.hpp
-../include/algorithm/ylt/easylog.hpp
+../include/common/ylt/easylog.hpp
 source_location
 -
 scoped_timer.hpp
-../include/algorithm/scoped_timer.hpp
+../include/common/scoped_timer.hpp
 cstdlib
--
-
-../include/client.h
-coordinator.h
-../include/coordinator.h
-metadata.h
-../include/metadata.h
-ylt/coro_rpc/coro_rpc_client.hpp
 -
 
 ../include/coordinator.h
@@ -13052,5 +13050,15 @@ client.h
 unistd.h
 -
 thread
+-
+
+/home/anyangyang/study/recovery/src/client/run_client.cpp
+client.h
+/home/anyangyang/study/recovery/src/client/client.h
+fstream
+-
+sstream
+-
+unistd.h
 -
 
