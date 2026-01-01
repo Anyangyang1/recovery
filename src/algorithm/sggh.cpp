@@ -1,5 +1,6 @@
 #include "sggh.h"
 #include "utils.h"
+#include "erasure_code.h"
 #include <algorithm>
 #include <cassert>
 #include <chrono>
@@ -17,7 +18,7 @@ SimilarityGreedy::generateOptDecodeBitMatrix(int failedBlock, int mode,
     // std::cout << "GenerateAllDecodeMatrix Time: " << time << " ms\n";
 
     // start = std::chrono::high_resolution_clock::now();
-    auto bitMatrix = matrix2Bitmatrix(bigMatrix, W);
+    auto bitMatrix = ErasureCode::matrix2Bitmatrix(bigMatrix, W);
     auto end = std::chrono::high_resolution_clock::now();
     auto duration =
         std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
@@ -31,9 +32,9 @@ SimilarityGreedy::generateOptDecodeBitMatrix(int failedBlock, int mode,
     cout << "bitMatrix row nums: " << bitMatrix.size() << endl;
 #endif
     vector<unsigned int> firstSelectSet;
-    if (mode == -1) {
+    if (mode == 0) {
         firstSelectSet = {0};
-    } else if (mode == 0) {
+    } else if (mode == -1) {
         firstSelectSet = generateAllRangeN(bitMatrix.size());
     } else {
         firstSelectSet = generateUniqueRandom(bitMatrix.size(), mode, seed);
@@ -47,7 +48,6 @@ SimilarityGreedy::generateOptDecodeBitMatrix(int failedBlock, int mode,
             generateOptDecodeBitMatrixWithFirstSelect(bitMatrix, r);
         auto optMatrixRank = computeBinaryMatrixRank(optMatrix, W);
         int ranks = getSum(optMatrixRank);
-        // cout << "need packets: " << ranks << endl;
 #ifdef MY_DEBUG
         cout << "need packets: " << ranks << endl;
 #endif
@@ -68,7 +68,7 @@ SimilarityGreedy::generateOptDecodeBitMatrix(int failedBlock, int mode,
 vector<vector<vector<int>>>
 SimilarityGreedy::generateAllOptDecodeBitMatrix(int failedBlock) {
     auto bigMatrix = generateAllDecodingMatrix(failedBlock);
-    auto bitMatrix = matrix2Bitmatrix(bigMatrix, W);
+    auto bitMatrix = ErasureCode::matrix2Bitmatrix(bigMatrix, W);
     vector<unsigned int> firstSelectSet = generateAllRangeN(bitMatrix.size());
     vector<vector<vector<int>>> bestMatrices;
     int minRank = INT32_MAX;

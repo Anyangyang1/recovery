@@ -24,7 +24,7 @@
 
 #define RS_K 4
 #define RS_M 2
-#define RS_W 4
+#define RS_W 8
 #define KB 1024
 #define MB (1024 * 1024)
 #define BLOCK_SIZE (8 * 1024 * 1024)
@@ -89,13 +89,10 @@ struct RepairPlan {
 };
 
 struct RepairResp {
-    double decoding_time;
-    double cross_cluster_time;
+    double read_data_time;
+    double computing_time;
+    double write_disk_time;
     double repair_time;
-    double meta_time;
-    int cross_cluster_transfers;
-    int io_cnt;
-    bool success;
 };
 
 struct GF2BasisResult {

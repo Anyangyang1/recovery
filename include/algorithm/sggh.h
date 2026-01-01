@@ -1,5 +1,6 @@
 #pragma once
 #include "utils.h"
+#include "erasure_code.h"
 #include <random>
 #include <set>
 #include <vector>
@@ -8,7 +9,7 @@ namespace ECProject {
 class SimilarityGreedy {
   public:
     SimilarityGreedy(int K, int M, int W) : K(K), M(M), W(W), N(K + M) {
-        codingMatrix = ECProject::cauchy_original_coding_matrix_vector(K, M, W);
+        codingMatrix = ErasureCode::cauchy_original_coding_matrix_vector(K, M, W);
     }
     ~SimilarityGreedy() {}
 
@@ -16,7 +17,7 @@ class SimilarityGreedy {
      * @brief 基于相似度，生成最优解码矩阵
      * @param failedBlock: 故障块号（0~K+M-1）
      * @param mode:
-     * 修复模式，mode=-1(默认)只选取第0行作为起始行，mode=0选取所有的行作为起始行,
+     * 修复模式，mode=0只选取第0行作为起始行，mode=-1(默认)选取所有的行作为起始行,
      * mode=num(num > 0)随机选取num行
      * @param seed 随机种子，设置mode>0才有意义
      * @return: 最优解码矩阵，维度 W x ((K+M)*W)
@@ -35,7 +36,7 @@ class SimilarityGreedy {
     /**
      * @brief 基于相似度，生成所有故障模式的最优解码矩阵
      * @param mode:
-     * 修复模式，mode=-1(默认)只选取第0行作为起始行，mode=0选取所有的行作为起始行,
+     * 修复模式，mode=0只选取第0行作为起始行，mode=-1(默认)选取所有的行作为起始行,
      * mode=num(num > 0)随机选取num行
      * @param seed 随机种子，设置mode>0才有意义
      * @return:

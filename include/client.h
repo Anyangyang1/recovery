@@ -28,6 +28,7 @@ class Client {
     void request_repair_node_non_local_decode(unsigned int node_id);
     void repair_node_test();
     void set_stripe(unsigned int stripe_num);
+    void clear_repair_file();
     
 
   private:

@@ -208,3 +208,60 @@ void ErasureCode::encode_partial_blocks_for_failures_v2_(
                            data_ptrs, coding_ptrs, block_size);
     free(decoding_matrix);
 }
+
+vector<vector<int>>
+ErasureCode::cauchy_original_coding_matrix_vector(int K, int M, int W) {
+    int *cauchy_mat = cauchy_original_coding_matrix(K, M, W);
+    // int *cauchy_mat = reed_sol_vandermonde_coding_matrix(K, M, W);
+    
+    vector<vector<int>> codingMatrix(M, vector<int>(K));
+    for (int i = 0; i < M; ++i)
+        for (int j = 0; j < K; ++j)
+            codingMatrix[i][j] = cauchy_mat[i * K + j];
+
+    free(cauchy_mat); // 注意：cauchy_* 返回 malloc 内存
+    return codingMatrix;
+}
+
+/**
+ * @brief 使用 Jerasure 将整数矩阵转为标准位矩阵（W×W per element）
+ *
+ * @param mat: R x C 的整数矩阵
+ * @param W: 字长
+ * @return: 位矩阵，维度 (R*W) x (C*W)
+ */
+vector<vector<int>> ErasureCode::matrix2Bitmatrix(const vector<vector<int>> &mat,
+                                                int W) {
+    size_t R = mat.size();
+    if (R == 0)
+        return {};
+    size_t C = mat[0].size();
+
+    // 转为 flat int array (row-major)
+    vector<int> flat(R * C);
+    for (size_t i = 0; i < R; ++i) {
+        for (size_t j = 0; j < C; ++j) {
+            flat[i * C + j] = mat[i][j];
+        }
+    }
+
+    // 调用 Jerasure
+    int *bitPtr = jerasure_matrix_to_bitmatrix(C, R, W, flat.data());
+    if (!bitPtr) {
+        throw std::runtime_error("jerasure_matrix_to_bitmatrix failed");
+    }
+
+    // 转为 vector<vector<int>>: (R*W) x (C*W)
+    size_t outRows = R * W;
+    size_t outCols = C * W;
+    vector<vector<int>> result(outRows, vector<int>(outCols));
+
+    for (size_t i = 0; i < outRows; ++i) {
+        for (size_t j = 0; j < outCols; ++j) {
+            result[i][j] = bitPtr[i * outCols + j];
+        }
+    }
+
+    free(bitPtr); // Jerasure 使用 malloc
+    return result;
+}

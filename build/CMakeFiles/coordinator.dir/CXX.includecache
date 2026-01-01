@@ -37,6 +37,8 @@ ylt/easylog.hpp
 ../include/common/ylt/easylog.hpp
 chrono
 -
+functional
+-
 string
 -
 
@@ -61,11 +63,19 @@ vector
 -
 
 ../include/common/utils.h
+scoped_timer.hpp
+../include/common/scoped_timer.hpp
+ylt/easylog.hpp
+../include/common/ylt/easylog.hpp
 algorithm
 -
 cassert
 -
+chrono
+-
 cmath
+-
+cstdlib
 -
 cstring
 -
@@ -77,17 +87,11 @@ numeric
 -
 random
 -
-vector
--
-chrono
--
-ylt/easylog.hpp
-../include/common/ylt/easylog.hpp
 source_location
 -
-scoped_timer.hpp
-../include/common/scoped_timer.hpp
-cstdlib
+vector
+-
+fstream
 -
 
 ../include/coordinator.h
@@ -128,6 +132,8 @@ condition_variable
 coroutine
 -
 fstream
+-
+isa-l.h
 -
 map
 -
@@ -13051,8 +13057,12 @@ ylt/struct_pack/md5_constexpr.hpp
 /home/anyangyang/study/recovery/src/coordinator/coordinator.cpp
 coordinator.h
 /home/anyangyang/study/recovery/src/coordinator/coordinator.h
+erasure_code.h
+/home/anyangyang/study/recovery/src/coordinator/erasure_code.h
 metadata.h
 /home/anyangyang/study/recovery/src/coordinator/metadata.h
+scoped_timer.hpp
+/home/anyangyang/study/recovery/src/coordinator/scoped_timer.hpp
 sggh.h
 /home/anyangyang/study/recovery/src/coordinator/sggh.h
 thread_pool.hpp
@@ -13063,6 +13073,8 @@ random
 -
 vector
 -
-erasure_code.h
-/home/anyangyang/study/recovery/src/coordinator/erasure_code.h
+
+/home/anyangyang/study/recovery/src/coordinator/run_coordinator.cpp
+coordinator.h
+/home/anyangyang/study/recovery/src/coordinator/coordinator.h
 

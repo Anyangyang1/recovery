@@ -97,7 +97,7 @@ exec/test_client: CMakeFiles/test_client.dir/build.make
 exec/test_client: libalgorithm.a
 exec/test_client: libec.a
 exec/test_client: libjerasure.a
-exec/test_client: /usr/lib64/libisal.so
+exec/test_client: /usr/lib/libisal.so
 exec/test_client: libcommon.a
 exec/test_client: CMakeFiles/test_client.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable exec/test_client"

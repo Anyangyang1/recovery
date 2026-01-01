@@ -9,6 +9,7 @@
 #include <condition_variable>
 #include <coroutine>
 #include <fstream>
+#include <isa-l.h>
 #include <map>
 #include <mutex>
 #include <queue>
@@ -99,16 +100,20 @@ class Datanode {
                             size_t block_size, int w,
                             std::string repair_file_name);
 
+    RepairResp do_repair_with_opt_isa(std::vector<DecodeRequest> helpers,
+                                size_t block_size, int w,
+                                std::string repair_file_name);
+
     /**
      * @brief 执行修复操作
      * @param stripe_id: 待修复的条带id
      * @param helpers: 参与修复的helpers
      * @param block_size: 数据块的大小
      */
-    void do_repair(std::vector<DecodeRequest> helpers, size_t block_size, int w,
+    RepairResp do_repair(std::vector<DecodeRequest> helpers, size_t block_size, int w,
                    std::string repair_file_name);
 
-    void do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
+    RepairResp do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
                                    size_t block_size, int w,
                                    std::string repair_file_name);
 
@@ -138,6 +143,15 @@ class Datanode {
                                 const std::vector<char *> &original_datas,
                                 char *decode_data, size_t block_size,
                                 size_t packet_size);
+
+    void decode_xor_with_basis(std::vector<GF2BasisResult> &basis_results,
+                               std::vector<char *> &data_buf,
+                               char *decode_data, size_t packet_size);
+
+    void decode_xor_with_matrix_isa(const std::vector<std::vector<int>> &matrix,
+                                    const std::vector<char *> &original_datas,
+                                    char *decode_data, size_t block_size,
+                                    size_t packet_size);
     /**
      * @brief 根据维矩阵，计算基底向量，以及每一行可以由哪些基底向量表示
      * @param matrix: w*w的维矩阵
@@ -155,6 +169,12 @@ class Datanode {
     void decode_xor(const std::vector<char *> &original_datas,
                     size_t block_size, char *decode_data);
 
+    void decode_xor_isa(std::vector<char *> &original_datas, size_t block_size,
+                        char *decode_data);
+
+    void local_decode_isa(const std::vector<std::vector<int>> &matrix,
+                          char *data_buf, char *decode_buf, size_t packet_size);
+
     /**
      * @brief 根据局部解码的数据，计算出解码需要的原始数据
      * @param buf: 局部解码数据
@@ -171,7 +191,8 @@ class Datanode {
 
     void start_data_service();
     void data_worker_loop();
-    std::vector<std::vector<int>> concatMatrices(const std::vector<DecodeRequest>& requests);
+    std::vector<std::vector<int>>
+    concatMatrices(const std::vector<DecodeRequest> &requests);
 
   private:
     std::string ip_;

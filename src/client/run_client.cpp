@@ -53,7 +53,7 @@ int main(int argc, char **argv) {
             unsigned int node_id = stoi(argv[2]);
             client.delete_node(node_id);
         } else if (cmd == "clear") {
-            client.clear();
+            client.clear_repair_file();
         } else if (cmd == "repair_node") {
             unsigned int node_id = stoi(argv[2]);
             client.request_repair_node(node_id);

@@ -1,11 +1,32 @@
 #include "coordinator.h"
+#include "erasure_code.h"
 #include "metadata.h"
+#include "scoped_timer.hpp"
 #include "sggh.h"
 #include "thread_pool.hpp"
 #include <algorithm>
 #include <random>
 #include <vector>
 namespace ECProject {
+
+bool writeRepairRespToCSV(const std::vector<RepairResp> &responses,
+                          const std::string &filename) {
+    std::ofstream file(filename);
+    if (!file.is_open())
+        return false;
+
+    // 写 header（可选但推荐）
+    file << "read_data_time,computing_time,write_disk_time,repair_time\n";
+
+    // 按行写：每行一个 RepairResp，按字段顺序输出
+    for (const auto &r : responses) {
+        file << r.read_data_time << ',' << r.computing_time
+             << ',' // 若原字段名是 conputing_time，替换此处
+             << r.write_disk_time << ',' << r.repair_time << '\n';
+    }
+
+    return file.good();
+}
 
 Coordinator::Coordinator(std::string ip, int port, std::string xml_path,
                          size_t io_thread_num)
@@ -37,6 +58,7 @@ Coordinator::Coordinator(std::string ip, int port, std::string xml_path,
             this);
     rpc_server_->register_handler<
         &Coordinator::request_repair_node_non_local_decode_con>(this);
+    rpc_server_->register_handler<&Coordinator::clear_repair_file>(this);
 
     cur_stripe_id_ = 0;
     try {
@@ -184,19 +206,30 @@ RepairResp Coordinator::request_repair_with_opt(unsigned int stripe_id,
     std::string node_ip_port =
         new_node.node_ip + ":" + std::to_string(new_node.node_port);
     try {
-        // {
-        //     SCOPED_TIMER("repair_opt stripe_" + std::to_string(stripe_id) +
-        //                  "_" + std::to_string(failed_block_id));
-        async_simple::coro::syncAwait(
-            datanodes_[node_ip_port]->call<&Datanode::do_repair_with_opt>(
-                repair_plan.helpers, ec_schema_.block_size, ec_schema_.ec->w,
-                repair_plan.repair_file_name));
-        // }
+        {
+            SCOPED_TIMER("repair_opt stripe_" + std::to_string(stripe_id) +
+                         "_" + std::to_string(failed_block_id));
+            auto result = async_simple::coro::syncAwait(
+                datanodes_[node_ip_port]
+                    ->call<&Datanode::do_repair_with_opt_isa>(
+                        repair_plan.helpers, ec_schema_.block_size,
+                        ec_schema_.ec->w, repair_plan.repair_file_name));
+            if (!result) {
+                // 处理 RPC 错误（强烈建议！）
+                const auto &err = result.error();
+                ELOG(ERROR) << "RPC failed for repair: " << err;
+                // 可选：填充一个失败的 response
+                response.repair_time = -1.0; // 标记失败
+                return response;
+            }
 
-        alter_metadata(stripe_id, failed_block_id, new_node.node_id);
-        // ELOG(WARNING) << "select node_" << new_node.node_id
-        //               << " to repair stripe_" << stripe_id << "_"
-        //               << failed_block_id;
+            response = std::move(result.value());
+        }
+
+        // alter_metadata(stripe_id, failed_block_id, new_node.node_id);
+        ELOG(WARNING) << "select node_" << new_node.node_id
+                      << " to repair stripe_" << stripe_id << "_"
+                      << failed_block_id;
     } catch (const std::exception &e) {
         ELOG(ERROR) << e.what() << '\n';
     }
@@ -211,19 +244,27 @@ RepairResp Coordinator::request_repair(unsigned int stripe_id,
     Node new_node = repair_plan.selected_new_node;
     std::string node_ip_port =
         new_node.node_ip + ":" + std::to_string(new_node.node_port);
+    {
+        SCOPED_TIMER("repair " + repair_plan.repair_file_name);
+        auto result = async_simple::coro::syncAwait(
+            datanodes_[node_ip_port]->call<&Datanode::do_repair>(
+                repair_plan.helpers, ec_schema_.block_size, ec_schema_.ec->w,
+                repair_plan.repair_file_name));
 
-    // {
-    //     SCOPED_TIMER("repair " + repair_plan.repair_file_name);
-    async_simple::coro::syncAwait(
-        datanodes_[node_ip_port]->call<&Datanode::do_repair>(
-            repair_plan.helpers, ec_schema_.block_size, ec_schema_.ec->w,
-            repair_plan.repair_file_name));
-    // }
+        if (!result) {
+            // 处理 RPC 错误（强烈建议！）
+            const auto &err = result.error();
+            ELOG(ERROR) << "RPC failed for repair: " << err;
+            // 可选：填充一个失败的 response
+            response.repair_time = -1.0; // 标记失败
+            return response;
+        }
 
-    alter_metadata(stripe_id, failed_block_id, new_node.node_id);
-    // ELOG(WARNING) << "select node_" << new_node.node_id << " to repair
-    // stripe_"
-    //               << stripe_id << "_" << failed_block_id;
+        response = std::move(result.value());
+    }
+    // alter_metadata(stripe_id, failed_block_id, new_node.node_id);
+    ELOG(WARNING) << "select node_" << new_node.node_id << " to repair stripe_ "
+                  << stripe_id << "_" << failed_block_id;
     return response;
 }
 
@@ -233,66 +274,91 @@ Coordinator::request_repair_no_local_decode(unsigned int stripe_id,
     const Stripe &stripe = stripe_table_[stripe_id];
     RepairResp response;
     RepairPlan repair_plan;
-   
+
     repair_plan = generate_repair_plan(stripe, failed_block_id);
-    
+
     Node new_node = repair_plan.selected_new_node;
     std::string node_ip_port =
         new_node.node_ip + ":" + std::to_string(new_node.node_port);
 
     {
-        // SCOPED_TIMER("repair " + repair_plan.repair_file_name);
-        async_simple::coro::syncAwait(
+        SCOPED_TIMER("repair " + repair_plan.repair_file_name);
+        auto result = async_simple::coro::syncAwait(
             datanodes_[node_ip_port]
                 ->call<&Datanode::do_repair_no_local_decode>(
                     repair_plan.helpers, ec_schema_.block_size,
                     ec_schema_.ec->w, repair_plan.repair_file_name));
+        if (!result) {
+            // 处理 RPC 错误（强烈建议！）
+            const auto &err = result.error();
+            ELOG(ERROR) << "RPC failed for repair: " << err;
+            // 可选：填充一个失败的 response
+            response.repair_time = -1.0; // 标记失败
+            return response;
+        }
+
+        response = std::move(result.value());
     }
 
-    alter_metadata(stripe_id, failed_block_id, new_node.node_id);
-    // ELOG(WARNING) << "select node_" << new_node.node_id << " to repair stripe_"
-    //               << stripe_id << "_" << failed_block_id;
+    // alter_metadata(stripe_id, failed_block_id, new_node.node_id);
+    ELOG(WARNING) << "select node_" << new_node.node_id << " to repai stripe_"
+                  << stripe_id << "_" << failed_block_id;
     return response;
 }
 
 RepairResp Coordinator::request_repair_node(unsigned int node_id) {
     Node node = node_table_[node_id];
-    RepairResp response;
+    std::vector<RepairResp> responses;
     std::vector<std::future<RepairResp>> futures;
-    {
-        SCOPED_TIMER("repair node_" + std::to_string(node_id));
-        for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
-            request_repair(stripe_id, block_id);
-        }
+    std::vector<double> timings;
+
+    for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+        SCOPED_TIMER_WITH_CB("repair stripe_" + std::to_string(stripe_id) +
+                                 "_" + std::to_string(block_id),
+                             [&timings](double ms) { timings.push_back(ms); });
+        responses.emplace_back(request_repair(stripe_id, block_id));
     }
-    return response;
+    // if (writeVectorToCSV(timings, "../data/request_repair_node.csv")) {
+    //     ELOG(WARNING)
+    //         << "write csv successfully, file_name: request_repair_node";
+    // }
+    writeRepairRespToCSV(responses, "../data/request_repair_node_response.csv");
+    return RepairResp{};
 }
 
 RepairResp
 Coordinator::request_repair_node_non_local_decode(unsigned int node_id) {
     Node node = node_table_[node_id];
-    RepairResp response;
+    std::vector<RepairResp> responses;
     std::vector<std::future<RepairResp>> futures;
-    {
-        SCOPED_TIMER("repair node_" + std::to_string(node_id));
-        for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
-            request_repair_no_local_decode(stripe_id, block_id);
-        }
+    std::vector<double> timings;
+
+    for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+        SCOPED_TIMER_WITH_CB("repair stripe_" + std::to_string(stripe_id) +
+                                 "_" + std::to_string(block_id),
+                             [&timings](double ms) { timings.push_back(ms); });
+        responses.emplace_back(request_repair_no_local_decode(stripe_id, block_id));
     }
-    return response;
+    // writeVectorToCSV(timings,
+    //                  "../data/request_repair_node_non_local_decode.csv");
+    writeRepairRespToCSV(responses, "../data/request_repair_node_non_local_response.csv");
+    return RepairResp{};
 }
 
 RepairResp Coordinator::request_repair_node_with_opt(unsigned int node_id) {
     Node node = node_table_[node_id];
-    RepairResp response;
+    std::vector<RepairResp> responses;
     std::vector<std::future<RepairResp>> futures;
-    {
-        SCOPED_TIMER("repair with opt node_" + std::to_string(node_id));
-        for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
-            request_repair_with_opt(stripe_id, block_id);
-        }
+    std::vector<double> timings;
+    for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
+        SCOPED_TIMER_WITH_CB("repair stripe_" + std::to_string(stripe_id) +
+                                 "_" + std::to_string(block_id),
+                             [&timings](double ms) { timings.push_back(ms); });
+        responses.emplace_back(request_repair_with_opt(stripe_id, block_id));
     }
-    return response;
+    // writeVectorToCSV(timings, "../data/request_repair_node_with_opt.csv");
+    writeRepairRespToCSV(responses, "../data/request_repair_node_with_opt_response.csv");
+    return RepairResp{};
 }
 
 RepairResp Coordinator::request_repair_node_con(unsigned int node_id) {
@@ -452,6 +518,14 @@ Coordinator::generate_repair_plan_with_opt(const Stripe &stripe,
     repair_plan.selected_new_node = node_table_[new_node_id];
     repair_plan.repair_file_name = "stripe_" + std::to_string(stripe_id) + "_" +
                                    std::to_string(failed_block_id);
+    /*
+        测试使用，之后删除
+    */
+    repair_file_placement_[new_node_id].push_back({stripe_id, failed_block_id});
+    /*
+        测试使用，之后删除
+    */
+
     return repair_plan;
 }
 
@@ -461,7 +535,7 @@ RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
     const int m = ec_schema_.ec->m;
     const int w = ec_schema_.ec->w;
     std::vector<std::vector<int>> codingMatrix =
-        cauchy_original_coding_matrix_vector(k, m, w);
+        ErasureCode::cauchy_original_coding_matrix_vector(k, m, w);
     // cout << "codingMatrix: " << endl;
     // cout << codingMatrix << endl;
     std::vector<unsigned int> node_ids = stripe.blocks2nodes;
@@ -472,6 +546,14 @@ RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
     repair_plan.selected_new_node = node_table_[new_node_id];
     repair_plan.repair_file_name = "stripe_" + std::to_string(stripe_id) + "_" +
                                    std::to_string(failed_block_id);
+
+    /*
+        测试使用，之后删除
+    */
+    repair_file_placement_[new_node_id].push_back({stripe_id, failed_block_id});
+    /*
+        测试使用，之后删除
+    */
 
     std::vector<std::vector<int>> recoveryCoeffs(1, std::vector<int>(k, 0));
     std::vector<int> recoveryIds(k, 0);
@@ -512,7 +594,7 @@ RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
     // cout << "recoveryIds:" << recoveryIds << endl;
     // cout << "recoveryCoeffs:" << recoveryCoeffs << endl;
     std::vector<std::vector<int>> bitmatrix =
-        matrix2Bitmatrix(recoveryCoeffs, w);
+        ErasureCode::matrix2Bitmatrix(recoveryCoeffs, w);
 
     for (int i = 0; i < k; i++) {
         std::vector<std::vector<int>> local_decode_matrix =
@@ -529,6 +611,7 @@ RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
 
         repair_plan.helpers.push_back(helper);
     }
+
     return repair_plan;
 }
 
@@ -613,6 +696,21 @@ unsigned int Coordinator::select_node(
     std::uniform_int_distribution<int> dis(
         0, static_cast<int>(candidates.size() - 1));
     return static_cast<unsigned int>(candidates[dis(gen)]);
+}
+void Coordinator::clear_repair_file() {
+    for (auto &[node_id, stripes] : repair_file_placement_) {
+        auto node = node_table_[node_id];
+        std::string node_ip_port =
+            node.node_ip + ":" + std::to_string(node.node_port);
+        for (auto &stripe : stripes) {
+            unsigned int stripe_id = stripe.first;
+            unsigned int block_id = stripe.second;
+            async_simple::coro::syncAwait(
+                datanodes_[node_ip_port]->call<&Datanode::handle_delete_stripe>(
+                    stripe_id, block_id));
+        }
+    }
+    repair_file_placement_.clear();
 }
 
 } // namespace ECProject

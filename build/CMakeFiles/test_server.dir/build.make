@@ -82,7 +82,7 @@ exec/test_server: CMakeFiles/test_server.dir/build.make
 exec/test_server: libalgorithm.a
 exec/test_server: libec.a
 exec/test_server: libjerasure.a
-exec/test_server: /usr/lib64/libisal.so
+exec/test_server: /usr/lib/libisal.so
 exec/test_server: libcommon.a
 exec/test_server: CMakeFiles/test_server.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_2) "Linking CXX executable exec/test_server"

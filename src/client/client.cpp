@@ -144,6 +144,13 @@ void Client::request_repair_node_non_local_decode(unsigned int node_id) {
                 std::chrono::seconds{30}, node_id));
 }
 
+void Client::clear_repair_file() {
+    async_simple::coro::syncAwait(
+        rpc_coordinator_
+            ->call_for<&Coordinator::clear_repair_file>(
+                std::chrono::seconds{30}));
+}
+
 void Client::set_stripe(unsigned int stripe_num) {
     const int value_size = RS_K * BLOCK_SIZE;
     for (unsigned int i = 0; i < stripe_num; i++) {

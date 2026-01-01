@@ -53,5 +53,8 @@ class ErasureCode {
         int block_size, const std::vector<int> &data_idxs,
         const std::vector<int> &failure_idxs,
         const std::vector<int> &live_idxs);
+    static vector<vector<int>> cauchy_original_coding_matrix_vector(int K, int M, int W);
+    static vector<vector<int>> matrix2Bitmatrix(const vector<vector<int>> &mat, int W);
+
 };
 } // namespace ECProject

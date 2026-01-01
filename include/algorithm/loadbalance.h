@@ -2,6 +2,7 @@
 #include <vector>
 #include <random>
 #include "utils.h"
+#include "erasure_code.h"
 using namespace std;
 namespace ECProject {
 
@@ -10,7 +11,7 @@ class MultiStripeRecovery {
 public:
     MultiStripeRecovery(int K, int M, int W, int nodeNums, int stripeNums):
         K(K), M(M), W(W), nodeNums(nodeNums), stripeNums(stripeNums) {
-        codingMatrix = cauchy_original_coding_matrix_vector(K, M, W);
+        codingMatrix = ErasureCode::cauchy_original_coding_matrix_vector(K, M, W);
         stripe2NodeAssignment = assignStripesToNodes();
         node2StripeAssignment = getNode2StripeAssignment();
     }

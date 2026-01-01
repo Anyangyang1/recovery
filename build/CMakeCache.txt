@@ -210,7 +210,7 @@ DistributedStorage_SOURCE_DIR:STATIC=/home/anyangyang/study/recovery
 ISAL_INCLUDE_DIR:PATH=/usr/include
 
 //Path to a library.
-ISAL_LIBRARY:FILEPATH=/usr/lib64/libisal.so
+ISAL_LIBRARY:FILEPATH=/usr/lib/libisal.so
 
 
 ########################

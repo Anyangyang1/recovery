@@ -98,7 +98,7 @@ exec/coordinator: libalgorithm.a
 exec/coordinator: libtinyxml2.a
 exec/coordinator: libec.a
 exec/coordinator: libjerasure.a
-exec/coordinator: /usr/lib64/libisal.so
+exec/coordinator: /usr/lib/libisal.so
 exec/coordinator: libcommon.a
 exec/coordinator: CMakeFiles/coordinator.dir/link.txt
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --green --bold --progress-dir=/home/anyangyang/study/recovery/build/CMakeFiles --progress-num=$(CMAKE_PROGRESS_3) "Linking CXX executable exec/coordinator"

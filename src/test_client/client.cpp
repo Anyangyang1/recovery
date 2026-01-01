@@ -9,8 +9,8 @@
 
 // int main(int argc, char* argv[]) {
 //     if (argc != 4) {
-//         std::cerr << "Usage: " << argv[0] << " <server_ip> <port> <data_size_MB>\n";
-//         return 1;
+//         std::cerr << "Usage: " << argv[0] << " <server_ip> <port>
+//         <data_size_MB>\n"; return 1;
 //     }
 
 //     std::string server_ip = argv[1];
@@ -63,8 +63,8 @@
 //     close(sock);
 
 //     if (sent != total_size) {
-//         std::cerr << "? Only sent " << sent << " / " << total_size << " bytes\n";
-//         return 1;
+//         std::cerr << "? Only sent " << sent << " / " << total_size << "
+//         bytes\n"; return 1;
 //     }
 
 //     double gbps = (sent * 8.0) / (sec * 1e9);
@@ -73,9 +73,14 @@
 //     return 0;
 // }
 
-#include "sggh.h"
-void reducePacketsTest();
+#include <iostream>
+#include <vector>
+void isa_jerasure_test(const int K, const int M, const size_t BLOCK_SIZE);
+void generate_opt_decode_matrix_test(const int K, const int M, const int W);
+void xor_gen_test(const int k, const size_t block_size);
+void xor_gen_and_cpy(const int k, const size_t block_size);
 int main() {
-    reducePacketsTest();
+   
+    isa_jerasure_test(10,1,8*1024*1024);
     return 0;
 }

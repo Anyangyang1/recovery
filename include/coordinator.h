@@ -55,6 +55,8 @@ class Coordinator {
     RepairResp request_repair_node_con(unsigned int node_id);
     RepairResp request_repair_node_with_opt_con(unsigned int node_id);
     RepairResp request_repair_node_non_local_decode_con(unsigned int node_id);
+
+    void clear_repair_file();
     
 
   private:
@@ -112,6 +114,9 @@ class Coordinator {
     std::vector<std::vector<std::vector<int>>>
         decode_matrix_with_all_failed_mode_;
     std::unique_ptr<ThreadPool> io_pool_;
+
+    // 临时记录修复文件存放的位置，用于测试使用
+    std::unordered_map<unsigned int, std::vector<pair<unsigned int, unsigned int>>> repair_file_placement_;
 };
 
 } // namespace ECProject

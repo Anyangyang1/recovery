@@ -11,6 +11,7 @@ Datanode::Datanode(std::string ip, int port, size_t io_thread_num)
 
     rpc_server_->register_handler<&Datanode::do_repair>(this);
     rpc_server_->register_handler<&Datanode::do_repair_with_opt>(this);
+    rpc_server_->register_handler<&Datanode::do_repair_with_opt_isa>(this);
     rpc_server_->register_handler<&Datanode::handle_delete_stripe>(this);
     rpc_server_->register_handler<&Datanode::handle_delete_all_file>(this);
     rpc_server_->register_handler<&Datanode::print_download_data_packet_num>(
@@ -259,7 +260,7 @@ void Datanode::data_worker_loop() {
                 }
                 {
                     SCOPED_TIMER("local decode...");
-                    local_decode(matrix, data_buf, decode_buf, packet_size);
+                    local_decode_isa(matrix, data_buf, decode_buf, packet_size);
                 }
                 {
                     SCOPED_TIMER("[NET]send data to node...");
@@ -449,6 +450,46 @@ void Datanode::local_decode(const std::vector<std::vector<int>> &matrix,
     }
 }
 
+void Datanode::local_decode_isa(const std::vector<std::vector<int>> &matrix,
+                                char *data_buf, char *decode_buf,
+                                size_t packet_size) {
+    // ELOG(ERROR) << matrix_to_01_string(matrix);
+    if (matrix.empty() || matrix[0].empty() || packet_size == 0)
+        return;
+    size_t need_packet = matrix.size();
+    size_t w = matrix[0].size();
+    if (w == 0 || packet_size == 0)
+        return;
+
+    char *out = decode_buf;
+    for (size_t i = 0; i < need_packet; ++i) {
+        std::vector<void *> srcs;
+        for (size_t j = 0; j < w; ++j) {
+            if (matrix[i][j]) {
+                void *src = (data_buf + j * packet_size);
+                srcs.push_back(src);
+            }
+        }
+        void *current_dest = out;
+        srcs.push_back(current_dest);
+        if (srcs.size() == 2) {
+            {
+                SCOPED_TIMER("memcpy: " + std::to_string(packet_size));
+                memcpy(current_dest, srcs[0], packet_size);
+            }
+        } else {
+            {
+                SCOPED_TIMER("xor_gen: " + std::to_string(srcs.size()) +
+                             ", size: " + std::to_string(packet_size));
+                xor_gen(static_cast<int>(srcs.size()),
+                        static_cast<int>(packet_size), srcs.data());
+            }
+        }
+
+        out += packet_size; // 移到下一块输出位置
+    }
+}
+
 void Datanode::print_download_data_packet_num() {
     ELOG(WARNING) << "download data packets: " << download_data_packet_num_;
     ELOG(WARNING) << "upload data packets: " << upload_data_packet_num_;
@@ -512,10 +553,10 @@ bool Datanode::read_from_datanode(const string &ip, int port, const string &key,
         asio::write(socket, asio::buffer(key));
         uint32_t sz = htonl(value_size);
         asio::write(socket, asio::buffer(&sz, 4));
-        
+
         // 读结果
         asio::read(socket, asio::buffer(value, value_size));
-        
+
         socket.close();
         return true;
     } catch (...) {
@@ -665,11 +706,129 @@ void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
     }
 }
 
-void Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
-                                         size_t block_size, int w,
-                                         std::string repair_file_name) {
+RepairResp Datanode::do_repair_with_opt_isa(std::vector<DecodeRequest> helpers,
+                                            size_t block_size, int w,
+                                            std::string repair_file_name) {
+    RepairResp response;
     {
-        SCOPED_TIMER("repair " + repair_file_name);
+        SCOPED_TIMER_WITH_CB(
+            "repair " + repair_file_name,
+            [&response](double ms) { response.repair_time = ms; });
+        assert(block_size % w == 0);
+        size_t packet_size = block_size / w;
+        // === 日志 ===
+        std::string helpers_info;
+        for (const auto &h : helpers)
+            helpers_info += h.ip + "/" + h.file_name + ", ";
+        ELOG(WARNING) << "do_repair_with_opt: " << repair_file_name
+                      << " read from [" << helpers_info << "]";
+
+        std::vector<GF2BasisResult> basis_results;
+        basis_results.reserve(helpers.size());
+        std::vector<char *> data_buf;
+        data_buf.reserve(helpers.size());
+        for (size_t i = 0; i < helpers.size(); i++) {
+            const auto &helper = helpers[i];
+            GF2BasisResult basis_result =
+                compute_basis_gf2_indices(helper.matrix);
+            size_t buf_size = packet_size * basis_result.basis.size();
+            char *buf = nullptr;
+            int ret = posix_memalign(reinterpret_cast<void **>(&buf),
+                                     SIMD_ALIGNMENT, buf_size);
+            if (ret != 0) {
+                ELOG(ERROR) << "posix_memalign failed";
+                throw std::runtime_error("posix_memalign failed");
+            }
+            basis_results.push_back(basis_result);
+            data_buf.push_back(buf);
+        }
+        {
+            SCOPED_TIMER_WITH_CB(
+                "read all data from survivors for repair " + repair_file_name,
+                [&response](double ms) { response.read_data_time = ms; });
+            std::vector<std::future<void>> futures;
+            futures.reserve(helpers.size());
+            for (size_t i = 0; i < helpers.size(); ++i) {
+                const auto &helper = helpers[i];
+                futures.push_back(io_pool_->submit(
+                    [this, i, helper, basis_results, data_buf, packet_size]() {
+                        size_t buf_size =
+                            packet_size * basis_results[i].basis.size();
+
+                        // Step 2: 读 basis 数据
+                        {
+                            SCOPED_TIMER("read basis " + helper.file_name +
+                                         " (" + std::to_string(buf_size) +
+                                         "B)");
+                            bool ok = read_from_datanode_with_local_decode(
+                                helper.ip, helper.port, helper.file_name,
+                                data_buf[i], buf_size, basis_results[i].basis);
+                            if (!ok)
+                                throw std::runtime_error(
+                                    "Read basis failed from " + helper.ip);
+                        }
+                    }));
+            }
+
+            // 聚合异常
+            std::exception_ptr first_exception = nullptr;
+            for (auto &fut : futures) {
+                try {
+                    fut.get();
+                } catch (...) {
+                    if (!first_exception)
+                        first_exception = std::current_exception();
+                }
+            }
+            if (first_exception)
+                std::rethrow_exception(first_exception);
+        }
+
+        // === XOR 修复 ===
+        char *decode_data;
+        int ret = posix_memalign(reinterpret_cast<void **>(&decode_data),
+                                 SIMD_ALIGNMENT, block_size);
+        if (ret != 0) {
+            ELOG(ERROR) << "posix_memalign failed";
+            throw std::runtime_error("posix_memalign failed");
+        }
+        {
+            SCOPED_TIMER_WITH_CB(
+                "recompute XOR for " + repair_file_name,
+                [&response](double ms) { response.computing_time = ms; });
+            decode_xor_with_basis(basis_results, data_buf, decode_data,
+                                  packet_size);
+        }
+
+        // === 存盘 ===
+        {
+            SCOPED_TIMER_WITH_CB(
+                "store repaired data: " + repair_file_name,
+                [&response](double ms) { response.write_disk_time = ms; });
+            if (!store_data(repair_file_name, decode_data, block_size)) {
+                throw std::runtime_error("Failed to store repaired file: " +
+                                         repair_file_name);
+            }
+        }
+        free(decode_data);
+        for (char *data_ptr : data_buf) {
+            free(data_ptr);
+        }
+
+        ELOG(WARNING) << "Optimized repair completed: " << repair_file_name;
+    }
+    return response;
+}
+
+RepairResp
+Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
+                                    size_t block_size, int w,
+                                    std::string repair_file_name) {
+    RepairResp response;
+    {
+        SCOPED_TIMER_WITH_CB(
+            "repair " + repair_file_name,
+            [&response](double ms) { response.repair_time = ms; });
         assert(block_size % w == 0);
 
         // === 日志 ===
@@ -688,13 +847,14 @@ void Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
                                SIMD_ALIGNMENT, block_size);
             if (ret != 0) {
                 ELOG(ERROR) << "posix_memalign failed";
-                return;
+                throw std::runtime_error("posix_memalign failed");
             }
         }
 
         {
-            SCOPED_TIMER("read all data from survivors for repair " +
-                         repair_file_name);
+            SCOPED_TIMER_WITH_CB(
+                "read all data from survivors for repair " + repair_file_name,
+                [&response](double ms) { response.read_data_time = ms; });
             std::vector<std::future<void>> futures;
             futures.reserve(helpers.size());
 
@@ -733,23 +893,27 @@ void Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
 
         // === XOR 修复 ===
         std::vector<std::vector<int>> bitmatrix = concatMatrices(helpers);
-
         char *decode_data;
         int ret = posix_memalign(reinterpret_cast<void **>(&decode_data),
                                  SIMD_ALIGNMENT, block_size);
         if (ret != 0) {
             ELOG(ERROR) << "posix_memalign failed";
-            return;
+            throw std::runtime_error("posix_memalign failed");
         }
         {
-            SCOPED_TIMER("compute XOR for " + repair_file_name);
-            decode_xor_with_matrix(bitmatrix, original_datas, decode_data,
-                                   block_size, block_size / bitmatrix.size());
+            SCOPED_TIMER_WITH_CB(
+                "compute XOR for " + repair_file_name,
+                [&response](double ms) { response.computing_time = ms; });
+            decode_xor_with_matrix_isa(bitmatrix, original_datas, decode_data,
+                                       block_size,
+                                       block_size / bitmatrix.size());
         }
 
         // === 存盘 ===
         {
-            SCOPED_TIMER("store repaired data: " + repair_file_name);
+            SCOPED_TIMER_WITH_CB(
+                "store repaired data: " + repair_file_name,
+                [&response](double ms) { response.write_disk_time = ms; });
             if (!store_data(repair_file_name, decode_data, block_size)) {
                 throw std::runtime_error("Failed to store repaired file: " +
                                          repair_file_name);
@@ -761,12 +925,17 @@ void Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
         }
         ELOG(WARNING) << "Repair completed: " << repair_file_name;
     }
+    return response;
 }
 
-void Datanode::do_repair(std::vector<DecodeRequest> helpers, size_t block_size,
-                         int w, std::string repair_file_name) {
+RepairResp Datanode::do_repair(std::vector<DecodeRequest> helpers,
+                               size_t block_size, int w,
+                               std::string repair_file_name) {
+    RepairResp response;
     {
-        SCOPED_TIMER("repair " + repair_file_name);
+        SCOPED_TIMER_WITH_CB(
+            "repair " + repair_file_name,
+            [&response](double ms) { response.repair_time = ms; });
         assert(block_size % w == 0);
 
         // === 日志 ===
@@ -785,13 +954,14 @@ void Datanode::do_repair(std::vector<DecodeRequest> helpers, size_t block_size,
                                SIMD_ALIGNMENT, block_size);
             if (ret != 0) {
                 ELOG(ERROR) << "posix_memalign failed";
-                return;
+                throw std::runtime_error("posix_memalign failed");
             }
         }
 
         {
-            SCOPED_TIMER("read all data from survivors for repair " +
-                         repair_file_name);
+            SCOPED_TIMER_WITH_CB(
+                "read all data from survivors for repair " + repair_file_name,
+                [&response](double ms) { response.read_data_time = ms; });
             std::vector<std::future<void>> futures;
             futures.reserve(helpers.size());
 
@@ -834,16 +1004,20 @@ void Datanode::do_repair(std::vector<DecodeRequest> helpers, size_t block_size,
                                  SIMD_ALIGNMENT, block_size);
         if (ret != 0) {
             ELOG(ERROR) << "posix_memalign failed";
-            return;
+            throw std::runtime_error("posix_memalign failed");
         }
         {
-            SCOPED_TIMER("recompute XOR for " + repair_file_name);
-            decode_xor(original_datas, block_size, decode_data);
+            SCOPED_TIMER_WITH_CB(
+                "recompute XOR for " + repair_file_name,
+                [&response](double ms) { response.computing_time = ms; });
+            decode_xor_isa(original_datas, block_size, decode_data);
         }
 
         // === 存盘 ===
         {
-            SCOPED_TIMER("store repaired data: " + repair_file_name);
+            SCOPED_TIMER_WITH_CB(
+                "store repaired data: " + repair_file_name,
+                [&response](double ms) { response.write_disk_time = ms; });
             if (!store_data(repair_file_name, decode_data, block_size)) {
                 throw std::runtime_error("Failed to store repaired file: " +
                                          repair_file_name);
@@ -855,6 +1029,7 @@ void Datanode::do_repair(std::vector<DecodeRequest> helpers, size_t block_size,
         }
         ELOG(WARNING) << "Repair completed: " << repair_file_name;
     }
+    return response;
 }
 
 void Datanode::decode_xor(const std::vector<char *> &original_datas,
@@ -865,6 +1040,43 @@ void Datanode::decode_xor(const std::vector<char *> &original_datas,
     for (char *block : original_datas) {
         galois_region_xor(decode_data, block, decode_data, block_size);
     }
+}
+
+void Datanode::decode_xor_with_basis(std::vector<GF2BasisResult> &basis_results,
+                                     std::vector<char *> &data_buf,
+                                     char *decode_data, size_t packet_size) {
+    size_t w = basis_results[0].reps.size();
+    char *out = decode_data;
+    for (size_t i = 0; i < w; i++) {
+        std::vector<void *> srcs;
+        void *dest = out;
+        for (size_t j = 0; j < basis_results.size(); j++) {
+            auto indices = basis_results[j].reps[i];
+            for (size_t k = 0; k < indices.size(); k++) {
+                void *src = data_buf[j] + indices[k] * packet_size;
+                srcs.push_back(src);
+            }
+        }
+        srcs.push_back(dest);
+        // {
+        //     SCOPED_TIMER("xor_gen: " + std::to_string(srcs.size()) +
+        //                  "size: " + std::to_string(packet_size));
+        xor_gen(static_cast<int>(srcs.size()), static_cast<int>(packet_size),
+                srcs.data());
+        // }
+        out += packet_size;
+    }
+}
+
+void Datanode::decode_xor_isa(std::vector<char *> &original_datas,
+                              size_t block_size, char *decode_data) {
+    if (original_datas.empty())
+        return;
+    void *dest_ptr = decode_data;
+    std::vector<void *> srcs(original_datas.begin(), original_datas.end());
+    srcs.push_back(dest_ptr);
+    // ELOG(ERROR) << "xor_gen: " << srcs.size() << " size: " << block_size;
+    xor_gen(srcs.size(), block_size, srcs.data());
 }
 
 void Datanode::compute_original_data(char *buf,
@@ -917,7 +1129,6 @@ Datanode::compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
     std::vector<int> pivot_row_for_col(
         w, -1); // col c → 哪一行是其主元行（在 R 中的行号）
     int rank = 0;
-
     for (int c = 0; c < w && rank < w; ++c) {
         // 找主元行
         int pivot = -1;
@@ -1121,16 +1332,59 @@ void Datanode::decode_xor_with_matrix(
         }
     }
 }
+void Datanode::decode_xor_with_matrix_isa(
+    const std::vector<std::vector<int>> &matrix,
+    const std::vector<char *> &original_datas, char *decode_data,
+    size_t block_size, size_t packet_size) {
+    // ELOG(ERROR) << matrix_to_01_string(matrix);
+    size_t k = original_datas.size();
+    size_t w = matrix.size(); // matrix is w x (w * k)
+    if (w == 0 || k == 0)
+        return;
+    if (block_size != w * packet_size) {
+        return;
+    }
+    // 对每一输出 packet j（j in [0, w)）
+    for (size_t j = 0; j < w; ++j) {
+        void *out_ptr = decode_data + j * packet_size;
+        std::vector<void *> srcs;
+        for (size_t i = 0; i < k; ++i) {
+            char *src_block = original_datas[i];
+            for (size_t y = 0; y < w; ++y) {
+                if (matrix[j][i * w + y]) { // coefficient == 1
+                    void *in_ptr = src_block + y * packet_size;
+                    srcs.push_back(in_ptr);
+                }
+            }
+        }
+        srcs.push_back(out_ptr);
+        if (srcs.size() == 2) {
+            {
+                SCOPED_TIMER("memcpy: " + std::to_string(packet_size));
+                memcpy(out_ptr, srcs[0], packet_size);
+            }
+        } else {
+            // {
+            //     SCOPED_TIMER("xor_gen: " + std::to_string(srcs.size()) +
+            //                  "size: " + std::to_string(packet_size));
+            xor_gen(static_cast<int>(srcs.size()),
+                    static_cast<int>(packet_size), srcs.data());
+            // }
+        }
+    }
+}
 
-std::vector<std::vector<int>> Datanode::concatMatrices(const std::vector<DecodeRequest>& requests) {
-    if (requests.empty()) return {};
+std::vector<std::vector<int>>
+Datanode::concatMatrices(const std::vector<DecodeRequest> &requests) {
+    if (requests.empty())
+        return {};
 
     size_t w = requests[0].matrix.size();
     size_t k = requests.size();
     std::vector<std::vector<int>> result(w, std::vector<int>(w * k));
 
     for (size_t idx = 0; idx < k; ++idx) {
-        const auto& mat = requests[idx].matrix;
+        const auto &mat = requests[idx].matrix;
         for (size_t i = 0; i < w; ++i) {
             std::copy(mat[i].begin(), mat[i].end(),
                       result[i].begin() + idx * w);

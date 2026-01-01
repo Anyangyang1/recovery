@@ -25,15 +25,25 @@ ylt/easylog.hpp
 ../include/common/ylt/easylog.hpp
 chrono
 -
+functional
+-
 string
 -
 
 ../include/common/utils.h
+scoped_timer.hpp
+../include/common/scoped_timer.hpp
+ylt/easylog.hpp
+../include/common/ylt/easylog.hpp
 algorithm
 -
 cassert
 -
+chrono
+-
 cmath
+-
+cstdlib
 -
 cstring
 -
@@ -45,17 +55,11 @@ numeric
 -
 random
 -
-vector
--
-chrono
--
-ylt/easylog.hpp
-../include/common/ylt/easylog.hpp
 source_location
 -
-scoped_timer.hpp
-../include/common/scoped_timer.hpp
-cstdlib
+vector
+-
+fstream
 -
 
 ../include/ec/erasure_code.h
@@ -63,6 +67,18 @@ cstdlib
 ../include/jerasure_wrapper.h
 utils.h
 ../include/ec/utils.h
+
+../include/ec/rs.h
+../jerasure_wrapper.h
+../include/jerasure_wrapper.h
+erasure_code.h
+../include/ec/erasure_code.h
+
+../include/ec/rs_xor.h
+../jerasure_wrapper.h
+../include/jerasure_wrapper.h
+erasure_code.h
+../include/ec/erasure_code.h
 
 ../include/jerasure_wrapper.h
 ../Jerasure-1.2A/cauchy.h
@@ -287,4 +303,12 @@ erasure_code.h
 /home/anyangyang/study/recovery/src/ec/erasure_code.h
 cstring
 -
+
+/home/anyangyang/study/recovery/src/ec/rs.cpp
+rs.h
+/home/anyangyang/study/recovery/src/ec/rs.h
+
+/home/anyangyang/study/recovery/src/ec/rs_xor.cpp
+rs_xor.h
+/home/anyangyang/study/recovery/src/ec/rs_xor.h
 

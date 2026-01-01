@@ -1,1 +1,1 @@
-/opt/rh/devtoolset-11/root/usr/bin/c++     CMakeFiles/client.dir/src/client/client.cpp.o CMakeFiles/client.dir/src/client/run_client.cpp.o  -o exec/client libalgorithm.a libec.a libjerasure.a /usr/lib64/libisal.so libcommon.a -pthread -lm 
+/opt/rh/devtoolset-11/root/usr/bin/c++  -g -O0   -Wl,--no-strip CMakeFiles/client.dir/src/client/client.cpp.o CMakeFiles/client.dir/src/client/run_client.cpp.o  -o exec/client libalgorithm.a libec.a libjerasure.a /usr/lib/libisal.so libcommon.a -pthread -lm 
