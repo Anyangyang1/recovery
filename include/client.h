@@ -12,6 +12,7 @@ class Client {
     ~Client();
 
     void set(std::string value);
+    // void time_test();
     void request_repair(unsigned int stripe_id, unsigned int failed_block_id);
     void request_repair_with_opt(unsigned int stripe_id, unsigned int failed_block_id);
     void request_repair_no_local_decode(unsigned int stripe_id, unsigned int failed_block_id);
@@ -39,5 +40,6 @@ class Client {
     int coordinator_port_;
     asio::io_context io_context_{};
     asio::ip::tcp::acceptor acceptor_;
+    std::mutex mutex_;
 };
 }; // namespace ECProject

@@ -27,9 +27,9 @@
 #define RS_W 8
 #define KB 1024
 #define MB (1024 * 1024)
-#define BLOCK_SIZE (8 * 1024 * 1024)
+#define BLOCK_SIZE (8 * MB)
 #define PACKET_SIZE BLOCK_SIZE / RS_W
-#define RPC_NUM 10
+#define RPC_NUM 30
 
 #define SIMD_ALIGNMENT 32 // 64-byte ∂‘∆Î£¨ºÊ»› AVX2/AVX-512/cache line
 
@@ -89,6 +89,10 @@ struct RepairPlan {
 };
 
 struct RepairResp {
+    double read_from_disk_time;
+    double local_decode_time;
+    double send_to_net_time;
+    
     double read_data_time;
     double computing_time;
     double write_disk_time;

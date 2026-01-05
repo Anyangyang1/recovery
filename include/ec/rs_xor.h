@@ -15,6 +15,8 @@ class XORCode : public ErasureCode {
                 int *erasures, int failed_num) override;
     void make_encoding_matrix(int *final_matrix) override;
 
+    void bitmatrix_encode_with_isa(char **data_ptrs, char **coding_ptrs, int* bitmatrix, int block_size);
+
     void matrix_to_bitmatrix(int *matrix, int *bitmatrix);
     std::unique_ptr<ErasureCode> clone() const override;
 };

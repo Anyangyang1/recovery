@@ -55,21 +55,27 @@ int main(int argc, char **argv) {
         } else if (cmd == "clear") {
             client.clear_repair_file();
         } else if (cmd == "repair_node") {
+            client.clear_repair_file();
             unsigned int node_id = stoi(argv[2]);
             client.request_repair_node(node_id);
         } else if (cmd == "repair_node_no_local") {
+            client.clear_repair_file();
             unsigned int node_id = stoi(argv[2]);
             client.request_repair_node_non_local_decode(node_id);
         } else if (cmd == "repair_node_opt") {
+            client.clear_repair_file();
             unsigned int node_id = stoi(argv[2]);
             client.request_repair_node_with_opt(node_id);
         } else if (cmd == "repair_node_con") {
+            client.clear_repair_file();
             unsigned int node_id = stoi(argv[2]);
             client.request_repair_node_con(node_id);
         } else if (cmd == "repair_node_opt_con") {
+            client.clear_repair_file();
             unsigned int node_id = stoi(argv[2]);
             client.request_repair_node_with_opt_con(node_id);
         } else if (cmd == "repair_node_no_local_con") {
+            client.clear_repair_file();
             unsigned int node_id = stoi(argv[2]);
             client.request_repair_node_non_local_decode_con(node_id);
         } else if (cmd == "repair_node_test") {

@@ -99,6 +99,8 @@ datanode.h
 ../include/datanode.h
 metadata.h
 ../include/metadata.h
+thread_pool.hpp
+../include/thread_pool.hpp
 tinyxml2.h
 ../include/tinyxml2.h
 condition_variable
@@ -111,8 +113,6 @@ ylt/coro_rpc/coro_rpc_client.hpp
 -
 ylt/coro_rpc/coro_rpc_server.hpp
 -
-thread_pool.hpp
-../include/thread_pool.hpp
 
 ../include/datanode.h
 coordinator.h

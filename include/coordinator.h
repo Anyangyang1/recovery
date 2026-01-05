@@ -2,13 +2,13 @@
 
 #include "datanode.h"
 #include "metadata.h"
+#include "thread_pool.hpp"
 #include "tinyxml2.h"
 #include <condition_variable>
 #include <mutex>
 #include <string>
 #include <ylt/coro_rpc/coro_rpc_client.hpp>
 #include <ylt/coro_rpc/coro_rpc_server.hpp>
-#include "thread_pool.hpp"
 
 namespace ECProject {
 
@@ -20,6 +20,7 @@ class Coordinator {
     void run();
     UploadInfo request_set(size_t value_size);
     void request_get(unsigned int stripe_id);
+    void time_test();
 
     /**
      * @brief 发生单块故障时，请求修复
@@ -38,9 +39,9 @@ class Coordinator {
      */
     RepairResp request_repair(unsigned int stripe_id,
                               unsigned int failed_block_id);
-    
+
     RepairResp request_repair_no_local_decode(unsigned int stripe_id,
-                              unsigned int failed_block_id);
+                                              unsigned int failed_block_id);
 
     StripeInfo get_stripe_info(unsigned int stripe_id);
     void print_stripe_info();
@@ -57,7 +58,6 @@ class Coordinator {
     RepairResp request_repair_node_non_local_decode_con(unsigned int node_id);
 
     void clear_repair_file();
-    
 
   private:
     void init_cluster_info();
@@ -87,8 +87,9 @@ class Coordinator {
     RepairPlan generate_repair_plan(const Stripe &stripe,
                                     unsigned int failed_block_id);
 
-    unsigned int select_node(const std::vector<unsigned int> &block2node,
-                             std::optional<unsigned int> seed);
+    unsigned int
+    select_node(const std::vector<unsigned int> &block2node,
+                std::optional<unsigned int> seed = std::random_device{}());
 
     void alter_metadata(unsigned int stripe_id, unsigned int failed_block_id,
                         unsigned int new_node_id);
@@ -116,7 +117,16 @@ class Coordinator {
     std::unique_ptr<ThreadPool> io_pool_;
 
     // 临时记录修复文件存放的位置，用于测试使用
-    std::unordered_map<unsigned int, std::vector<pair<unsigned int, unsigned int>>> repair_file_placement_;
+    std::unordered_map<unsigned int,
+                       std::vector<pair<unsigned int, unsigned int>>>
+        repair_file_placement_;
+
+    // // 测试使用，之后删除
+    // void set(std::string &value);
+    // void set_stripe(unsigned int stripe_num, const int value_size);
+
+    // asio::io_context io_context_{};
+    // asio::ip::tcp::acceptor acceptor_;
 };
 
 } // namespace ECProject

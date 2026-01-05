@@ -190,3 +190,9 @@ sudo systemctl enable --now wondershaper.service
 # 修改.conf,重启生效
 sudo systemctl restart wondershaper.service
 ```
++ 新版本使用
+```bash
+sudo wondershaper start -a ens9 -d 10000 -u 5000   # 限速 10Mbps down / 5Mbps up
+sudo wondershaper stop -a ens9                      # 清除限速
+sudo wondershaper status -a ens9                    # 查看状态
+```

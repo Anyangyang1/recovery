@@ -154,14 +154,26 @@ function(add_storage_executable TARGET_NAME)
         -O2 -Wall -Wextra
         $<$<COMPILE_LANGUAGE:CXX>:-pthread -fcoroutines>
     )
+
 endfunction()
 
 # —— Client ——
 add_storage_executable(client)
+target_link_libraries(client PRIVATE -static-libstdc++ -static-libgcc)
 
 # —— Coordinator（额外依赖 tinyxml2）——
 add_storage_executable(coordinator)
 target_link_libraries(coordinator PRIVATE tinyxml2)
+# === 仅对 coordinator 在 Debug 模式启用 ASan ===
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    target_compile_options(coordinator PRIVATE
+        -fsanitize=address
+        -fno-omit-frame-pointer
+    )
+    target_link_options(coordinator PRIVATE
+        -fsanitize=address
+    )
+endif()
 
 # —— Datanode（保持原有静态链接）——
 add_storage_executable(datanode)

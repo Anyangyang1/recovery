@@ -81,6 +81,6 @@ void xor_gen_test(const int k, const size_t block_size);
 void xor_gen_and_cpy(const int k, const size_t block_size);
 int main() {
    
-    isa_jerasure_test(10,1,8*1024*1024);
+    generate_opt_decode_matrix_test(6,3,8);
     return 0;
 }

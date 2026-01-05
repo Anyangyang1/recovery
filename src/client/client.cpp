@@ -1,6 +1,6 @@
 #include "client.h"
-#include <unistd.h>
 #include <thread>
+#include <unistd.h>
 namespace ECProject {
 Client::Client(std::string ip, int port, std::string coordinator_ip,
                int coordinator_port)
@@ -71,10 +71,11 @@ void Client::request_repair_with_opt(unsigned int stripe_id,
             std::chrono::seconds{3}, stripe_id, failed_block_id));
 }
 void Client::request_repair_no_local_decode(unsigned int stripe_id,
-                                     unsigned int failed_block_id) {
+                                            unsigned int failed_block_id) {
     async_simple::coro::syncAwait(
-        rpc_coordinator_->call_for<&Coordinator::request_repair_no_local_decode>(
-            std::chrono::seconds{3}, stripe_id, failed_block_id));
+        rpc_coordinator_
+            ->call_for<&Coordinator::request_repair_no_local_decode>(
+                std::chrono::seconds{3}, stripe_id, failed_block_id));
 }
 
 void Client::print_node_info() {
@@ -133,8 +134,9 @@ void Client::request_repair_node_with_opt_con(unsigned int node_id) {
 
 void Client::request_repair_node_non_local_decode_con(unsigned int node_id) {
     async_simple::coro::syncAwait(
-        rpc_coordinator_->call_for<&Coordinator::request_repair_node_non_local_decode_con>(
-            std::chrono::seconds{30}, node_id));
+        rpc_coordinator_
+            ->call_for<&Coordinator::request_repair_node_non_local_decode_con>(
+                std::chrono::seconds{30}, node_id));
 }
 
 void Client::request_repair_node_non_local_decode(unsigned int node_id) {
@@ -146,67 +148,89 @@ void Client::request_repair_node_non_local_decode(unsigned int node_id) {
 
 void Client::clear_repair_file() {
     async_simple::coro::syncAwait(
-        rpc_coordinator_
-            ->call_for<&Coordinator::clear_repair_file>(
-                std::chrono::seconds{30}));
+        rpc_coordinator_->call_for<&Coordinator::clear_repair_file>(
+            std::chrono::seconds{30}));
 }
 
 void Client::set_stripe(unsigned int stripe_num) {
     const int value_size = RS_K * BLOCK_SIZE;
+    std::string value = generate_random_string(value_size);
     for (unsigned int i = 0; i < stripe_num; i++) {
-        std::string value = generate_random_string(value_size);
         set(value);
     }
 }
 
+// void Client::time_test() {
+//     async_simple::coro::syncAwait(
+//         rpc_coordinator_->call_for<&Coordinator::time_test>(
+//             std::chrono::seconds{30}));
+// }
+
 void Client::repair_node_test() {
     vector<unsigned int> node_ids{1};
     vector<unsigned int> stripe_nums{200};
-    for(auto stripe_num: stripe_nums) {
+    for (auto stripe_num : stripe_nums) {
         // ELOG(ERROR) << "stripe_num: " << stripe_num;
-        for(auto node_id: node_ids) {
+        for (auto node_id : node_ids) {
             clear();
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 10));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 10));
             set_stripe(stripe_num);
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 200));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 200));
             request_repair_node_non_local_decode_con(node_id);
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 50));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 50));
 
             clear();
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 10));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 10));
             set_stripe(stripe_num);
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 200));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 200));
             request_repair_node_con(node_id);
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 50));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 50));
 
             clear();
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 10));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 10));
             set_stripe(stripe_num);
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 200));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 200));
             request_repair_node_with_opt_con(node_id);
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 50));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 50));
 
             clear();
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 10));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 10));
             set_stripe(stripe_num);
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 200));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 200));
             request_repair_node_non_local_decode(node_id);
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 50));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 50));
 
             clear();
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 10));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 10));
             set_stripe(stripe_num);
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 200));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 200));
             request_repair_node(node_id);
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 50));
-            
-            clear();
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 10));
-            set_stripe(stripe_num);
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 200));
-            request_repair_node_with_opt(node_id);
-            std::this_thread::sleep_for(std::chrono::milliseconds(stripe_num * 50));
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 50));
 
+            clear();
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 10));
+            set_stripe(stripe_num);
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 200));
+            request_repair_node_with_opt(node_id);
+            std::this_thread::sleep_for(
+                std::chrono::milliseconds(stripe_num * 50));
         }
     }
 }

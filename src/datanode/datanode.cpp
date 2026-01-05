@@ -85,6 +85,7 @@ void Datanode::start_data_service() {
                     uint32_t value_size;
                     asio::read(*socket, asio::buffer(&value_size, 4));
                     task.value_size = ntohl(value_size);
+                    ELOG(ERROR) << "recevie key: " << task.key;
 
                     if (op == DataOp::GET_WITH_DECODE) {
                         uint32_t rows, cols;
@@ -104,11 +105,13 @@ void Datanode::start_data_service() {
                     socket->close();
                     continue;
                 }
-
+                std::string keykey = task.key;
                 {
                     std::lock_guard lock(data_mutex_);
                     data_queue_.emplace(std::move(task));
                 }
+                ELOG(ERROR) << "put task: " << task.op << " " << keykey
+                            << " task_size: " << data_queue_.size();
                 data_cv_.notify_one();
 
             } catch (const std::exception &e) {
@@ -126,9 +129,11 @@ void Datanode::data_worker_loop() {
     while (running_) {
         DataTask task;
         {
+            ELOG(ERROR) << "wait......";
             std::unique_lock lock(data_mutex_);
             data_cv_.wait(lock,
                           [this] { return !data_queue_.empty() || !running_; });
+            ELOG(ERROR) << "wait......successfully";
             if (!running_ && data_queue_.empty())
                 break;
             if (!data_queue_.empty()) {
@@ -136,150 +141,212 @@ void Datanode::data_worker_loop() {
                 data_queue_.pop();
             }
         }
-
         if (!task.socket)
             continue;
-        auto &socket = *task.socket;
+        io_pool_->submit([this, task = std::move(task)]() mutable {
+            ELOG(ERROR) << "execute task: " << task.op << " " << task.key
+                        << " task_size: " << data_queue_.size();
 
-        try {
-            switch (task.op) {
-            case DataOp::UPLOAD: {
-                char *buf = nullptr;
-                int ret = posix_memalign(reinterpret_cast<void **>(&buf),
-                                         SIMD_ALIGNMENT, task.value_size);
-                if (ret != 0) {
-                    ELOG(ERROR) << "posix_memalign failed";
-                    return;
+            auto &socket = *task.socket;
+            try {
+                switch (task.op) {
+                case DataOp::UPLOAD: {
+                    char *buf = nullptr;
+                    int ret = posix_memalign(reinterpret_cast<void **>(&buf),
+                                             SIMD_ALIGNMENT, task.value_size);
+                    if (ret != 0) {
+                        ELOG(ERROR) << "posix_memalign failed";
+                        return;
+                    }
+                    {
+                        SCOPED_TIMER("read data from client...");
+                        asio::read(socket, asio::buffer(buf, task.value_size),
+                                   asio::transfer_exactly(task.value_size));
+                        socket.close();
+                    }
+
+                    StripeInfo info;
+                    {
+                        SCOPED_TIMER("request metadata...");
+                        auto coordinator_client =
+                            std::make_unique<coro_rpc::coro_rpc_client>();
+                        async_simple::coro::syncAwait(
+                            coordinator_client->connect(
+                                COORDINATOR_IP,
+                                std::to_string(COORDINATOR_PORT)));
+                        auto result = async_simple::coro::syncAwait(
+                            coordinator_client
+                                ->call<&Coordinator::get_stripe_info>(
+                                    task.stripe_id));
+
+                        if (!result)
+                            throw std::runtime_error("get_stripe_info failed");
+                        info = std::move(result).value();
+                    }
+                    {
+                        SCOPED_TIMER("encode and distribute...");
+                        encode_and_distribute(info, buf, task.value_size);
+                    }
+                    ELOG(WARNING)
+                        << "Stripe " << task.stripe_id << " processed.";
+                    free(buf);
+                    break;
                 }
-                {
-                    SCOPED_TIMER("read data from client...");
-                    asio::read(socket, asio::buffer(buf, task.value_size),
-                               asio::transfer_exactly(task.value_size));
+                case DataOp::SET: {
+                    download_data_packet_num_ += task.value_size / PACKET_SIZE;
+                    char *buf = nullptr;
+                    int ret = posix_memalign(reinterpret_cast<void **>(&buf),
+                                             SIMD_ALIGNMENT, task.value_size);
+                    if (ret != 0) {
+                        ELOG(ERROR) << "posix_memalign failed";
+                        return;
+                    }
+                    {
+                        SCOPED_TIMER("[NET]read data " + task.key);
+                        ELOG(ERROR) << "begin read data..." << task.key;
+                        asio::read(socket, asio::buffer(buf, task.value_size),
+                                   asio::transfer_exactly(task.value_size));
+                        ELOG(ERROR)
+                            << "receive data: " << to_hex_string2(buf, 16)
+                            << " " << task.key;
+                        ELOG(ERROR) << "read data end..." << task.key;
+                    }
+                    {
+                        SCOPED_TIMER("[DISK]write data " + task.key);
+                        bool ok = store_data(task.key, buf, task.value_size);
+                        if (!ok)
+                            throw std::runtime_error("store_data failed");
+                    }
                     socket.close();
+                    free(buf);
+                    break;
                 }
+                case DataOp::GET: {
+                    double read_disk;
+                    double send_to_net;
+                    upload_data_packet_num_ += task.value_size / PACKET_SIZE;
+                    char *buf = nullptr;
+                    int ret = posix_memalign(reinterpret_cast<void **>(&buf),
+                                             SIMD_ALIGNMENT, task.value_size);
+                    if (ret != 0) {
+                        ELOG(ERROR) << "posix_memalign failed";
+                        return;
+                    }
+                    {
+                        SCOPED_TIMER_WITH_CB(
+                            "[DISK]read data " + task.key,
+                            [&read_disk](double ms) { read_disk = ms; });
+                        bool ok = access_data(task.key, buf, task.value_size);
+                        if (!ok)
+                            throw std::runtime_error("access_data failed");
+                    }
+                    {
+                        SCOPED_TIMER_WITH_CB(
+                            "[NET]send data to node...",
+                            [&send_to_net](double ms) { send_to_net = ms; });
+                        asio::write(socket, asio::buffer(buf, task.value_size));
+                    }
 
-                StripeInfo info;
-                {
-                    SCOPED_TIMER("request metadata...");
-                    auto coordinator_client =
-                        std::make_unique<coro_rpc::coro_rpc_client>();
-                    async_simple::coro::syncAwait(coordinator_client->connect(
-                        COORDINATOR_IP, std::to_string(COORDINATOR_PORT)));
-                    auto result = async_simple::coro::syncAwait(
-                        coordinator_client->call<&Coordinator::get_stripe_info>(
-                            task.stripe_id));
+                    int64_t us = static_cast<int64_t>(
+                        std::round(read_disk * 1000)); // 毫秒→微秒，保留精度
+                    us = htobe64(us); // 转为网络字节序（big-endian）
+                    asio::write(socket, asio::buffer(&us, sizeof(us)));
 
-                    if (!result)
-                        throw std::runtime_error("get_stripe_info failed");
-                    info = std::move(result).value();
+                    us = static_cast<int64_t>(
+                        std::round(send_to_net * 1000)); // 毫秒→微秒，保留精度
+                    us = htobe64(us); // 转为网络字节序（big-endian）
+                    asio::write(socket, asio::buffer(&us, sizeof(us)));
+                    socket.close();
+                    free(buf);
+                    break;
                 }
-                {
-                    SCOPED_TIMER("encode and distribute...");
-                    encode_and_distribute(info, buf, task.value_size);
-                }
-                ELOG(WARNING) << "Stripe " << task.stripe_id << " processed.";
-                free(buf);
-                break;
-            }
-            case DataOp::SET: {
-                download_data_packet_num_ += task.value_size / PACKET_SIZE;
-                char *buf = nullptr;
-                int ret = posix_memalign(reinterpret_cast<void **>(&buf),
+                case DataOp::GET_WITH_DECODE: {
+                    double read_disk;
+                    double local_decode;
+                    double send_to_net;
+                    size_t w = task.matrix_cols;
+                    size_t need_packets = task.matrix_rows;
+                    size_t packet_size = task.value_size / need_packets;
+                    size_t data_size = w * packet_size;
+                    upload_data_packet_num_ += need_packets;
+                    char *data_buf = nullptr;
+                    int ret =
+                        posix_memalign(reinterpret_cast<void **>(&data_buf),
+                                       SIMD_ALIGNMENT, data_size);
+                    if (ret != 0) {
+                        ELOG(ERROR) << "posix_memalign failed";
+                        return;
+                    }
+
+                    {
+                        SCOPED_TIMER_WITH_CB(
+                            "[DISK]read data " + task.key,
+                            [&read_disk](double ms) { read_disk = ms; });
+                        bool ok = access_data(task.key, data_buf, data_size);
+                        if (!ok)
+                            throw std::runtime_error("access_data failed");
+                    }
+
+                    auto matrix = string_to_matrix(
+                        task.matrix_01, task.matrix_rows, task.matrix_cols);
+                    char *decode_buf = nullptr;
+                    ret = posix_memalign(reinterpret_cast<void **>(&decode_buf),
                                          SIMD_ALIGNMENT, task.value_size);
-                if (ret != 0) {
-                    ELOG(ERROR) << "posix_memalign failed";
-                    return;
-                }
-                {
-                    SCOPED_TIMER("[NET]read data " + task.key);
-                    asio::read(socket, asio::buffer(buf, task.value_size),
-                               asio::transfer_exactly(task.value_size));
-                }
-                {
-                    SCOPED_TIMER("[DISK]write data " + task.key);
-                    bool ok = store_data(task.key, buf, task.value_size);
-                    if (!ok)
-                        throw std::runtime_error("store_data failed");
-                }
-                socket.close();
-                free(buf);
-                break;
-            }
-            case DataOp::GET: {
-                upload_data_packet_num_ += task.value_size / PACKET_SIZE;
-                char *buf = nullptr;
-                int ret = posix_memalign(reinterpret_cast<void **>(&buf),
-                                         SIMD_ALIGNMENT, task.value_size);
-                if (ret != 0) {
-                    ELOG(ERROR) << "posix_memalign failed";
-                    return;
-                }
-                {
-                    SCOPED_TIMER("[DISK]read data " + task.key);
-                    bool ok = access_data(task.key, buf, task.value_size);
-                    if (!ok)
-                        throw std::runtime_error("access_data failed");
-                }
-                {
-                    SCOPED_TIMER("[NET]write data " + task.key);
-                    asio::write(socket, asio::buffer(buf, task.value_size));
-                }
-                socket.close();
-                free(buf);
-                break;
-            }
-            case DataOp::GET_WITH_DECODE: {
-                size_t w = task.matrix_cols;
-                size_t need_packets = task.matrix_rows;
-                size_t packet_size = task.value_size / need_packets;
-                size_t data_size = w * packet_size;
-                upload_data_packet_num_ += need_packets;
-                char *data_buf = nullptr;
-                int ret = posix_memalign(reinterpret_cast<void **>(&data_buf),
-                                         SIMD_ALIGNMENT, data_size);
-                if (ret != 0) {
-                    ELOG(ERROR) << "posix_memalign failed";
-                    return;
-                }
+                    if (ret != 0) {
+                        ELOG(ERROR) << "posix_memalign failed";
+                        return;
+                    }
+                    {
+                        SCOPED_TIMER_WITH_CB(
+                            "local decode...",
+                            [&local_decode](double ms) { local_decode = ms; });
+                        local_decode_isa(matrix, data_buf, decode_buf,
+                                         packet_size);
+                    }
+                    {
+                        SCOPED_TIMER_WITH_CB(
+                            "[NET]send data to node...",
+                            [&send_to_net](double ms) { send_to_net = ms; });
+                        asio::write(socket,
+                                    asio::buffer(decode_buf, task.value_size));
+                    }
+                    int64_t us = static_cast<int64_t>(
+                        std::round(read_disk * 1000)); // 毫秒→微秒，保留精度
+                    us = htobe64(us); // 转为网络字节序（big-endian）
+                    asio::write(socket, asio::buffer(&us, sizeof(us)));
 
-                {
-                    SCOPED_TIMER("[DISK]read data " + task.key);
-                    bool ok = access_data(task.key, data_buf, data_size);
-                    if (!ok)
-                        throw std::runtime_error("access_data failed");
-                }
+                    us = static_cast<int64_t>(
+                        std::round(local_decode * 1000)); // 毫秒→微秒，保留精度
+                    us = htobe64(us); // 转为网络字节序（big-endian）
+                    asio::write(socket, asio::buffer(&us, sizeof(us)));
 
-                auto matrix = string_to_matrix(task.matrix_01, task.matrix_rows,
-                                               task.matrix_cols);
-                char *decode_buf = nullptr;
-                ret = posix_memalign(reinterpret_cast<void **>(&decode_buf),
-                                     SIMD_ALIGNMENT, task.value_size);
-                if (ret != 0) {
-                    ELOG(ERROR) << "posix_memalign failed";
-                    return;
+                    us = static_cast<int64_t>(
+                        std::round(send_to_net * 1000)); // 毫秒→微秒，保留精度
+                    us = htobe64(us); // 转为网络字节序（big-endian）
+                    asio::write(socket, asio::buffer(&us, sizeof(us)));
+
+                    // ELOG(ERROR) << "read:disk: " << read_disk
+                    //             << " local_decode: " << local_decode
+                    //             << " send_to_net: " << send_to_net;
+
+                    socket.close();
+                    free(data_buf);
+                    free(decode_buf);
+                    break;
                 }
-                {
-                    SCOPED_TIMER("local decode...");
-                    local_decode_isa(matrix, data_buf, decode_buf, packet_size);
                 }
-                {
-                    SCOPED_TIMER("[NET]send data to node...");
-                    asio::write(socket,
-                                asio::buffer(decode_buf, task.value_size));
-                }
-                socket.close();
-                free(data_buf);
-                free(decode_buf);
-                break;
+            } catch (const std::exception &e) {
+                ELOG(ERROR)
+                    << "Data worker error (op=" << static_cast<int>(task.op)
+                    << "): " << e.what();
+                if (socket.is_open())
+                    socket.close();
             }
-            }
-        } catch (const std::exception &e) {
-            ELOG(ERROR) << "Data worker error (op=" << static_cast<int>(task.op)
-                        << "): " << e.what();
-            if (socket.is_open())
-                socket.close();
-        }
+        });
+
+        ELOG(ERROR) << "running_:  " << running_;
     }
+    ELOG(ERROR) << "exit.. successfully successfully";
 }
 
 void Datanode::handle_delete_stripe(unsigned int stripe_id,
@@ -495,10 +562,11 @@ void Datanode::print_download_data_packet_num() {
     ELOG(WARNING) << "upload data packets: " << upload_data_packet_num_;
 }
 // ====== datanode.cpp —— 替换 read_from_datanode_with_local_decode ======
-bool Datanode::read_from_datanode_with_local_decode(
+RepairResp Datanode::read_from_datanode_with_local_decode(
     const string &ip, int port, const string &key, char *value,
     size_t value_size, const vector<vector<int>> &matrix) {
     download_data_packet_num_ += matrix.size();
+    RepairResp resp;
     try {
         int data_port = port + SOCKET_PORT_OFFSET;
         asio::ip::tcp::socket socket(io_context_);
@@ -528,18 +596,32 @@ bool Datanode::read_from_datanode_with_local_decode(
         // 读结果
         asio::read(socket, asio::buffer(value, value_size));
 
+        int64_t us;
+        asio::read(socket, asio::buffer(&us, sizeof(us)));
+        us = be64toh(us);
+        resp.read_from_disk_time = us / 1000.0;
+
+        asio::read(socket, asio::buffer(&us, sizeof(us)));
+        us = be64toh(us);
+        resp.local_decode_time = us / 1000.0;
+
+        asio::read(socket, asio::buffer(&us, sizeof(us)));
+        us = be64toh(us);
+        resp.send_to_net_time = us / 1000.0;
+
         socket.close();
-        return true;
     } catch (const std::exception &e) {
         ELOG(ERROR) << "read_from_datanode_with_local_decode failed: "
                     << e.what();
-        return false;
     }
+    return resp;
 }
 
 // ====== read_from_datanode (GET) ======
-bool Datanode::read_from_datanode(const string &ip, int port, const string &key,
-                                  char *value, size_t value_size) {
+RepairResp Datanode::read_from_datanode(const string &ip, int port,
+                                        const string &key, char *value,
+                                        size_t value_size) {
+    RepairResp resp;
     try {
         int data_port = port + SOCKET_PORT_OFFSET;
         asio::ip::tcp::socket socket(io_context_);
@@ -557,11 +639,22 @@ bool Datanode::read_from_datanode(const string &ip, int port, const string &key,
         // 读结果
         asio::read(socket, asio::buffer(value, value_size));
 
+        int64_t us;
+        asio::read(socket, asio::buffer(&us, sizeof(us)));
+        us = be64toh(us);
+        resp.read_from_disk_time = us / 1000.0;
+
+        asio::read(socket, asio::buffer(&us, sizeof(us)));
+        us = be64toh(us);
+        resp.send_to_net_time = us / 1000.0;
+
         socket.close();
-        return true;
-    } catch (...) {
-        return false;
+
+    } catch (const std::exception &e) {
+        ELOG(ERROR) << "read_from_datanode_with_local_decode failed: "
+                    << e.what();
     }
+    return resp;
 }
 
 // ====== write_to_datanode (SET) ======
@@ -582,13 +675,19 @@ bool Datanode::write_to_datanode(const string &ip, int port, const string &key,
         asio::write(socket, asio::buffer(&sz, 4));
 
         {
-            SCOPED_TIMER("[NET]write to datanode");
+            SCOPED_TIMER("[NET]write to datanode: " + ip + "/" + key);
+            ELOG(ERROR) << "begin to send: " << ip << "/" << key;
+            ELOG(ERROR) << "send data: " << to_hex_string2(value, 16) << ip
+                        << "/" << key;
             asio::write(socket, asio::buffer(value, value_size));
+            ELOG(ERROR) << "send successfully: " << ip << "/" << key;
         }
 
         socket.close();
+        ELOG(WARNING) << "write successfully.. " << key;
         return true;
     } catch (...) {
+        ELOG(ERROR) << "write failed.. " << key;
         return false;
     }
 }
@@ -645,12 +744,9 @@ void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
                     {
                         SCOPED_TIMER("read basis " + helper.file_name + " (" +
                                      std::to_string(buf_size) + "B)");
-                        bool ok = read_from_datanode_with_local_decode(
+                        read_from_datanode_with_local_decode(
                             helper.ip, helper.port, helper.file_name, buf,
                             buf_size, basis_result.basis);
-                        if (!ok)
-                            throw std::runtime_error("Read basis failed from " +
-                                                     helper.ip);
                     }
                     // Step 3: 还原原始块
                     {
@@ -706,10 +802,27 @@ void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
     }
 }
 
+void compute_repair_resp(std::vector<RepairResp> &response_from_helper,
+                         RepairResp &response) {
+    double read_from_disk_time = 0.0, local_decode_time = 0.0,
+           send_to_net_time = 0.0;
+    for (auto helper_time : response_from_helper) {
+        read_from_disk_time += helper_time.read_from_disk_time;
+        local_decode_time += helper_time.local_decode_time;
+        send_to_net_time = max(helper_time.send_to_net_time, send_to_net_time);
+    }
+    response.read_from_disk_time =
+        read_from_disk_time / response_from_helper.size();
+    response.local_decode_time =
+        local_decode_time / response_from_helper.size();
+    response.send_to_net_time = send_to_net_time;
+}
+
 RepairResp Datanode::do_repair_with_opt_isa(std::vector<DecodeRequest> helpers,
                                             size_t block_size, int w,
                                             std::string repair_file_name) {
     RepairResp response;
+    std::vector<RepairResp> response_from_helper(helpers.size());
     {
         SCOPED_TIMER_WITH_CB(
             "repair " + repair_file_name,
@@ -747,27 +860,27 @@ RepairResp Datanode::do_repair_with_opt_isa(std::vector<DecodeRequest> helpers,
                 "read all data from survivors for repair " + repair_file_name,
                 [&response](double ms) { response.read_data_time = ms; });
             std::vector<std::future<void>> futures;
+
             futures.reserve(helpers.size());
             for (size_t i = 0; i < helpers.size(); ++i) {
                 const auto &helper = helpers[i];
-                futures.push_back(io_pool_->submit(
-                    [this, i, helper, basis_results, data_buf, packet_size]() {
-                        size_t buf_size =
-                            packet_size * basis_results[i].basis.size();
+                futures.push_back(io_pool_->submit([this, i, helper,
+                                                    basis_results, data_buf,
+                                                    packet_size,
+                                                    &response_from_helper]() {
+                    size_t buf_size =
+                        packet_size * basis_results[i].basis.size();
 
-                        // Step 2: 读 basis 数据
-                        {
-                            SCOPED_TIMER("read basis " + helper.file_name +
-                                         " (" + std::to_string(buf_size) +
-                                         "B)");
-                            bool ok = read_from_datanode_with_local_decode(
+                    // Step 2: 读 basis 数据
+                    {
+                        SCOPED_TIMER("read basis " + helper.file_name + " (" +
+                                     std::to_string(buf_size) + "B)");
+                        response_from_helper[i] =
+                            read_from_datanode_with_local_decode(
                                 helper.ip, helper.port, helper.file_name,
                                 data_buf[i], buf_size, basis_results[i].basis);
-                            if (!ok)
-                                throw std::runtime_error(
-                                    "Read basis failed from " + helper.ip);
-                        }
-                    }));
+                    }
+                }));
             }
 
             // 聚合异常
@@ -817,6 +930,7 @@ RepairResp Datanode::do_repair_with_opt_isa(std::vector<DecodeRequest> helpers,
 
         ELOG(WARNING) << "Optimized repair completed: " << repair_file_name;
     }
+    compute_repair_resp(response_from_helper, response);
     return response;
 }
 
@@ -825,6 +939,7 @@ Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
                                     size_t block_size, int w,
                                     std::string repair_file_name) {
     RepairResp response;
+    std::vector<RepairResp> response_from_helper(helpers.size());
     {
         SCOPED_TIMER_WITH_CB(
             "repair " + repair_file_name,
@@ -860,19 +975,15 @@ Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
 
             for (size_t i = 0; i < helpers.size(); ++i) {
                 const auto &helper = helpers[i];
-                futures.push_back(io_pool_->submit(
-                    [this, i, helper, original_datas, block_size]() {
+                futures.push_back(
+                    io_pool_->submit([this, i, helper, original_datas,
+                                      block_size, &response_from_helper]() {
                         {
                             SCOPED_TIMER("read " + helper.file_name + " (" +
                                          std::to_string(block_size) + "B)");
-                            bool ok = read_from_datanode(
+                            response_from_helper[i] = read_from_datanode(
                                 helper.ip, helper.port, helper.file_name,
                                 original_datas[i], block_size);
-                            if (!ok) {
-                                throw std::runtime_error("Read failed from " +
-                                                         helper.ip + " for " +
-                                                         helper.file_name);
-                            }
                         }
                     }));
             }
@@ -925,6 +1036,8 @@ Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
         }
         ELOG(WARNING) << "Repair completed: " << repair_file_name;
     }
+    compute_repair_resp(response_from_helper, response);
+    response.local_decode_time = 0.0;
     return response;
 }
 
@@ -932,6 +1045,7 @@ RepairResp Datanode::do_repair(std::vector<DecodeRequest> helpers,
                                size_t block_size, int w,
                                std::string repair_file_name) {
     RepairResp response;
+    std::vector<RepairResp> response_from_helper(helpers.size());
     {
         SCOPED_TIMER_WITH_CB(
             "repair " + repair_file_name,
@@ -967,21 +1081,18 @@ RepairResp Datanode::do_repair(std::vector<DecodeRequest> helpers,
 
             for (size_t i = 0; i < helpers.size(); ++i) {
                 const auto &helper = helpers[i];
-                futures.push_back(io_pool_->submit(
-                    [this, i, helper, original_datas, block_size]() {
-                        {
-                            SCOPED_TIMER("read " + helper.file_name + " (" +
-                                         std::to_string(block_size) + "B)");
-                            bool ok = read_from_datanode_with_local_decode(
+                futures.push_back(io_pool_->submit([this, i, helper,
+                                                    original_datas, block_size,
+                                                    &response_from_helper]() {
+                    {
+                        SCOPED_TIMER("read " + helper.file_name + " (" +
+                                     std::to_string(block_size) + "B)");
+                        response_from_helper[i] =
+                            read_from_datanode_with_local_decode(
                                 helper.ip, helper.port, helper.file_name,
                                 original_datas[i], block_size, helper.matrix);
-                            if (!ok) {
-                                throw std::runtime_error("Read failed from " +
-                                                         helper.ip + " for " +
-                                                         helper.file_name);
-                            }
-                        }
-                    }));
+                    }
+                }));
             }
 
             // 聚合异常（保留首个异常）
@@ -1029,6 +1140,7 @@ RepairResp Datanode::do_repair(std::vector<DecodeRequest> helpers,
         }
         ELOG(WARNING) << "Repair completed: " << repair_file_name;
     }
+    compute_repair_resp(response_from_helper, response);
     return response;
 }
 

@@ -54,7 +54,6 @@ compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
         }
         if (pivot == -1)
             continue;
-        cout << "pivot: " << pivot << endl;
         std::swap(R[rank], R[pivot]);
         pivot_row_for_col[c] = rank;
 
@@ -200,7 +199,7 @@ void generate_opt_decode_matrix_test(const int k, const int m, const int w) {
 
     auto ranks = SimilarityGreedy::computeBinaryMatrixRank(matrix, w);
     cout << "ranks: " << ranks << endl;
-    ;
+    
     cout << getSum(ranks) << endl;
 
     cout << matrix << endl;
@@ -208,8 +207,6 @@ void generate_opt_decode_matrix_test(const int k, const int m, const int w) {
     for (int i = 0; i < k + m; i++) {
         auto local = get_submatrix(matrix, i);
         auto basis_result = compute_basis_gf2_indices(local);
-        cout << basis_result.basis << endl;
-        cout << basis_result.reps << endl;
     }
 }
 

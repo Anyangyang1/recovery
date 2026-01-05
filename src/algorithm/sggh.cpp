@@ -28,9 +28,6 @@ SimilarityGreedy::generateOptDecodeBitMatrix(int failedBlock, int mode,
 
     // cout << bitMatrix << endl;
 
-#ifdef MY_DEBUG
-    cout << "bitMatrix row nums: " << bitMatrix.size() << endl;
-#endif
     vector<unsigned int> firstSelectSet;
     if (mode == 0) {
         firstSelectSet = {0};
@@ -48,10 +45,6 @@ SimilarityGreedy::generateOptDecodeBitMatrix(int failedBlock, int mode,
             generateOptDecodeBitMatrixWithFirstSelect(bitMatrix, r);
         auto optMatrixRank = computeBinaryMatrixRank(optMatrix, W);
         int ranks = getSum(optMatrixRank);
-#ifdef MY_DEBUG
-        cout << "need packets: " << ranks << endl;
-#endif
-
         if (ranks < bestMatrixRank) {
             bestMatrix = optMatrix;
             bestMatrixRank = ranks;

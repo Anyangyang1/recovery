@@ -60,7 +60,7 @@ class Datanode {
      * @param matrix: 进行局部解码的矩阵
      * @return: 数据读取是否成功
      */
-    bool read_from_datanode_with_local_decode(
+    RepairResp read_from_datanode_with_local_decode(
         const std::string &ip, int port, const std::string &key, char *value,
         size_t value_size, const vector<vector<int>> &matrix);
 
@@ -73,7 +73,7 @@ class Datanode {
      * @param value_size: 读取数据的大小
      * @return: 数据读取是否成功
      */
-    bool read_from_datanode(const std::string &ip, int port,
+    RepairResp read_from_datanode(const std::string &ip, int port,
                             const std::string &key, char *value,
                             size_t value_size);
 
