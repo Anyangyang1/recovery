@@ -73,14 +73,42 @@
 //     return 0;
 // }
 
+#include "scoped_timer.hpp"
+#include "utils.h"
 #include <iostream>
 #include <vector>
+using namespace std;
 void isa_jerasure_test(const int K, const int M, const size_t BLOCK_SIZE);
 void generate_opt_decode_matrix_test(const int K, const int M, const int W);
 void xor_gen_test(const int k, const size_t block_size);
-void xor_gen_and_cpy(const int k, const size_t block_size);
+int64_t xor_gen_and_cpy(const int k, const size_t block_size);
+bool access_data(const std::string &key, char *value_buf, size_t value_size);
+bool access_data(const std::string &key, char *value_buf,
+                 const vector<int> &idxs);
+bool store_data(const std::string &key, const char *value, size_t value_size);
 int main() {
-   
-    generate_opt_decode_matrix_test(6,3,8);
+    // generate_opt_decode_matrix_test(8,3,16);
+    // generate_opt_decode_matrix_test(8,4,16);
+    // generate_opt_decode_matrix_test(6,3,16);
+    // generate_opt_decode_matrix_test(6,4,16);
+    
+    const int MB = 1024 * 512;
+    std::vector<int> KK {2,3,4,5,6,7,8,9,10,11,12,13,14,15,16};
+    std::vector<int> BB {1, 2, 4};
+    const int loop = 100;
+    xor_gen_and_cpy(5, 2 * MB);
+    xor_gen_and_cpy(5, 2 * MB);
+    xor_gen_and_cpy(5, 2 * MB);
+    int64_t time;
+    for(auto b: BB) {
+        for(auto k: KK) {
+            for(int i = 0; i < loop; i++) {
+                time = xor_gen_and_cpy(k, b * MB);
+                cout << time << ",";
+
+            }
+            cout << endl;
+        }
+    }
     return 0;
 }

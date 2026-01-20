@@ -61,6 +61,9 @@ class SimilarityGreedy {
      */
     static vector<int> computeBinaryMatrixRank(vector<vector<int>> &bitMmatrix,
                                                int W);
+
+    static vector<int> computeBinaryNonZeroCol(vector<vector<int>> &bitMmatrix,
+                                               int W);
     vector<vector<vector<int>>>
     generateAllDecodingMatrices(const vector<int> &failedBlocks);
 

@@ -11,7 +11,7 @@ int main(int argc, char **argv)
   }
   
   std::string xml_path = "/home/anyangyang/study/recovery/clusterinfo3.xml";
-  Coordinator coordinator("0.0.0.0", COORDINATOR_PORT, xml_path, 128);
+  Coordinator coordinator("0.0.0.0", COORDINATOR_PORT, xml_path, 8);
   coordinator.run();
   return 0;
 }

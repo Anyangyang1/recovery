@@ -6,7 +6,7 @@ USER="anyangyang"
 REMOTE_DIR="~/exp"
 
 # 节点列表：datanode 部署到 node3~5，client 部署到 node6
-DATANODE_NODES=("node3" "node4" "node5" "node6" "node7" "node8" "node11" "node12" "node13" "node14" "node15" "node17" "node18")
+DATANODE_NODES=("node3" "node4" "node5" "node6" "node7" "node8" "node11" "node12" "node14" "node15" "node17" "node18")
 # DATANODE_NODES=("node11" "node12" "node13" "node14" "node15" "node17" "node18")
 CLIENT_NODES=("node1")
 

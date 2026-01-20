@@ -194,20 +194,20 @@ get_submatrix(const std::vector<std::vector<int>> &decode_matrix, int i) {
 }
 
 void generate_opt_decode_matrix_test(const int k, const int m, const int w) {
+    cout << "k, m, w " << k << "," << m << "," << w << "**********************" << endl;
     SimilarityGreedy sg = SimilarityGreedy(k, m, w);
     auto matrix = sg.generateOptDecodeBitMatrix(0);
+    // cout << matrix << endl;
 
     auto ranks = SimilarityGreedy::computeBinaryMatrixRank(matrix, w);
-    cout << "ranks: " << ranks << endl;
+    cout << "net every packets: " << ranks << endl;
+    cout << "net sum packets: " << getSum(ranks) << endl;
+
+    auto non_zeros = SimilarityGreedy::computeBinaryNonZeroCol(matrix, w);
+    cout << "disk every packets: " << non_zeros << endl;
+    cout << "disk sum packets: " << getSum(non_zeros) << endl;
+
     
-    cout << getSum(ranks) << endl;
-
-    cout << matrix << endl;
-
-    for (int i = 0; i < k + m; i++) {
-        auto local = get_submatrix(matrix, i);
-        auto basis_result = compute_basis_gf2_indices(local);
-    }
 }
 
 void xor_gen_test(const int k, const size_t block_size) {
@@ -222,23 +222,13 @@ void xor_gen_test(const int k, const size_t block_size) {
     void *srcs[k + 1];
     for (int i = 0; i < k; i++) {
         srcs[i] = data[i];
-        ELOG(ERROR) << srcs[i] << to_hex_string2(data[i], 32);
     }
     void *dests = parity_isal;
     srcs[k] = dests;
-    ELOG(ERROR) << "before: " << dests;
-    for (auto c : data) {
-        ELOG(ERROR) << to_hex_string2(c, 32);
-    }
-    xor_gen(k, block_size, srcs);
-    ELOG(ERROR) << "after: " << dests;
-    for (auto c : data) {
-        ELOG(ERROR) << to_hex_string2(c, 32);
-    }
-    ELOG(ERROR) << to_hex_string2(parity_isal, 32);
+    xor_gen(k + 1, block_size, srcs);
 }
 
-void xor_gen_and_cpy(const int k, const size_t block_size) {
+int64_t xor_gen_and_cpy(const int k, const size_t block_size) {
     std::vector<char *> data(k);
     char *parity_isal = (char *)aligned_malloc(block_size);
     for (int i = 0; i < k; ++i) {
@@ -255,26 +245,12 @@ void xor_gen_and_cpy(const int k, const size_t block_size) {
     srcs[k] = dests;
 
     auto start = std::chrono::high_resolution_clock::now();
-    xor_gen(k, block_size, srcs);
+    xor_gen(k + 1, block_size, srcs);
     auto end = std::chrono::high_resolution_clock::now();
 
     auto us = std::chrono::duration_cast<std::chrono::microseconds>(end - start)
                   .count();
-    double mbps = (k * block_size) / 1024.0 / 1024.0 / (us / 1e6);
-    std::cout << "[ISA-L] XOR time: " << us << " us, bandwidth: " << mbps
-              << " MB/s\n";
-
-
-    
-    start = std::chrono::high_resolution_clock::now();
-    memcpy(dests, srcs[0], block_size);
-    end = std::chrono::high_resolution_clock::now();
-
-    us = std::chrono::duration_cast<std::chrono::microseconds>(end - start)
-                  .count();
-    mbps = (block_size) / 1024.0 / 1024.0 / (us / 1e6);
-    std::cout << "copy: " << us << " us, bandwidth: " << mbps
-              << " MB/s\n";
+    return us;
 }
 
 void isa_jerasure_test(const int k, const int m, const size_t block_size) {

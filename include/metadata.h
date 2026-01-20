@@ -19,11 +19,12 @@
 // #define REDIS true
 #define COORDINATOR_PORT 12121
 // #define COORDINATOR_IP "192.168.1.12"
-#define COORDINATOR_IP "10.0.0.2"
+// #define COORDINATOR_IP "10.0.0.2"
+#define COORDINATOR_IP "100.0.0.2"
 #define CLIENT_PORT 21212
 
 #define RS_K 4
-#define RS_M 2
+#define RS_M 4
 #define RS_W 8
 #define KB 1024
 #define MB (1024 * 1024)
@@ -92,7 +93,7 @@ struct RepairResp {
     double read_from_disk_time;
     double local_decode_time;
     double send_to_net_time;
-    
+
     double read_data_time;
     double computing_time;
     double write_disk_time;

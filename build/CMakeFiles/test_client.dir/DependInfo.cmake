@@ -6,6 +6,7 @@ set(CMAKE_DEPENDS_LANGUAGES
 set(CMAKE_DEPENDS_CHECK_CXX
   "/home/anyangyang/study/recovery/src/test_client/client.cpp" "/home/anyangyang/study/recovery/build/CMakeFiles/test_client.dir/src/test_client/client.cpp.o"
   "/home/anyangyang/study/recovery/src/test_client/test1.cpp" "/home/anyangyang/study/recovery/build/CMakeFiles/test_client.dir/src/test_client/test1.cpp.o"
+  "/home/anyangyang/study/recovery/src/test_client/test_disk_read.cpp" "/home/anyangyang/study/recovery/build/CMakeFiles/test_client.dir/src/test_client/test_disk_read.cpp.o"
   )
 set(CMAKE_CXX_COMPILER_ID "GNU")
 

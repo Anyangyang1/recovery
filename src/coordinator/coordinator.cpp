@@ -319,9 +319,10 @@ RepairResp Coordinator::request_repair_node(unsigned int node_id) {
         SCOPED_TIMER("repair node_" + std::to_string(node_id));
         for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
             responses.emplace_back(request_repair(stripe_id, block_id));
+            // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
     }
-    writeRepairRespToCSV(responses, "../data/request_repair_node_response.csv");
+    writeRepairRespToCSV(responses, "../data/repair_node.csv");
     return RepairResp{};
 }
 
@@ -335,10 +336,11 @@ Coordinator::request_repair_node_non_local_decode(unsigned int node_id) {
         for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
             responses.emplace_back(
                 request_repair_no_local_decode(stripe_id, block_id));
+            // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
     }
     writeRepairRespToCSV(responses,
-                         "../data/request_repair_node_non_local_response.csv");
+                         "../data/repair_node_non_local.csv");
     return RepairResp{};
 }
 
@@ -352,10 +354,11 @@ RepairResp Coordinator::request_repair_node_with_opt(unsigned int node_id) {
         for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
             responses.emplace_back(
                 request_repair_with_opt(stripe_id, block_id));
+            // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
         }
     }
     writeRepairRespToCSV(responses,
-                         "../data/request_repair_node_with_opt_response.csv");
+                         "../data/repair_node_with_opt.csv");
     return RepairResp{};
 }
 

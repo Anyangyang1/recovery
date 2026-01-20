@@ -85,7 +85,7 @@ void Datanode::start_data_service() {
                     uint32_t value_size;
                     asio::read(*socket, asio::buffer(&value_size, 4));
                     task.value_size = ntohl(value_size);
-                    ELOG(ERROR) << "recevie key: " << task.key;
+                    // ELOG(ERROR) << "recevie key: " << task.key;
 
                     if (op == DataOp::GET_WITH_DECODE) {
                         uint32_t rows, cols;
@@ -109,10 +109,11 @@ void Datanode::start_data_service() {
                 {
                     std::lock_guard lock(data_mutex_);
                     data_queue_.emplace(std::move(task));
+                    data_cv_.notify_one();
                 }
-                ELOG(ERROR) << "put task: " << task.op << " " << keykey
-                            << " task_size: " << data_queue_.size();
-                data_cv_.notify_one();
+                // ELOG(ERROR) << "put task: " << task.op << " " << keykey
+                            // << " task_size: " << data_queue_.size();
+                
 
             } catch (const std::exception &e) {
                 // if (running_)
@@ -129,11 +130,11 @@ void Datanode::data_worker_loop() {
     while (running_) {
         DataTask task;
         {
-            ELOG(ERROR) << "wait......";
+            // ELOG(ERROR) << "wait......";
             std::unique_lock lock(data_mutex_);
             data_cv_.wait(lock,
                           [this] { return !data_queue_.empty() || !running_; });
-            ELOG(ERROR) << "wait......successfully";
+            // ELOG(ERROR) << "wait......successfully";
             if (!running_ && data_queue_.empty())
                 break;
             if (!data_queue_.empty()) {
@@ -143,9 +144,9 @@ void Datanode::data_worker_loop() {
         }
         if (!task.socket)
             continue;
-        io_pool_->submit([this, task = std::move(task)]() mutable {
-            ELOG(ERROR) << "execute task: " << task.op << " " << task.key
-                        << " task_size: " << data_queue_.size();
+        //  std::thread([this, task = std::move(task)]() mutable {
+            // ELOG(ERROR) << "execute task: " << task.op << " " << task.key
+                        // << " task_size: " << data_queue_.size();
 
             auto &socket = *task.socket;
             try {
@@ -203,13 +204,13 @@ void Datanode::data_worker_loop() {
                     }
                     {
                         SCOPED_TIMER("[NET]read data " + task.key);
-                        ELOG(ERROR) << "begin read data..." << task.key;
+                        // ELOG(ERROR) << "begin read data..." << task.key;
                         asio::read(socket, asio::buffer(buf, task.value_size),
                                    asio::transfer_exactly(task.value_size));
-                        ELOG(ERROR)
-                            << "receive data: " << to_hex_string2(buf, 16)
-                            << " " << task.key;
-                        ELOG(ERROR) << "read data end..." << task.key;
+                        // ELOG(ERROR)
+                        //     << "receive data: " << to_hex_string2(buf, 16)
+                        //     << " " << task.key;
+                        // ELOG(ERROR) << "read data end..." << task.key;
                     }
                     {
                         SCOPED_TIMER("[DISK]write data " + task.key);
@@ -264,12 +265,20 @@ void Datanode::data_worker_loop() {
                     double read_disk;
                     double local_decode;
                     double send_to_net;
-                    size_t w = task.matrix_cols;
                     size_t need_packets = task.matrix_rows;
                     size_t packet_size = task.value_size / need_packets;
-                    size_t data_size = w * packet_size;
+                    
                     upload_data_packet_num_ += need_packets;
                     char *data_buf = nullptr;
+                    auto matrix = string_to_matrix(
+                        task.matrix_01, task.matrix_rows, task.matrix_cols);
+                    auto idxs = alter_matrix(matrix);
+                    size_t data_size = matrix[0].size() * packet_size;
+
+                    // ELOG(ERROR) << "matrix row: " << matrix.size() << " matrix col: " << matrix[0].size();
+                    // ELOG(ERROR) << "matrix: " << matrix_to_01_string(matrix);
+                    // ELOG(ERROR) << "idxs " << matrix_to_01_string(std::vector<std::vector<int>>{idxs});
+
                     int ret =
                         posix_memalign(reinterpret_cast<void **>(&data_buf),
                                        SIMD_ALIGNMENT, data_size);
@@ -282,13 +291,12 @@ void Datanode::data_worker_loop() {
                         SCOPED_TIMER_WITH_CB(
                             "[DISK]read data " + task.key,
                             [&read_disk](double ms) { read_disk = ms; });
-                        bool ok = access_data(task.key, data_buf, data_size);
+                        bool ok = access_data(task.key, data_buf, idxs);
                         if (!ok)
                             throw std::runtime_error("access_data failed");
                     }
 
-                    auto matrix = string_to_matrix(
-                        task.matrix_01, task.matrix_rows, task.matrix_cols);
+                    
                     char *decode_buf = nullptr;
                     ret = posix_memalign(reinterpret_cast<void **>(&decode_buf),
                                          SIMD_ALIGNMENT, task.value_size);
@@ -342,11 +350,38 @@ void Datanode::data_worker_loop() {
                 if (socket.is_open())
                     socket.close();
             }
-        });
+        // });
 
-        ELOG(ERROR) << "running_:  " << running_;
+        // ELOG(ERROR) << "running_:  " << running_;
     }
     ELOG(ERROR) << "exit.. successfully successfully";
+}
+
+std::vector<int> Datanode::alter_matrix(std::vector<std::vector<int>> &matrix) {
+    if (matrix.empty() || matrix[0].empty()) return {};
+
+    int m = matrix.size(), n = matrix[0].size();
+    std::vector<int> mask;
+    std::vector<std::vector<int>> new_matrix(m);
+
+    for (int j = 0; j < n; ++j) {
+        bool all_zero = true;
+        for (int i = 0; i < m; ++i) {
+            if (matrix[i][j] != 0) {
+                all_zero = false;
+                break;
+            }
+        }
+        mask.push_back(all_zero ? 0 : 1);
+        if (!all_zero) {
+            for (int i = 0; i < m; ++i) {
+                new_matrix[i].push_back(matrix[i][j]);
+            }
+        }
+    }
+
+    matrix = std::move(new_matrix);
+    return mask;
 }
 
 void Datanode::handle_delete_stripe(unsigned int stripe_id,
@@ -483,7 +518,7 @@ bool Datanode::store_data(const std::string &key, const char *value,
     ofs.flush();
     ofs.close();
     if (!ofs) {
-        ELOG(WARNING) << "[Datanode" << port_ << "][Disk] failed to set!\n";
+        ELOG(WARNING) << "[Disk] failed to set!";
         return false;
     }
     return true;
@@ -676,11 +711,11 @@ bool Datanode::write_to_datanode(const string &ip, int port, const string &key,
 
         {
             SCOPED_TIMER("[NET]write to datanode: " + ip + "/" + key);
-            ELOG(ERROR) << "begin to send: " << ip << "/" << key;
-            ELOG(ERROR) << "send data: " << to_hex_string2(value, 16) << ip
-                        << "/" << key;
+            // ELOG(ERROR) << "begin to send: " << ip << "/" << key;
+            // ELOG(ERROR) << "send data: " << to_hex_string2(value, 16) << ip
+                        // << "/" << key;
             asio::write(socket, asio::buffer(value, value_size));
-            ELOG(ERROR) << "send successfully: " << ip << "/" << key;
+            // ELOG(ERROR) << "send successfully: " << ip << "/" << key;
         }
 
         socket.close();

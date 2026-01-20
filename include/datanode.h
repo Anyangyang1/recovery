@@ -193,6 +193,7 @@ class Datanode {
     void data_worker_loop();
     std::vector<std::vector<int>>
     concatMatrices(const std::vector<DecodeRequest> &requests);
+    vector<int> alter_matrix(vector<vector<int>> &matrix);
 
   private:
     std::string ip_;

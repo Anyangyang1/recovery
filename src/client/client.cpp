@@ -157,6 +157,7 @@ void Client::set_stripe(unsigned int stripe_num) {
     std::string value = generate_random_string(value_size);
     for (unsigned int i = 0; i < stripe_num; i++) {
         set(value);
+        std::this_thread::sleep_for(std::chrono::milliseconds(200));
     }
 }
 

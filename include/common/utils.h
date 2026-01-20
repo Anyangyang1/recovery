@@ -49,6 +49,8 @@ intMatrixToBitMatrix(const std::vector<std::vector<int>> &intMatrix, int W);
 // 高斯消元求 0-1 矩阵的秩
 int computeBinaryMatrixRank(vector<vector<int>> bitMatrix);
 
+int computeBinaryNonZeroCol(vector<vector<int>> bitMatrix);
+
 vector<unsigned int>
 generateUniqueRandom(int N, int K, unsigned int seed = std::random_device{}());
 

@@ -726,6 +726,33 @@ src/test_client/test1.cpp.s:
 	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/src/test_client/test1.cpp.s
 .PHONY : src/test_client/test1.cpp.s
 
+src/test_client/test_disk_read.o: src/test_client/test_disk_read.cpp.o
+
+.PHONY : src/test_client/test_disk_read.o
+
+# target to build an object file
+src/test_client/test_disk_read.cpp.o:
+	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/src/test_client/test_disk_read.cpp.o
+.PHONY : src/test_client/test_disk_read.cpp.o
+
+src/test_client/test_disk_read.i: src/test_client/test_disk_read.cpp.i
+
+.PHONY : src/test_client/test_disk_read.i
+
+# target to preprocess a source file
+src/test_client/test_disk_read.cpp.i:
+	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/src/test_client/test_disk_read.cpp.i
+.PHONY : src/test_client/test_disk_read.cpp.i
+
+src/test_client/test_disk_read.s: src/test_client/test_disk_read.cpp.s
+
+.PHONY : src/test_client/test_disk_read.s
+
+# target to generate assembly for a file
+src/test_client/test_disk_read.cpp.s:
+	$(MAKE) -f CMakeFiles/test_client.dir/build.make CMakeFiles/test_client.dir/src/test_client/test_disk_read.cpp.s
+.PHONY : src/test_client/test_disk_read.cpp.s
+
 src/test_server/server.o: src/test_server/server.cpp.o
 
 .PHONY : src/test_server/server.o
@@ -852,6 +879,9 @@ help:
 	@echo "... src/test_client/test1.o"
 	@echo "... src/test_client/test1.i"
 	@echo "... src/test_client/test1.s"
+	@echo "... src/test_client/test_disk_read.o"
+	@echo "... src/test_client/test_disk_read.i"
+	@echo "... src/test_client/test_disk_read.s"
 	@echo "... src/test_server/server.o"
 	@echo "... src/test_server/server.i"
 	@echo "... src/test_server/server.s"

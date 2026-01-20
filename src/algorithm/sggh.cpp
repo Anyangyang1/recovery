@@ -322,6 +322,25 @@ SimilarityGreedy::computeBinaryMatrixRank(vector<vector<int>> &bitMatrix,
     return ranks;
 }
 
+
+vector<int>
+SimilarityGreedy::computeBinaryNonZeroCol(vector<vector<int>> &bitMatrix,
+                                          int W) {
+    int col = bitMatrix[0].size() / W;
+    vector<vector<int>> matrix(W, vector<int>(W));
+    vector<int> ranks(col);
+    for (int k = 0; k < col; k++) {
+        for (int i = 0; i < W; i++) {
+            for (int j = 0; j < W; j++) {
+                matrix[i][j] = bitMatrix[i][k * W + j];
+            }
+        }
+        ranks[k] = ECProject::computeBinaryNonZeroCol(matrix);
+    }
+    return ranks;
+}
+
+
 void SimilarityGreedy::updateXorClosure(set<int> &closure, int val) {
     if (val == 0)
         return;

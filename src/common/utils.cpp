@@ -37,6 +37,24 @@ int ECProject::computeBinaryMatrixRank(vector<vector<int>> matrix) {
     return rank;
 }
 
+
+int ECProject::computeBinaryNonZeroCol(vector<vector<int>> bitMatrix) {
+    int ans = 0;
+    for(size_t j = 0; j < bitMatrix[0].size(); ++j) {
+        bool all_zero = true;
+        for(size_t i = 0; i < bitMatrix.size(); ++i) {
+            if(bitMatrix[i][j] == 1) {
+                all_zero = false;
+                break;
+            }
+        }
+        if(!all_zero) {
+            ans++;
+        }
+    }
+    return ans;
+}
+
 /**
  * @brief 将简化位矩阵（每行 R x (C*W)）转换为整数矩阵（R x C）
  *
