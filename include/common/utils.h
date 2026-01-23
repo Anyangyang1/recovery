@@ -15,6 +15,8 @@
 #include <source_location>
 #include <vector>
 #include <fstream>
+#include <iomanip>
+#include <sstream>
 
 #define my_assert(condition)                                                   \
     exit_when((condition), std::source_location::current())
@@ -74,6 +76,8 @@ double bytes_to_double(std::vector<unsigned char> &bytes);
 std::vector<unsigned char> double_to_bytes(double doubler);
 
 void exit_when(bool condition, const std::source_location &location);
+
+std::string append_timestamp_to_filename(const std::string& base_path);
 
 template <typename T> std::string vecToString(const std::vector<T> &vec) {
     if (vec.empty())

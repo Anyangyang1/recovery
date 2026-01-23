@@ -23,13 +23,8 @@
 #define COORDINATOR_IP "100.0.0.2"
 #define CLIENT_PORT 21212
 
-#define RS_K 4
-#define RS_M 4
-#define RS_W 8
 #define KB 1024
 #define MB (1024 * 1024)
-#define BLOCK_SIZE (8 * MB)
-#define PACKET_SIZE BLOCK_SIZE / RS_W
 #define RPC_NUM 30
 
 #define SIMD_ALIGNMENT 32 // 64-byte ∂‘∆Î£¨ºÊ»› AVX2/AVX-512/cache line

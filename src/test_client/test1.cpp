@@ -30,6 +30,35 @@ void test2() {
     }
 }
 
+std::vector<std::vector<int>> element_to_bitmatrix(int elt, int w) {
+    std::vector<std::vector<int>> bitmatrix(w, std::vector<int>(w, 0));
+
+    for (int x = 0; x < w; ++x) {
+        for (int l = 0; l < w; ++l) {
+            bitmatrix[x][l] = (elt >> l) & 1;
+        }
+        elt = galois_single_multiply(elt, 2, w);
+    }
+
+    return bitmatrix;
+}
+
+// 测试2^w的位矩阵是否都可逆
+bool test_reverse(int w) {
+    int num = (1 << w);
+    // cout << "w: " << w << " ,num: " << num << "*************" <<  endl;
+    for(int i = 1; i < num; ++i) {
+        auto bitmatrix = element_to_bitmatrix(i, w);
+        // cout << i << endl;
+        // cout << bitmatrix << endl;
+        if (computeBinaryMatrixRank(bitmatrix) != w) {
+            return false;
+        }
+    }
+    return true;
+}
+
+
 GF2BasisResult
 compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
     int w = static_cast<int>(A.size());
@@ -194,7 +223,8 @@ get_submatrix(const std::vector<std::vector<int>> &decode_matrix, int i) {
 }
 
 void generate_opt_decode_matrix_test(const int k, const int m, const int w) {
-    cout << "k, m, w " << k << "," << m << "," << w << "**********************" << endl;
+    cout << "k, m, w " << k << "," << m << "," << w << "**********************"
+         << endl;
     SimilarityGreedy sg = SimilarityGreedy(k, m, w);
     auto matrix = sg.generateOptDecodeBitMatrix(0);
     // cout << matrix << endl;
@@ -206,8 +236,6 @@ void generate_opt_decode_matrix_test(const int k, const int m, const int w) {
     auto non_zeros = SimilarityGreedy::computeBinaryNonZeroCol(matrix, w);
     cout << "disk every packets: " << non_zeros << endl;
     cout << "disk sum packets: " << getSum(non_zeros) << endl;
-
-    
 }
 
 void xor_gen_test(const int k, const size_t block_size) {

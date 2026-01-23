@@ -30,8 +30,8 @@ bool writeRepairRespToCSV(const std::vector<RepairResp> &responses,
     return file.good();
 }
 
-Coordinator::Coordinator(std::string ip, int port, std::string xml_path,
-                         size_t io_thread_num)
+Coordinator::Coordinator(std::string ip, int port, std::string xml_path, int k,
+                         int m, int w, size_t block_size, size_t io_thread_num)
     : ip_(ip), port_(port), xml_path_(xml_path),
       io_pool_(std::make_unique<ThreadPool>(io_thread_num)) {
     easylog::set_min_severity(easylog::Severity::WARNING);
@@ -71,11 +71,11 @@ Coordinator::Coordinator(std::string ip, int port, std::string xml_path,
         std::abort(); // »ò throw
     }
 
-    ec_schema_.ec = std::make_unique<XORCode>(RS_K, RS_M, RS_W);
-    ec_schema_.block_size = BLOCK_SIZE;
+    ec_schema_.ec = std::make_unique<XORCode>(k, m, w);
+    ec_schema_.block_size = block_size;
     ec_schema_.ec_type = XOR;
 
-    SimilarityGreedy sg = SimilarityGreedy(RS_K, RS_M, RS_W);
+    SimilarityGreedy sg = SimilarityGreedy(k, m, w);
     opt_decode_matrix_with_all_failed_mode_ =
         sg.generateOptDecodeBitMatrixWithAllMode(0);
     ELOG(WARNING) << "init completely...";
@@ -310,61 +310,73 @@ Coordinator::request_repair_no_local_decode(unsigned int stripe_id,
     return response;
 }
 
-RepairResp Coordinator::request_repair_node(unsigned int node_id) {
+double Coordinator::request_repair_node(unsigned int node_id) {
     Node node = node_table_[node_id];
     std::vector<RepairResp> responses;
-    std::vector<std::future<RepairResp>> futures;
+    double time;
 
     {
-        SCOPED_TIMER("repair node_" + std::to_string(node_id));
+        SCOPED_TIMER_WITH_CB("repair node_" + std::to_string(node_id),
+                             [&time](double ms) { time = ms; });
         for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
             responses.emplace_back(request_repair(stripe_id, block_id));
-            // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            // std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
     }
-    writeRepairRespToCSV(responses, "../data/repair_node.csv");
-    return RepairResp{};
+    writeRepairRespToCSV(
+        responses, append_timestamp_to_filename(
+                       "../data/repair_" + std::to_string(ec_schema_.ec->k) +
+                       "_" + std::to_string(ec_schema_.ec->m) + "_" +
+                       std::to_string(ec_schema_.ec->w) + ".csv"));
+    return time;
 }
 
-RepairResp
-Coordinator::request_repair_node_non_local_decode(unsigned int node_id) {
+double Coordinator::request_repair_node_non_local_decode(unsigned int node_id) {
     Node node = node_table_[node_id];
     std::vector<RepairResp> responses;
-    std::vector<std::future<RepairResp>> futures;
+    double time;
     {
-        SCOPED_TIMER("repair node_" + std::to_string(node_id));
+        SCOPED_TIMER_WITH_CB("repair node_" + std::to_string(node_id),
+                             [&time](double ms) { time = ms; });
         for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
             responses.emplace_back(
                 request_repair_no_local_decode(stripe_id, block_id));
-            // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            // std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
     }
-    writeRepairRespToCSV(responses,
-                         "../data/repair_node_non_local.csv");
-    return RepairResp{};
+    writeRepairRespToCSV(
+        responses, append_timestamp_to_filename(
+                       "../data/non_local_" + std::to_string(ec_schema_.ec->k) +
+                       "_" + std::to_string(ec_schema_.ec->m) + "_" +
+                       std::to_string(ec_schema_.ec->w) + ".csv"));
+    return time;
 }
 
-RepairResp Coordinator::request_repair_node_with_opt(unsigned int node_id) {
+double Coordinator::request_repair_node_with_opt(unsigned int node_id) {
     Node node = node_table_[node_id];
     std::vector<RepairResp> responses;
-    std::vector<std::future<RepairResp>> futures;
+    double time;
     std::vector<double> timings;
     {
-        SCOPED_TIMER("repair node_" + std::to_string(node_id));
+        SCOPED_TIMER_WITH_CB("repair node_" + std::to_string(node_id),
+                             [&time](double ms) { time = ms; });
         for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
             responses.emplace_back(
                 request_repair_with_opt(stripe_id, block_id));
-            // std::this_thread::sleep_for(std::chrono::milliseconds(1000));
+            // std::this_thread::sleep_for(std::chrono::milliseconds(500));
         }
     }
-    writeRepairRespToCSV(responses,
-                         "../data/repair_node_with_opt.csv");
-    return RepairResp{};
+    writeRepairRespToCSV(
+        responses, append_timestamp_to_filename(
+                       "../data/opt_" + std::to_string(ec_schema_.ec->k) +
+                       "_" + std::to_string(ec_schema_.ec->m) + "_" +
+                       std::to_string(ec_schema_.ec->w) + ".csv"));
+    return time;
 }
 
-RepairResp Coordinator::request_repair_node_con(unsigned int node_id) {
+double Coordinator::request_repair_node_con(unsigned int node_id) {
     // Node node = node_table_[node_id];
-    RepairResp response;
+    double response;
     auto it = node_table_.find(node_id);
     if (it == node_table_.end()) {
         ELOG(ERROR) << "Node " << node_id << " not found";
@@ -373,9 +385,8 @@ RepairResp Coordinator::request_repair_node_con(unsigned int node_id) {
     const Node &node = it->second;
     std::vector<std::future<RepairResp>> futures;
     {
-        SCOPED_TIMER_WITH_CB(
-            "repair node_" + std::to_string(node_id),
-            [&response](double ms) { response.repair_time = ms; });
+        SCOPED_TIMER_WITH_CB("repair node_" + std::to_string(node_id),
+                             [&response](double ms) { response = ms; });
         for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
             futures.push_back(io_pool_->submit([this, stripe_id, block_id]() {
                 return request_repair(stripe_id, block_id);
@@ -394,18 +405,18 @@ RepairResp Coordinator::request_repair_node_con(unsigned int node_id) {
             std::rethrow_exception(first_exception);
     }
 
-    // for (const auto &[node_id, node] : node_table_) {
-    //     std::string node_ip_port =
-    //         node.node_ip + ":" + std::to_string(node.node_port);
-    //     async_simple::coro::syncAwait(
-    //         datanodes_[node_ip_port]
-    //             ->call<&Datanode::print_download_data_packet_num>());
-    // }
+    for (const auto &[node_id, node] : node_table_) {
+        std::string node_ip_port =
+            node.node_ip + ":" + std::to_string(node.node_port);
+        async_simple::coro::syncAwait(
+            datanodes_[node_ip_port]
+                ->call<&Datanode::print_download_data_packet_num>());
+    }
     return response;
 }
 
-RepairResp Coordinator::request_repair_node_with_opt_con(unsigned int node_id) {
-    RepairResp response;
+double Coordinator::request_repair_node_with_opt_con(unsigned int node_id) {
+    double response;
     auto it = node_table_.find(node_id);
     if (it == node_table_.end()) {
         ELOG(ERROR) << "Node " << node_id << " not found";
@@ -414,9 +425,8 @@ RepairResp Coordinator::request_repair_node_with_opt_con(unsigned int node_id) {
     const Node &node = it->second;
     std::vector<std::future<RepairResp>> futures;
     {
-        SCOPED_TIMER_WITH_CB(
-            "repair node_" + std::to_string(node_id),
-            [&response](double ms) { response.repair_time = ms; });
+        SCOPED_TIMER_WITH_CB("repair node_" + std::to_string(node_id),
+                             [&response](double ms) { response = ms; });
         for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
             futures.push_back(io_pool_->submit([this, stripe_id, block_id]() {
                 return request_repair_with_opt(stripe_id, block_id);
@@ -434,20 +444,20 @@ RepairResp Coordinator::request_repair_node_with_opt_con(unsigned int node_id) {
         if (first_exception)
             std::rethrow_exception(first_exception);
     }
-    // for (const auto &[node_id, node] : node_table_) {
-    //     std::string node_ip_port =
-    //         node.node_ip + ":" + std::to_string(node.node_port);
-    //     async_simple::coro::syncAwait(
-    //         datanodes_[node_ip_port]
-    //             ->call<&Datanode::print_download_data_packet_num>());
-    // }
+    for (const auto &[node_id, node] : node_table_) {
+        std::string node_ip_port =
+            node.node_ip + ":" + std::to_string(node.node_port);
+        async_simple::coro::syncAwait(
+            datanodes_[node_ip_port]
+                ->call<&Datanode::print_download_data_packet_num>());
+    }
     return response;
 }
 
-RepairResp
+double
 Coordinator::request_repair_node_non_local_decode_con(unsigned int node_id) {
     // Node node = node_table_[node_id];
-    RepairResp response;
+    double response;
     auto it = node_table_.find(node_id);
     if (it == node_table_.end()) {
         ELOG(ERROR) << "Node " << node_id << " not found";
@@ -456,9 +466,8 @@ Coordinator::request_repair_node_non_local_decode_con(unsigned int node_id) {
     const Node &node = it->second;
     std::vector<std::future<RepairResp>> futures;
     {
-        SCOPED_TIMER_WITH_CB(
-            "repair node_" + std::to_string(node_id),
-            [&response](double ms) { response.repair_time = ms; });
+        SCOPED_TIMER_WITH_CB("repair node_" + std::to_string(node_id),
+                             [&response](double ms) { response = ms; });
         for (const auto &[stripe_id, block_id] : node.nodes2blocks) {
             futures.push_back(io_pool_->submit([this, stripe_id, block_id]() {
                 return request_repair_no_local_decode(stripe_id, block_id);
@@ -477,13 +486,13 @@ Coordinator::request_repair_node_non_local_decode_con(unsigned int node_id) {
             std::rethrow_exception(first_exception);
     }
 
-    // for (const auto &[node_id, node] : node_table_) {
-    //     std::string node_ip_port =
-    //         node.node_ip + ":" + std::to_string(node.node_port);
-    //     async_simple::coro::syncAwait(
-    //         datanodes_[node_ip_port]
-    //             ->call<&Datanode::print_download_data_packet_num>());
-    // }
+    for (const auto &[node_id, node] : node_table_) {
+        std::string node_ip_port =
+            node.node_ip + ":" + std::to_string(node.node_port);
+        async_simple::coro::syncAwait(
+            datanodes_[node_ip_port]
+                ->call<&Datanode::print_download_data_packet_num>());
+    }
     return response;
 }
 
@@ -758,6 +767,8 @@ void Coordinator::clear_repair_file() {
                 datanodes_[node_ip_port]->call<&Datanode::handle_delete_stripe>(
                     stripe_id, block_id));
         }
+        async_simple::coro::syncAwait(
+            datanodes_[node_ip_port]->call<&Datanode::handle_clear_time>());
     }
     repair_file_placement_.clear();
 }

@@ -27,8 +27,10 @@ int main(int argc, char **argv) {
     try {
         string cmd = argv[1];
         if (cmd == "set") {
-            unsigned int stripe_num = stoi(argv[2]);
-            client.set_stripe(stripe_num);
+            int k = stoi(argv[2]);
+            int block_size = stoi(argv[3]);
+            unsigned int stripe_num = stoi(argv[4]);
+            client.set_stripe(k, block_size * MB, stripe_num);
         } else if (cmd == "repair") {
             unsigned int stripe_id = stoi(argv[2]);
             unsigned int block_id = stoi(argv[3]);
@@ -57,29 +59,27 @@ int main(int argc, char **argv) {
         } else if (cmd == "repair_node") {
             client.clear_repair_file();
             unsigned int node_id = stoi(argv[2]);
-            client.request_repair_node(node_id);
+            std::cout << client.request_repair_node(node_id) << std::endl;
         } else if (cmd == "repair_node_no_local") {
             client.clear_repair_file();
             unsigned int node_id = stoi(argv[2]);
-            client.request_repair_node_non_local_decode(node_id);
+            std::cout << client.request_repair_node_non_local_decode(node_id) << std::endl;
         } else if (cmd == "repair_node_opt") {
             client.clear_repair_file();
             unsigned int node_id = stoi(argv[2]);
-            client.request_repair_node_with_opt(node_id);
+            std::cout << client.request_repair_node_with_opt(node_id) << std::endl;
         } else if (cmd == "repair_node_con") {
             client.clear_repair_file();
             unsigned int node_id = stoi(argv[2]);
-            client.request_repair_node_con(node_id);
+            std::cout << client.request_repair_node_con(node_id) << std::endl;
         } else if (cmd == "repair_node_opt_con") {
             client.clear_repair_file();
             unsigned int node_id = stoi(argv[2]);
-            client.request_repair_node_with_opt_con(node_id);
+            std::cout << client.request_repair_node_with_opt_con(node_id) << std::endl;
         } else if (cmd == "repair_node_no_local_con") {
             client.clear_repair_file();
             unsigned int node_id = stoi(argv[2]);
-            client.request_repair_node_non_local_decode_con(node_id);
-        } else if (cmd == "repair_node_test") {
-            client.repair_node_test();
+            std::cout << client.request_repair_node_non_local_decode_con(node_id) << std::endl;
         } else {
             ELOG(ERROR) << "cmd error";
         }

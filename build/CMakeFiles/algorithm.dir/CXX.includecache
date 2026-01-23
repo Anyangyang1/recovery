@@ -83,6 +83,10 @@ vector
 -
 fstream
 -
+iomanip
+-
+sstream
+-
 
 ../include/ec/erasure_code.h
 ../jerasure_wrapper.h

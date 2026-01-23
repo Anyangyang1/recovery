@@ -1,6 +1,29 @@
 #include "utils.h"
 #include <fstream>
 
+#include <string>
+#include <chrono>
+#include <iomanip>
+#include <sstream>
+
+std::string ECProject::append_timestamp_to_filename(const std::string& base_path) {
+    auto now = std::chrono::system_clock::now();
+    auto time_t = std::chrono::system_clock::to_time_t(now);
+    auto ms = std::chrono::duration_cast<std::chrono::milliseconds>(now.time_since_epoch()) % 1000;
+
+    std::ostringstream oss;
+    oss << std::put_time(std::localtime(&time_t), "%Y%m%d%H%M%S");
+    // 如果需要毫秒精度，可追加： << '.' << std::setfill('0') << std::setw(3) << ms.count();
+
+    // 分离路径和扩展名
+    size_t last_dot = base_path.find_last_of('.');
+    if (last_dot == std::string::npos) {
+        return base_path + "_" + oss.str();
+    } else {
+        return base_path.substr(0, last_dot) + "_" + oss.str() + base_path.substr(last_dot);
+    }
+}
+
 // 高斯消元求 0-1 矩阵的秩
 int ECProject::computeBinaryMatrixRank(vector<vector<int>> matrix) {
     int rows = matrix.size();

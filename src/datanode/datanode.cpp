@@ -13,6 +13,7 @@ Datanode::Datanode(std::string ip, int port, size_t io_thread_num)
     rpc_server_->register_handler<&Datanode::do_repair_with_opt>(this);
     rpc_server_->register_handler<&Datanode::do_repair_with_opt_isa>(this);
     rpc_server_->register_handler<&Datanode::handle_delete_stripe>(this);
+    rpc_server_->register_handler<&Datanode::handle_clear_time>(this);
     rpc_server_->register_handler<&Datanode::handle_delete_all_file>(this);
     rpc_server_->register_handler<&Datanode::print_download_data_packet_num>(
         this);
@@ -194,7 +195,7 @@ void Datanode::data_worker_loop() {
                     break;
                 }
                 case DataOp::SET: {
-                    download_data_packet_num_ += task.value_size / PACKET_SIZE;
+                    download_data_packet_num_ += task.value_size;
                     char *buf = nullptr;
                     int ret = posix_memalign(reinterpret_cast<void **>(&buf),
                                              SIMD_ALIGNMENT, task.value_size);
@@ -225,7 +226,7 @@ void Datanode::data_worker_loop() {
                 case DataOp::GET: {
                     double read_disk;
                     double send_to_net;
-                    upload_data_packet_num_ += task.value_size / PACKET_SIZE;
+                    upload_data_packet_num_ += task.value_size;
                     char *buf = nullptr;
                     int ret = posix_memalign(reinterpret_cast<void **>(&buf),
                                              SIMD_ALIGNMENT, task.value_size);
@@ -246,6 +247,13 @@ void Datanode::data_worker_loop() {
                             "[NET]send data to node...",
                             [&send_to_net](double ms) { send_to_net = ms; });
                         asio::write(socket, asio::buffer(buf, task.value_size));
+
+                        uint8_t success;
+                        asio::read(socket, asio::buffer(&success, sizeof(success)));
+                        // ELOG(ERROR) << "success: " << success;
+                        if (!success) {
+                            ELOG(ERROR) << "read data error...";
+                        }
                     }
 
                     int64_t us = static_cast<int64_t>(
@@ -257,6 +265,10 @@ void Datanode::data_worker_loop() {
                         std::round(send_to_net * 1000)); // 毫秒→微秒，保留精度
                     us = htobe64(us); // 转为网络字节序（big-endian）
                     asio::write(socket, asio::buffer(&us, sizeof(us)));
+
+                    read_disk_time_ += read_disk;
+                    net_time_ += send_to_net;
+
                     socket.close();
                     free(buf);
                     break;
@@ -295,7 +307,6 @@ void Datanode::data_worker_loop() {
                         if (!ok)
                             throw std::runtime_error("access_data failed");
                     }
-
                     
                     char *decode_buf = nullptr;
                     ret = posix_memalign(reinterpret_cast<void **>(&decode_buf),
@@ -317,6 +328,13 @@ void Datanode::data_worker_loop() {
                             [&send_to_net](double ms) { send_to_net = ms; });
                         asio::write(socket,
                                     asio::buffer(decode_buf, task.value_size));
+
+                        uint8_t success;
+                        asio::read(socket, asio::buffer(&success, sizeof(success)));
+                        // ELOG(ERROR) << "success: " << success;
+                        if (!success) {
+                            ELOG(ERROR) << "read data error...";
+                        }
                     }
                     int64_t us = static_cast<int64_t>(
                         std::round(read_disk * 1000)); // 毫秒→微秒，保留精度
@@ -336,6 +354,9 @@ void Datanode::data_worker_loop() {
                     // ELOG(ERROR) << "read:disk: " << read_disk
                     //             << " local_decode: " << local_decode
                     //             << " send_to_net: " << send_to_net;
+                    read_disk_time_ += read_disk;
+                    computing_time_ += local_decode;
+                    net_time_ += send_to_net;
 
                     socket.close();
                     free(data_buf);
@@ -412,6 +433,15 @@ void Datanode::handle_delete_all_file() {
     clear_directory(dir_path);
     upload_data_packet_num_ = 0;
     download_data_packet_num_ = 0;
+}
+
+void Datanode::handle_clear_time() {
+    upload_data_packet_num_ = 0;
+    download_data_packet_num_ = 0;
+
+    read_disk_time_ = 0.0;
+    computing_time_ = 0.0;
+    net_time_ = 0.0;
 }
 
 bool Datanode::clear_directory(const std::string &dir_path) {
@@ -593,8 +623,11 @@ void Datanode::local_decode_isa(const std::vector<std::vector<int>> &matrix,
 }
 
 void Datanode::print_download_data_packet_num() {
-    ELOG(WARNING) << "download data packets: " << download_data_packet_num_;
-    ELOG(WARNING) << "upload data packets: " << upload_data_packet_num_;
+    ELOG(ERROR) << "download data packets: " << download_data_packet_num_;
+    ELOG(ERROR) << "upload data packets: " << upload_data_packet_num_;
+    ELOG(ERROR) << "read_disk_time_: " << read_disk_time_;
+    ELOG(ERROR) << "computing_time_: " << computing_time_;
+    ELOG(ERROR) << "net_time_: " << net_time_;
 }
 // ====== datanode.cpp —— 替换 read_from_datanode_with_local_decode ======
 RepairResp Datanode::read_from_datanode_with_local_decode(
@@ -630,6 +663,9 @@ RepairResp Datanode::read_from_datanode_with_local_decode(
 
         // 读结果
         asio::read(socket, asio::buffer(value, value_size));
+
+        uint8_t success = 1;
+        asio::write(socket, asio::buffer(&success, 1));
 
         int64_t us;
         asio::read(socket, asio::buffer(&us, sizeof(us)));
@@ -673,6 +709,10 @@ RepairResp Datanode::read_from_datanode(const string &ip, int port,
 
         // 读结果
         asio::read(socket, asio::buffer(value, value_size));
+
+        uint8_t success = 1;
+        asio::write(socket, asio::buffer(&success, 1));
+
 
         int64_t us;
         asio::read(socket, asio::buffer(&us, sizeof(us)));
@@ -958,6 +998,7 @@ RepairResp Datanode::do_repair_with_opt_isa(std::vector<DecodeRequest> helpers,
                                          repair_file_name);
             }
         }
+        computing_time_ += response.computing_time;
         free(decode_data);
         for (char *data_ptr : data_buf) {
             free(data_ptr);
@@ -1065,6 +1106,7 @@ Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
                                          repair_file_name);
             }
         }
+        computing_time_ += response.computing_time;
         free(decode_data);
         for (char *data_ptr : original_datas) {
             free(data_ptr);
@@ -1169,6 +1211,7 @@ RepairResp Datanode::do_repair(std::vector<DecodeRequest> helpers,
                                          repair_file_name);
             }
         }
+        computing_time_ += response.computing_time;
         free(decode_data);
         for (char *data_ptr : original_datas) {
             free(data_ptr);

@@ -74,8 +74,8 @@ class Datanode {
      * @return: 数据读取是否成功
      */
     RepairResp read_from_datanode(const std::string &ip, int port,
-                            const std::string &key, char *value,
-                            size_t value_size);
+                                  const std::string &key, char *value,
+                                  size_t value_size);
 
     /**
      * @brief 将数据写入指定节点
@@ -101,8 +101,8 @@ class Datanode {
                             std::string repair_file_name);
 
     RepairResp do_repair_with_opt_isa(std::vector<DecodeRequest> helpers,
-                                size_t block_size, int w,
-                                std::string repair_file_name);
+                                      size_t block_size, int w,
+                                      std::string repair_file_name);
 
     /**
      * @brief 执行修复操作
@@ -110,14 +110,15 @@ class Datanode {
      * @param helpers: 参与修复的helpers
      * @param block_size: 数据块的大小
      */
-    RepairResp do_repair(std::vector<DecodeRequest> helpers, size_t block_size, int w,
-                   std::string repair_file_name);
+    RepairResp do_repair(std::vector<DecodeRequest> helpers, size_t block_size,
+                         int w, std::string repair_file_name);
 
     RepairResp do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
-                                   size_t block_size, int w,
-                                   std::string repair_file_name);
+                                         size_t block_size, int w,
+                                         std::string repair_file_name);
 
     void print_download_data_packet_num();
+    void handle_clear_time() ;
 
   private:
     /**
@@ -145,8 +146,8 @@ class Datanode {
                                 size_t packet_size);
 
     void decode_xor_with_basis(std::vector<GF2BasisResult> &basis_results,
-                               std::vector<char *> &data_buf,
-                               char *decode_data, size_t packet_size);
+                               std::vector<char *> &data_buf, char *decode_data,
+                               size_t packet_size);
 
     void decode_xor_with_matrix_isa(const std::vector<std::vector<int>> &matrix,
                                     const std::vector<char *> &original_datas,
@@ -194,6 +195,7 @@ class Datanode {
     std::vector<std::vector<int>>
     concatMatrices(const std::vector<DecodeRequest> &requests);
     vector<int> alter_matrix(vector<vector<int>> &matrix);
+    
 
   private:
     std::string ip_;
@@ -215,6 +217,10 @@ class Datanode {
 
     std::atomic<unsigned long long> upload_data_packet_num_{0};
     std::atomic<unsigned long long> download_data_packet_num_{0};
+
+    std::atomic<double> read_disk_time_{0.0};
+    std::atomic<double> computing_time_{0.0};
+    std::atomic<double> net_time_{0.0};
 
     // // 辅助哈希（C++11 兼容）
     // struct VecIntHash {

@@ -14,8 +14,8 @@ namespace ECProject {
 
 class Coordinator {
   public:
-    Coordinator(std::string ip, int port, std::string xml_path,
-                size_t io_thread_num = 8);
+    Coordinator(std::string ip, int port, std::string xml_path, int k, int m,
+                int w, size_t block_size, size_t io_thread_num = 8);
     ~Coordinator();
     void run();
     UploadInfo request_set(size_t value_size);
@@ -50,12 +50,12 @@ class Coordinator {
                              unsigned int failed_block_id);
     void delete_node(unsigned int node_id);
     void clear();
-    RepairResp request_repair_node(unsigned int node_id);
-    RepairResp request_repair_node_with_opt(unsigned int node_id);
-    RepairResp request_repair_node_non_local_decode(unsigned int node_id);
-    RepairResp request_repair_node_con(unsigned int node_id);
-    RepairResp request_repair_node_with_opt_con(unsigned int node_id);
-    RepairResp request_repair_node_non_local_decode_con(unsigned int node_id);
+    double request_repair_node(unsigned int node_id);
+    double request_repair_node_with_opt(unsigned int node_id);
+    double request_repair_node_non_local_decode(unsigned int node_id);
+    double request_repair_node_con(unsigned int node_id);
+    double request_repair_node_with_opt_con(unsigned int node_id);
+    double request_repair_node_non_local_decode_con(unsigned int node_id);
 
     void clear_repair_file();
 
