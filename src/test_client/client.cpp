@@ -77,6 +77,7 @@
 #include "utils.h"
 #include <iostream>
 #include <vector>
+#include "metadata.h"
 using namespace std;
 void isa_jerasure_test(const int K, const int M, const size_t BLOCK_SIZE);
 void generate_opt_decode_matrix_test(const int K, const int M, const int W);
@@ -87,13 +88,10 @@ bool access_data(const std::string &key, char *value_buf,
                  const vector<int> &idxs);
 bool store_data(const std::string &key, const char *value, size_t value_size);
 bool test_reverse(int w);
+int64_t test_xor_gen_split_or_all(const size_t block_size, const int data_num,
+                                  const int group_size);
+void test_SGGR_force_time();
 int main() {
-    for(int i = 1; i <= 16; i++) {
-        if(!test_reverse(i)) {
-            cout << "not reverse: " << i << endl;
-        } else {
-            cout << "can all reverse: " << i << endl;
-        }
-    }
+    test_SGGR_force_time();
     return 0;
 }

@@ -252,7 +252,7 @@ void Datanode::data_worker_loop() {
                         asio::read(socket, asio::buffer(&success, sizeof(success)));
                         // ELOG(ERROR) << "success: " << success;
                         if (!success) {
-                            ELOG(ERROR) << "read data error...";
+                            ELOG(ERROR) << "send data error...";
                         }
                     }
 
@@ -333,7 +333,7 @@ void Datanode::data_worker_loop() {
                         asio::read(socket, asio::buffer(&success, sizeof(success)));
                         // ELOG(ERROR) << "success: " << success;
                         if (!success) {
-                            ELOG(ERROR) << "read data error...";
+                            ELOG(ERROR) << "send data error...";
                         }
                     }
                     int64_t us = static_cast<int64_t>(

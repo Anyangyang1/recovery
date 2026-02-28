@@ -325,7 +325,7 @@ double Coordinator::request_repair_node(unsigned int node_id) {
     }
     writeRepairRespToCSV(
         responses, append_timestamp_to_filename(
-                       "../data/repair_" + std::to_string(ec_schema_.ec->k) +
+                       "/home/anyangyang/study/recovery/data/repair_" + std::to_string(ec_schema_.ec->k) +
                        "_" + std::to_string(ec_schema_.ec->m) + "_" +
                        std::to_string(ec_schema_.ec->w) + ".csv"));
     return time;
@@ -346,7 +346,7 @@ double Coordinator::request_repair_node_non_local_decode(unsigned int node_id) {
     }
     writeRepairRespToCSV(
         responses, append_timestamp_to_filename(
-                       "../data/non_local_" + std::to_string(ec_schema_.ec->k) +
+                       "/home/anyangyang/study/recovery/data/non_local_" + std::to_string(ec_schema_.ec->k) +
                        "_" + std::to_string(ec_schema_.ec->m) + "_" +
                        std::to_string(ec_schema_.ec->w) + ".csv"));
     return time;
@@ -368,7 +368,7 @@ double Coordinator::request_repair_node_with_opt(unsigned int node_id) {
     }
     writeRepairRespToCSV(
         responses, append_timestamp_to_filename(
-                       "../data/opt_" + std::to_string(ec_schema_.ec->k) +
+                       "/home/anyangyang/study/recovery/data/opt_" + std::to_string(ec_schema_.ec->k) +
                        "_" + std::to_string(ec_schema_.ec->m) + "_" +
                        std::to_string(ec_schema_.ec->w) + ".csv"));
     return time;

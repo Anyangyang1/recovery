@@ -18,6 +18,23 @@
 using namespace std;
 using namespace ECProject;
 
+void test_SGGR_force_time() {
+    // int param[][3] {
+    //     {6, 3, 4}, {8, 3, 4}, {6, 3, 5}, {8, 3, 5}, {6, 3, 8}, {8, 3, 8},
+    //         {10, 4, 8}, {12, 4, 8}
+    // };
+    int param[][3]{{6,3,4},{8, 3, 4}, {6, 3, 5}, {8, 3, 5}, {6, 3, 8}};
+    for (auto p : param) {
+        SimilarityGreedy sg = SimilarityGreedy(p[0], p[1], p[2]);
+        auto matrix = sg.generateOptDecodeBitMatrixBruteForce(0);
+        cout << matrix << endl;
+       
+        auto ranks = SimilarityGreedy::computeBinaryMatrixRank(matrix, p[2]);
+        cout << "ranks: " << ranks << endl;
+        cout << getSum(ranks) << endl;
+    }
+}
+
 void test2() {
     const int k = 4, m = 3, w = 8;
     SimilarityGreedy sg = SimilarityGreedy(k, m, w);
@@ -25,7 +42,6 @@ void test2() {
     for (auto matrix : matrixs) {
         auto ranks = SimilarityGreedy::computeBinaryMatrixRank(matrix, w);
         cout << "ranks: " << ranks << endl;
-        ;
         cout << getSum(ranks) << endl;
     }
 }
@@ -47,7 +63,7 @@ std::vector<std::vector<int>> element_to_bitmatrix(int elt, int w) {
 bool test_reverse(int w) {
     int num = (1 << w);
     // cout << "w: " << w << " ,num: " << num << "*************" <<  endl;
-    for(int i = 1; i < num; ++i) {
+    for (int i = 1; i < num; ++i) {
         auto bitmatrix = element_to_bitmatrix(i, w);
         // cout << i << endl;
         // cout << bitmatrix << endl;
@@ -57,7 +73,6 @@ bool test_reverse(int w) {
     }
     return true;
 }
-
 
 GF2BasisResult
 compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
@@ -254,6 +269,50 @@ void xor_gen_test(const int k, const size_t block_size) {
     void *dests = parity_isal;
     srcs[k] = dests;
     xor_gen(k + 1, block_size, srcs);
+}
+
+int64_t test_xor_gen_split_or_all(const size_t block_size, const int data_num,
+                                  const int group_size) {
+    assert(data_num % group_size == 0);
+    int64_t us = 0;
+    std::vector<char *> data(data_num);
+    std::vector<char *> parity(group_size);
+    int loop_size = data_num / group_size;
+    char *parity_isal = (char *)aligned_malloc(block_size);
+    for (int i = 0; i < data_num; ++i) {
+        data[i] = (char *)aligned_malloc(block_size);
+        std::string str = generate_random_string(block_size);
+        std::memcpy(data[i], str.data(), block_size);
+    }
+    for (int i = 0; i < group_size; i++) {
+        parity[i] = (char *)aligned_malloc(block_size);
+        void *loops[loop_size + 1];
+        for (int j = 0; j < loop_size; j++) {
+            loops[j] = data[i * loop_size + j];
+        }
+        loops[loop_size] = parity[i];
+        auto start = std::chrono::high_resolution_clock::now();
+        xor_gen(loop_size + 1, block_size, loops);
+        auto end = std::chrono::high_resolution_clock::now();
+
+        us += std::chrono::duration_cast<std::chrono::microseconds>(end - start)
+                  .count();
+    }
+
+    if (group_size > 1) {
+        void *srcs[group_size + 1];
+        for (int i = 0; i < group_size; i++) {
+            srcs[i] = parity[i];
+        }
+        srcs[group_size] = parity_isal;
+        auto start = std::chrono::high_resolution_clock::now();
+        xor_gen(group_size + 1, block_size, srcs);
+        auto end = std::chrono::high_resolution_clock::now();
+
+        us += std::chrono::duration_cast<std::chrono::microseconds>(end - start)
+                  .count();
+    }
+    return us;
 }
 
 int64_t xor_gen_and_cpy(const int k, const size_t block_size) {

@@ -1,6 +1,6 @@
 #include "sggh.h"
-#include "utils.h"
 #include "erasure_code.h"
+#include "utils.h"
 #include <algorithm>
 #include <cassert>
 #include <chrono>
@@ -9,26 +9,12 @@ using namespace ECProject;
 vector<vector<int>>
 SimilarityGreedy::generateOptDecodeBitMatrix(int failedBlock, int mode,
                                              unsigned int seed) {
-    auto start = std::chrono::high_resolution_clock::now();
+    
     auto bigMatrix = generateAllDecodingMatrix(failedBlock);
-    // auto end = std::chrono::high_resolution_clock::now();
-    // auto duration =
-    //     std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-    // auto time = duration.count() / 1e6;
-    // std::cout << "GenerateAllDecodeMatrix Time: " << time << " ms\n";
-
-    // start = std::chrono::high_resolution_clock::now();
+    
     auto bitMatrix = ErasureCode::matrix2Bitmatrix(bigMatrix, W);
-    auto end = std::chrono::high_resolution_clock::now();
-    auto duration =
-        std::chrono::duration_cast<std::chrono::nanoseconds>(end - start);
-    auto time = duration.count() / 1e6;
-    // std::cout << "GenerateAllDecodeMatrix and matrix2Bitmatrix Time: " << time
-    //           << " ms\n";
-
-    // cout << bitMatrix << endl;
-
-    vector<unsigned int> firstSelectSet;
+   
+    std::vector<unsigned int> firstSelectSet;
     if (mode == 0) {
         firstSelectSet = {0};
     } else if (mode == -1) {
@@ -37,7 +23,7 @@ SimilarityGreedy::generateOptDecodeBitMatrix(int failedBlock, int mode,
         firstSelectSet = generateUniqueRandom(bitMatrix.size(), mode, seed);
     }
 
-    vector<vector<int>> bestMatrix;
+    std::vector<std::vector<int>> bestMatrix;
     int bestMatrixRank = INT32_MAX;
     auto start1 = std::chrono::high_resolution_clock::now();
     for (int r : firstSelectSet) {
@@ -54,7 +40,42 @@ SimilarityGreedy::generateOptDecodeBitMatrix(int failedBlock, int mode,
     auto duration1 =
         std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1);
     auto time1 = duration1.count() / 1e6;
-    // std::cout << "SGGH Time: " << time1 << " ms\n";
+    std::cout << "K: " << K << ", M: " << M << ", W: " << W
+              << ", SGGH Time: " << time1 << " ms\n";
+    return bestMatrix;
+}
+
+std::vector<std::vector<int>>
+SimilarityGreedy::generateOptDecodeBitMatrixBruteForce(int failedBlock) {
+    auto bigMatrix = generateAllDecodingMatrix(failedBlock);
+    auto bitMatrix = ErasureCode::matrix2Bitmatrix(bigMatrix, W);
+    auto gK = ECProject::get_combinations(bitMatrix.size(), W);
+    int minV = INT32_MAX;
+    std::vector<std::vector<int>> optMatrix(W,
+                                            std::vector<int>((K + M) * W, 0));
+    std::vector<std::vector<int>> bestMatrix;
+    auto start1 = std::chrono::high_resolution_clock::now();
+    for (std::vector<int> g : gK) {
+        for (int row = 0; row < W; row++) {
+            for (int col = 0; col < (K + M) * W; col++) {
+                optMatrix[row][col] = bitMatrix[g[row]][col];
+            }
+        }
+        auto optMatrixRank = computeBinaryMatrixRank(optMatrix, W);
+        int ranks = getSum(optMatrixRank);
+        if (ranks < minV) {
+            bestMatrix = optMatrix;
+            minV = ranks;
+        }
+        // cout << optMatrix;
+        // cout << g << "->" << ranks << endl;
+    }
+    auto end1 = std::chrono::high_resolution_clock::now();
+    auto duration1 =
+        std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1);
+    auto time1 = duration1.count() / 1e6;
+    std::cout << "K: " << K << ", M: " << M << ", W: " << W
+              << ", Brute Force Time: " << time1 << " ms\n";
     return bestMatrix;
 }
 
@@ -322,7 +343,6 @@ SimilarityGreedy::computeBinaryMatrixRank(vector<vector<int>> &bitMatrix,
     return ranks;
 }
 
-
 vector<int>
 SimilarityGreedy::computeBinaryNonZeroCol(vector<vector<int>> &bitMatrix,
                                           int W) {
@@ -339,7 +359,6 @@ SimilarityGreedy::computeBinaryNonZeroCol(vector<vector<int>> &bitMatrix,
     }
     return ranks;
 }
-
 
 void SimilarityGreedy::updateXorClosure(set<int> &closure, int val) {
     if (val == 0)

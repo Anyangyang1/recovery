@@ -61,6 +61,38 @@ int ECProject::computeBinaryMatrixRank(vector<vector<int>> matrix) {
 }
 
 
+// 递归函数，用于生成组合
+void ECProject::generate_combinations(int start, int n, int k, std::vector<int>& current, std::vector<std::vector<int>>& result, std::set<int>& isExist) {
+    if (current.size() == k) {
+        result.push_back(current);
+        // cout << current << endl;
+        return;
+    }
+
+    for (int i = start; i <= n; ++i) {
+        if(isExist.count(i % k) > 0) {
+            continue;
+        }
+        current.push_back(i);
+        isExist.insert(i % k);
+        generate_combinations(i + 1, n, k, current, result, isExist);
+        current.pop_back();
+        isExist.erase(i % k);
+    }
+}
+
+// 主函数，用于生成所有 k 组合
+std::vector<std::vector<int>> ECProject::get_combinations(int n, int k) {
+    std::vector<std::vector<int>> result;
+    std::vector<int> current;
+    set<int> isExist;
+    generate_combinations(0, n - 1, k, current, result, isExist);
+    return result;
+}
+
+
+
+
 int ECProject::computeBinaryNonZeroCol(vector<vector<int>> bitMatrix) {
     int ans = 0;
     for(size_t j = 0; j < bitMatrix[0].size(); ++j) {
