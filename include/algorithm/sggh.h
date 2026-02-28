@@ -26,6 +26,10 @@ class SimilarityGreedy {
     generateOptDecodeBitMatrix(int failedBlock, int mode = -1,
                                unsigned int seed = std::random_device{}());
 
+
+    vector<vector<int>>
+    generateOptDecodeBitMatrixBruteForce(int failedBlock);
+
     /**
      * @brief 基于相似度，生成所有的最优解码矩阵
      * @param failedBlock: 故障块号（0~K+M-1）

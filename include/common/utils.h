@@ -8,15 +8,16 @@
 #include <cmath>
 #include <cstdlib>
 #include <cstring>
+#include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <memory>
 #include <numeric>
 #include <random>
 #include <source_location>
-#include <vector>
-#include <fstream>
-#include <iomanip>
 #include <sstream>
+#include <vector>
+#include <set>
 
 #define my_assert(condition)                                                   \
     exit_when((condition), std::source_location::current())
@@ -53,6 +54,11 @@ int computeBinaryMatrixRank(vector<vector<int>> bitMatrix);
 
 int computeBinaryNonZeroCol(vector<vector<int>> bitMatrix);
 
+void generate_combinations(int start, int n, int k, std::vector<int> &current,
+                           std::vector<std::vector<int>> &result,
+                           std::set<int> &isExist);
+std::vector<std::vector<int>> get_combinations(int n, int k);
+
 vector<unsigned int>
 generateUniqueRandom(int N, int K, unsigned int seed = std::random_device{}());
 
@@ -77,7 +83,7 @@ std::vector<unsigned char> double_to_bytes(double doubler);
 
 void exit_when(bool condition, const std::source_location &location);
 
-std::string append_timestamp_to_filename(const std::string& base_path);
+std::string append_timestamp_to_filename(const std::string &base_path);
 
 template <typename T> std::string vecToString(const std::vector<T> &vec) {
     if (vec.empty())
@@ -134,14 +140,15 @@ inline void aligned_free(void *ptr) {
 }
 
 template <typename T>
-bool writeVectorToCSV(const std::vector<T>& vec, const std::string& filename) {
+bool writeVectorToCSV(const std::vector<T> &vec, const std::string &filename) {
     std::ofstream file(filename);
     if (!file.is_open()) {
         return false;
     }
     for (size_t i = 0; i < vec.size(); ++i) {
         file << vec[i];
-        if (i != vec.size() - 1) file << '\n';  // 最后一行不加换行（可选）
+        if (i != vec.size() - 1)
+            file << '\n'; // 最后一行不加换行（可选）
     }
     // 或统一加换行（更常见）：
     // for (const auto& x : vec) file << x << '\n';
