@@ -17,7 +17,7 @@ Client::Client(std::string ip, int port, std::string coordinator_ip,
 
 Client::~Client() { acceptor_.close(); }
 
-// ====== client.cpp ¡ª¡ª Ìæ»» Client::set ======
+// ====== client.cpp â€”â€” æ›¿æ¢ Client::set ======
 void Client::set(std::string value) {
     // Step 1: Request upload target from coordinator
     auto result = async_simple::coro::syncAwait(
@@ -29,7 +29,7 @@ void Client::set(std::string value) {
     }
     auto response = std::move(result).value();
 
-    // Step 2: Ö±Á¬ datanode data port (NO RPC!)
+    // Step 2: ç›´è¿ datanode data port (NO RPC!)
     int data_port = response.node_port + SOCKET_PORT_OFFSET;
     ELOG(WARNING) << "[SET] Sending stripe_" << response.stripe_id << " ("
                   << value.size() << "B) to " << response.node_ip << ":"
@@ -40,7 +40,7 @@ void Client::set(std::string value) {
         socket.connect(asio::ip::tcp::endpoint(
             asio::ip::make_address(response.node_ip), data_port));
 
-        // ·¢ header: op + stripe_id + size
+        // å‘ header: op + stripe_id + size
         uint8_t op = static_cast<uint8_t>(DataOp::UPLOAD);
         asio::write(socket, asio::buffer(&op, 1));
         uint32_t sid = htonl(response.stripe_id);
@@ -48,7 +48,7 @@ void Client::set(std::string value) {
         asio::write(socket, asio::buffer(&sid, 4));
         asio::write(socket, asio::buffer(&sz, 4));
 
-        // ·¢ body
+        // å‘ body
         asio::write(socket, asio::buffer(value));
         socket.close();
         ELOG(WARNING) << "Send data completely.";
@@ -163,7 +163,7 @@ void Client::set_stripe(int k, int block_size, unsigned int stripe_num) {
     std::string value = generate_random_string(value_size);
     for (unsigned int i = 0; i < stripe_num; i++) {
         set(value);
-        std::this_thread::sleep_for(std::chrono::milliseconds(200));
+        // std::this_thread::sleep_for(std::chrono::milliseconds(500));
     }
 }
 

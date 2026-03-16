@@ -56,7 +56,7 @@ int main(int argc, char* argv[]) {
         close(server_fd);
         return 1;
     }
-    total_size = be64toh(total_size);  // network ¡ú host
+    total_size = be64toh(total_size);  // network â†’ host
 
     std::cout << "? Receiving " << total_size / 1024.0 / 1024.0 << " MB data...\n";
 
@@ -84,6 +84,6 @@ int main(int argc, char* argv[]) {
 
     double gbps = (received * 8.0) / (sec * 1e9);
     std::cout << "? Received " << received / 1024.0 / 1024.0 << " MB in "
-              << sec << " s ¡ú " << gbps << " Gbps\n";
+              << sec << " s-> " << gbps << " Gbps\n";
     return 0;
 }

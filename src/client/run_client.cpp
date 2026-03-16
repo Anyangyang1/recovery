@@ -6,7 +6,7 @@ using namespace ECProject;
 
 
 std::string generateBlocks(int k, int block_size) {
-    // ÒªÇó£ºk ¡İ 1, block_size ¡İ 0£»ÇÒ k ¡Ü 9£¨±ÜÃâÊı×Ö×Ö·ûÒç³ö£©
+    // è¦æ±‚ï¼šk â‰¥ 1, block_size â‰¥ 0ï¼›ä¸” k â‰¤ 9ï¼ˆé¿å…æ•°å­—å­—ç¬¦æº¢å‡ºï¼‰
     assert(k >= 1 && "k must be at least 1");
     assert(block_size >= 0 && "block_size must be non-negative");
     assert(k <= 9 && "k > 9 not supported for digit characters; use letters or "
@@ -14,7 +14,7 @@ std::string generateBlocks(int k, int block_size) {
 
     std::string result;
     result.reserve(static_cast<size_t>(k) *
-                   block_size); // Ô¤·ÖÅä±ÜÃâ¶à´Î realloc
+                   block_size); // é¢„åˆ†é…é¿å…å¤šæ¬¡ realloc
 
     for (int i = 1; i <= k; ++i) {
         char c = '0' + i;             // '1', '2', ..., '9'
@@ -23,7 +23,7 @@ std::string generateBlocks(int k, int block_size) {
     return result;
 }
 int main(int argc, char **argv) {
-    Client client("0.0.0.0", CLIENT_PORT, "192.168.1.12", COORDINATOR_PORT);
+    Client client("0.0.0.0", CLIENT_PORT, COORDINATOR_IP, COORDINATOR_PORT);
     try {
         string cmd = argv[1];
         if (cmd == "set") {

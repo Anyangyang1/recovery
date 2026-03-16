@@ -23,19 +23,19 @@ class Coordinator {
     void time_test();
 
     /**
-     * @brief ·¢Éúµ¥¿é¹ÊÕÏÊ±£¬ÇëÇóĞŞ¸´
-     * @param stripe: ´ıĞŞ¸´Ìõ´ø
-     * @param failed_block_id: ¹ÊÕÏ¿éºÅ
-     * @return: ĞŞ¸´ÏìÓ¦½á¹û
+     * @brief å‘ç”Ÿå•å—æ•…éšœæ—¶ï¼Œè¯·æ±‚ä¿®å¤
+     * @param stripe: å¾…ä¿®å¤æ¡å¸¦
+     * @param failed_block_id: æ•…éšœå—å·
+     * @return: ä¿®å¤å“åº”ç»“æœ
      */
     RepairResp request_repair_with_opt(unsigned int stripe_id,
                                        unsigned int failed_block_id);
 
     /**
-     * @brief ·¢Éúµ¥¿é¹ÊÕÏÊ±£¬ÇëÇóĞŞ¸´
-     * @param stripe: ´ıĞŞ¸´Ìõ´ø
-     * @param failed_block_id: ¹ÊÕÏ¿éºÅ
-     * @return: ĞŞ¸´ÏìÓ¦½á¹û
+     * @brief å‘ç”Ÿå•å—æ•…éšœæ—¶ï¼Œè¯·æ±‚ä¿®å¤
+     * @param stripe: å¾…ä¿®å¤æ¡å¸¦
+     * @param failed_block_id: æ•…éšœå—å·
+     * @return: ä¿®å¤å“åº”ç»“æœ
      */
     RepairResp request_repair(unsigned int stripe_id,
                               unsigned int failed_block_id);
@@ -64,25 +64,25 @@ class Coordinator {
     Stripe &new_stripe();
 
     /**
-     * @brief »ñÈ¡¾ØÕódecode_matrixµÄµÚi¸ö×Ó¾ØÕó
-     * @return: ·µ»ØµÚi¸ö×Ó¾ØÕó£¬Èç¹ûµÚi¸ö×Ó¾ØÕóÎªÈ«0£¬·µ»Ø{}
+     * @brief è·å–çŸ©é˜µdecode_matrixçš„ç¬¬iä¸ªå­çŸ©é˜µ
+     * @return: è¿”å›ç¬¬iä¸ªå­çŸ©é˜µï¼Œå¦‚æœç¬¬iä¸ªå­çŸ©é˜µä¸ºå…¨0ï¼Œè¿”å›{}
      */
     std::vector<std::vector<int>>
     get_submatrix(const std::vector<std::vector<int>> &decode_matrix, int i);
 
     /**
-     * @brief ¸ù¾İÌõ´øºÍ¹ÊÕÏ½Úµã£¬Éú³ÉĞŞ¸´¼Æ»®£¬²ÉÓÃÓÅ»¯ºóµÄËã·¨
-     * @param stripe: ´ıĞŞ¸´Ìõ´ø
-     * @param failed_node: ¹ÊÕÏ½Úµã
-     * @return: ĞŞ¸´¼Æ»®
+     * @brief æ ¹æ®æ¡å¸¦å’Œæ•…éšœèŠ‚ç‚¹ï¼Œç”Ÿæˆä¿®å¤è®¡åˆ’ï¼Œé‡‡ç”¨ä¼˜åŒ–åçš„ç®—æ³•
+     * @param stripe: å¾…ä¿®å¤æ¡å¸¦
+     * @param failed_node: æ•…éšœèŠ‚ç‚¹
+     * @return: ä¿®å¤è®¡åˆ’
      */
     RepairPlan generate_repair_plan_with_opt(const Stripe &stripe,
                                              unsigned int failed_block_id);
     /**
-     * @brief ¸ù¾İÌõ´øºÍ¹ÊÕÏ½Úµã£¬Éú³ÉĞŞ¸´¼Æ»®£¬baseline
-     * @param stripe: ´ıĞŞ¸´Ìõ´ø
-     * @param failed_node: ¹ÊÕÏ½Úµã
-     * @return: ĞŞ¸´¼Æ»®
+     * @brief æ ¹æ®æ¡å¸¦å’Œæ•…éšœèŠ‚ç‚¹ï¼Œç”Ÿæˆä¿®å¤è®¡åˆ’ï¼Œbaseline
+     * @param stripe: å¾…ä¿®å¤æ¡å¸¦
+     * @param failed_node: æ•…éšœèŠ‚ç‚¹
+     * @return: ä¿®å¤è®¡åˆ’
      */
     RepairPlan generate_repair_plan(const Stripe &stripe,
                                     unsigned int failed_block_id);
@@ -116,12 +116,12 @@ class Coordinator {
         decode_matrix_with_all_failed_mode_;
     std::unique_ptr<ThreadPool> io_pool_;
 
-    // ÁÙÊ±¼ÇÂ¼ĞŞ¸´ÎÄ¼ş´æ·ÅµÄÎ»ÖÃ£¬ÓÃÓÚ²âÊÔÊ¹ÓÃ
+    // ä¸´æ—¶è®°å½•ä¿®å¤æ–‡ä»¶å­˜æ”¾çš„ä½ç½®ï¼Œç”¨äºæµ‹è¯•ä½¿ç”¨
     std::unordered_map<unsigned int,
                        std::vector<pair<unsigned int, unsigned int>>>
         repair_file_placement_;
 
-    // // ²âÊÔÊ¹ÓÃ£¬Ö®ºóÉ¾³ı
+    // // æµ‹è¯•ä½¿ç”¨ï¼Œä¹‹ååˆ é™¤
     // void set(std::string &value);
     // void set_stripe(unsigned int stripe_num, const int value_size);
 

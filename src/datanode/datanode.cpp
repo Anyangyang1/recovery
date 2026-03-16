@@ -36,16 +36,16 @@ Datanode::~Datanode() {
         data_worker_thread_.join();
     rpc_server_->stop();
     if (io_pool_)
-        io_pool_->stop(); // È·±£ÈÎÎñÍê³É»òÈ¡Ïû
+        io_pool_->stop(); // ç¡®ä¿ä»»åŠ¡å®Œæˆæˆ–å–æ¶ˆ
 }
 
 void Datanode::run() { auto ret = rpc_server_->start(); }
 
-// ====== datanode.cpp ¡ª¡ª ĞÂÔö ======
+// ====== datanode.cpp â€”â€” æ–°å¢ ======
 void Datanode::start_data_service() {
     int data_port = port_ + SOCKET_PORT_OFFSET;
 
-    // Æô¶¯ accept Ïß³Ì
+    // å¯åŠ¨ accept çº¿ç¨‹
     data_accept_thread_ = std::thread([this, data_port]() {
         asio::io_context ioc;
         asio::ip::tcp::acceptor acceptor(
@@ -57,7 +57,7 @@ void Datanode::start_data_service() {
                 auto socket = std::make_shared<asio::ip::tcp::socket>(ioc);
                 acceptor.accept(*socket);
 
-                // ¶Á 1B op
+                // è¯» 1B op
                 uint8_t op_byte;
                 asio::read(*socket, asio::buffer(&op_byte, 1));
                 DataOp op = static_cast<DataOp>(op_byte);
@@ -77,7 +77,7 @@ void Datanode::start_data_service() {
                 case DataOp::SET:
                 case DataOp::GET:
                 case DataOp::GET_WITH_DECODE: {
-                    // ¶Á key_len + key + value_size
+                    // è¯» key_len + key + value_size
                     uint32_t key_len;
                     asio::read(*socket, asio::buffer(&key_len, 4));
                     key_len = ntohl(key_len);
@@ -123,7 +123,7 @@ void Datanode::start_data_service() {
         }
     });
 
-    // Æô¶¯ worker Ïß³Ì
+    // å¯åŠ¨ worker çº¿ç¨‹
     data_worker_thread_ = std::thread([this]() { data_worker_loop(); });
 }
 
@@ -257,13 +257,13 @@ void Datanode::data_worker_loop() {
                     }
 
                     int64_t us = static_cast<int64_t>(
-                        std::round(read_disk * 1000)); // ºÁÃë¡úÎ¢Ãë£¬±£Áô¾«¶È
-                    us = htobe64(us); // ×ªÎªÍøÂç×Ö½ÚĞò£¨big-endian£©
+                        std::round(read_disk * 1000)); // æ¯«ç§’â†’å¾®ç§’ï¼Œä¿ç•™ç²¾åº¦
+                    us = htobe64(us); // è½¬ä¸ºç½‘ç»œå­—èŠ‚åºï¼ˆbig-endianï¼‰
                     asio::write(socket, asio::buffer(&us, sizeof(us)));
 
                     us = static_cast<int64_t>(
-                        std::round(send_to_net * 1000)); // ºÁÃë¡úÎ¢Ãë£¬±£Áô¾«¶È
-                    us = htobe64(us); // ×ªÎªÍøÂç×Ö½ÚĞò£¨big-endian£©
+                        std::round(send_to_net * 1000)); // æ¯«ç§’â†’å¾®ç§’ï¼Œä¿ç•™ç²¾åº¦
+                    us = htobe64(us); // è½¬ä¸ºç½‘ç»œå­—èŠ‚åºï¼ˆbig-endianï¼‰
                     asio::write(socket, asio::buffer(&us, sizeof(us)));
 
                     read_disk_time_ += read_disk;
@@ -337,18 +337,18 @@ void Datanode::data_worker_loop() {
                         }
                     }
                     int64_t us = static_cast<int64_t>(
-                        std::round(read_disk * 1000)); // ºÁÃë¡úÎ¢Ãë£¬±£Áô¾«¶È
-                    us = htobe64(us); // ×ªÎªÍøÂç×Ö½ÚĞò£¨big-endian£©
+                        std::round(read_disk * 1000)); // æ¯«ç§’â†’å¾®ç§’ï¼Œä¿ç•™ç²¾åº¦
+                    us = htobe64(us); // è½¬ä¸ºç½‘ç»œå­—èŠ‚åºï¼ˆbig-endianï¼‰
                     asio::write(socket, asio::buffer(&us, sizeof(us)));
 
                     us = static_cast<int64_t>(
-                        std::round(local_decode * 1000)); // ºÁÃë¡úÎ¢Ãë£¬±£Áô¾«¶È
-                    us = htobe64(us); // ×ªÎªÍøÂç×Ö½ÚĞò£¨big-endian£©
+                        std::round(local_decode * 1000)); // æ¯«ç§’â†’å¾®ç§’ï¼Œä¿ç•™ç²¾åº¦
+                    us = htobe64(us); // è½¬ä¸ºç½‘ç»œå­—èŠ‚åºï¼ˆbig-endianï¼‰
                     asio::write(socket, asio::buffer(&us, sizeof(us)));
 
                     us = static_cast<int64_t>(
-                        std::round(send_to_net * 1000)); // ºÁÃë¡úÎ¢Ãë£¬±£Áô¾«¶È
-                    us = htobe64(us); // ×ªÎªÍøÂç×Ö½ÚĞò£¨big-endian£©
+                        std::round(send_to_net * 1000)); // æ¯«ç§’â†’å¾®ç§’ï¼Œä¿ç•™ç²¾åº¦
+                    us = htobe64(us); // è½¬ä¸ºç½‘ç»œå­—èŠ‚åºï¼ˆbig-endianï¼‰
                     asio::write(socket, asio::buffer(&us, sizeof(us)));
 
                     // ELOG(ERROR) << "read:disk: " << read_disk
@@ -418,14 +418,14 @@ void Datanode::handle_delete_stripe(unsigned int stripe_id,
 
 bool Datanode::delete_file(const std::string &path) {
     if (std::remove(path.c_str()) != 0) {
-        // ×¢Òâ£ºÎÄ¼ş²»´æÔÚÊ±Ò²¿ÉÄÜ·µ»Ø·Ç0£¨errno=ENOENT£©
+        // æ³¨æ„ï¼šæ–‡ä»¶ä¸å­˜åœ¨æ—¶ä¹Ÿå¯èƒ½è¿”å›é0ï¼ˆerrno=ENOENTï¼‰
         if (errno != ENOENT) {
             ELOG(ERROR) << "Failed to delete '" << path
                         << "': " << std::strerror(errno) << '\n';
             return false;
         }
     }
-    return true; // °üÀ¨¡°ÎÄ¼ş²»´æÔÚ¡±ÊÓÎª³É¹¦É¾³ı
+    return true; // åŒ…æ‹¬â€œæ–‡ä»¶ä¸å­˜åœ¨â€è§†ä¸ºæˆåŠŸåˆ é™¤
 }
 
 void Datanode::handle_delete_all_file() {
@@ -453,26 +453,26 @@ bool Datanode::clear_directory(const std::string &dir_path) {
         return false;
     }
 
-    // ±éÀúÄ¿Â¼ÏÂÃ¿Ò»Ïî£¨·Çµİ¹é iterator ¼´¿É£©
+    // éå†ç›®å½•ä¸‹æ¯ä¸€é¡¹ï¼ˆéé€’å½’ iterator å³å¯ï¼‰
     for (const auto &entry : fs::directory_iterator(dir_path, ec)) {
         if (ec) {
             ELOG(ERROR) << "Iterate error: " << ec.message() << "\n";
             return false;
         }
 
-        // µİ¹éÉ¾³ı£ºÎÄ¼ş or Ä¿Â¼¶¼É¾£¨remove_all ÄÜÉ¾·Ç¿ÕÄ¿Â¼£©
+        // é€’å½’åˆ é™¤ï¼šæ–‡ä»¶ or ç›®å½•éƒ½åˆ ï¼ˆremove_all èƒ½åˆ éç©ºç›®å½•ï¼‰
         if (!fs::remove_all(entry.path(), ec)) {
             ELOG(ERROR) << "Failed to remove " << entry.path() << ": "
                         << ec.message() << "\n";
-            return false; // »ò¼ÌĞøÉ¾ÆäËûÏî£º²» return£¬½ö¼ÇÂ¼Ê§°Ü
+            return false; // æˆ–ç»§ç»­åˆ å…¶ä»–é¡¹ï¼šä¸ returnï¼Œä»…è®°å½•å¤±è´¥
         }
     }
     return true;
 }
 
-// // »ñÈ¡±¾µØµØÖ·£¨±¾»ú°ó¶¨µÄ IP:Port£©
+// // è·å–æœ¬åœ°åœ°å€ï¼ˆæœ¬æœºç»‘å®šçš„ IP:Portï¼‰
 // auto local_ep = socket.local_endpoint();
-// // »ñÈ¡Ô¶¶ËµØÖ·£¨¶Ô¶ËµÄ IP:Port£©
+// // è·å–è¿œç«¯åœ°å€ï¼ˆå¯¹ç«¯çš„ IP:Portï¼‰
 // auto remote_ep = socket.remote_endpoint();
 // ELOG(WARNING) << key << " socket fd=" <<
 // socket.native_handle()
@@ -516,7 +516,7 @@ bool Datanode::access_data(const std::string &key, char *value_buf,
     if (n == 0)
         return true;
     if (file_size % n != 0)
-        return false; // ²»Âú×ã¡°¸ÕºÃÕû³ı¡±Ç°Ìá ¡ú ´íÎó
+        return false; // ä¸æ»¡è¶³â€œåˆšå¥½æ•´é™¤â€å‰æ â†’ é”™è¯¯
 
     std::streamsize packet_size = file_size / n;
     char *out = value_buf;
@@ -566,10 +566,10 @@ void Datanode::local_decode(const std::vector<std::vector<int>> &matrix,
     char *out = decode_buf;
 
     for (size_t i = 0; i < need_packet; ++i) {
-        // ³õÊ¼»¯Êä³ö¿éÎªÈ«0£¨Òì»òÆğµã£©
+        // åˆå§‹åŒ–è¾“å‡ºå—ä¸ºå…¨0ï¼ˆå¼‚æˆ–èµ·ç‚¹ï¼‰
         std::memset(out, 0, packet_size);
 
-        // °´ÁĞÒì»ò£ºÈô matrix[i][j]==1£¬Ôò data_buf + j*packet_size Òì»òÈë
+        // æŒ‰åˆ—å¼‚æˆ–ï¼šè‹¥ matrix[i][j]==1ï¼Œåˆ™ data_buf + j*packet_size å¼‚æˆ–å…¥
         // out
         for (size_t j = 0; j < w; ++j) {
             if (matrix[i][j]) {
@@ -578,7 +578,7 @@ void Datanode::local_decode(const std::vector<std::vector<int>> &matrix,
             }
         }
 
-        out += packet_size; // ÒÆµ½ÏÂÒ»¿éÊä³öÎ»ÖÃ
+        out += packet_size; // ç§»åˆ°ä¸‹ä¸€å—è¾“å‡ºä½ç½®
     }
 }
 
@@ -618,7 +618,7 @@ void Datanode::local_decode_isa(const std::vector<std::vector<int>> &matrix,
             }
         }
 
-        out += packet_size; // ÒÆµ½ÏÂÒ»¿éÊä³öÎ»ÖÃ
+        out += packet_size; // ç§»åˆ°ä¸‹ä¸€å—è¾“å‡ºä½ç½®
     }
 }
 
@@ -629,7 +629,7 @@ void Datanode::print_download_data_packet_num() {
     ELOG(ERROR) << "computing_time_: " << computing_time_;
     ELOG(ERROR) << "net_time_: " << net_time_;
 }
-// ====== datanode.cpp ¡ª¡ª Ìæ»» read_from_datanode_with_local_decode ======
+// ====== datanode.cpp â€”â€” æ›¿æ¢ read_from_datanode_with_local_decode ======
 RepairResp Datanode::read_from_datanode_with_local_decode(
     const string &ip, int port, const string &key, char *value,
     size_t value_size, const vector<vector<int>> &matrix) {
@@ -642,7 +642,7 @@ RepairResp Datanode::read_from_datanode_with_local_decode(
         auto endpoints = resolver.resolve(ip, std::to_string(data_port));
         asio::connect(socket, endpoints);
 
-        // ·¢ header: op + key + size + matrix
+        // å‘ header: op + key + size + matrix
         uint8_t op = static_cast<uint8_t>(DataOp::GET_WITH_DECODE);
         asio::write(socket, asio::buffer(&op, 1));
 
@@ -653,7 +653,7 @@ RepairResp Datanode::read_from_datanode_with_local_decode(
         uint32_t sz = htonl(value_size);
         asio::write(socket, asio::buffer(&sz, 4));
 
-        // ·¢ matrix: rows + cols + 01 string
+        // å‘ matrix: rows + cols + 01 string
         uint32_t rows = htonl(matrix.size());
         uint32_t cols = htonl(matrix.empty() ? 0 : matrix[0].size());
         asio::write(socket, asio::buffer(&rows, 4));
@@ -661,7 +661,7 @@ RepairResp Datanode::read_from_datanode_with_local_decode(
         std::string mat_str = matrix_to_01_string(matrix);
         asio::write(socket, asio::buffer(mat_str));
 
-        // ¶Á½á¹û
+        // è¯»ç»“æœ
         asio::read(socket, asio::buffer(value, value_size));
 
         uint8_t success = 1;
@@ -707,7 +707,7 @@ RepairResp Datanode::read_from_datanode(const string &ip, int port,
         uint32_t sz = htonl(value_size);
         asio::write(socket, asio::buffer(&sz, 4));
 
-        // ¶Á½á¹û
+        // è¯»ç»“æœ
         asio::read(socket, asio::buffer(value, value_size));
 
         uint8_t success = 1;
@@ -774,7 +774,7 @@ void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
         SCOPED_TIMER("repair " + repair_file_name);
         assert(block_size % w == 0);
         size_t packet_size = block_size / w;
-        // === ÈÕÖ¾ ===
+        // === æ—¥å¿— ===
         std::string helpers_info;
         for (const auto &h : helpers)
             helpers_info += h.ip + "/" + h.file_name + ", ";
@@ -783,7 +783,7 @@ void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
 
         std::vector<char *> original_datas(helpers.size());
 
-        // === ·ÖÅäÊı¾İ buffer£¨shared_ptr ±£»î£©===
+        // === åˆ†é…æ•°æ® bufferï¼ˆshared_ptr ä¿æ´»ï¼‰===
         for (size_t i = 0; i < helpers.size(); ++i) {
             int ret =
                 posix_memalign(reinterpret_cast<void **>(&original_datas[i]),
@@ -815,7 +815,7 @@ void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
                         return;
                     }
                     ELOG(WARNING) << "allocate successfully";
-                    // Step 2: ¶Á basis Êı¾İ
+                    // Step 2: è¯» basis æ•°æ®
                     {
                         SCOPED_TIMER("read basis " + helper.file_name + " (" +
                                      std::to_string(buf_size) + "B)");
@@ -823,7 +823,7 @@ void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
                             helper.ip, helper.port, helper.file_name, buf,
                             buf_size, basis_result.basis);
                     }
-                    // Step 3: »¹Ô­Ô­Ê¼¿é
+                    // Step 3: è¿˜åŸåŸå§‹å—
                     {
                         SCOPED_TIMER("compute original " + helper.file_name);
                         compute_original_data(buf, basis_result.reps,
@@ -833,7 +833,7 @@ void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
                 }));
             }
 
-            // ¾ÛºÏÒì³£
+            // èšåˆå¼‚å¸¸
             std::exception_ptr first_exception = nullptr;
             for (auto &fut : futures) {
                 try {
@@ -847,7 +847,7 @@ void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
                 std::rethrow_exception(first_exception);
         }
 
-        // === XOR ĞŞ¸´ ===
+        // === XOR ä¿®å¤ ===
         char *decode_data;
         int ret = posix_memalign(reinterpret_cast<void **>(&decode_data),
                                  SIMD_ALIGNMENT, block_size);
@@ -860,7 +860,7 @@ void Datanode::do_repair_with_opt(std::vector<DecodeRequest> helpers,
             decode_xor(original_datas, block_size, decode_data);
         }
 
-        // === ´æÅÌ ===
+        // === å­˜ç›˜ ===
         {
             SCOPED_TIMER("store repaired data: " + repair_file_name);
             if (!store_data(repair_file_name, decode_data, block_size)) {
@@ -904,7 +904,7 @@ RepairResp Datanode::do_repair_with_opt_isa(std::vector<DecodeRequest> helpers,
             [&response](double ms) { response.repair_time = ms; });
         assert(block_size % w == 0);
         size_t packet_size = block_size / w;
-        // === ÈÕÖ¾ ===
+        // === æ—¥å¿— ===
         std::string helpers_info;
         for (const auto &h : helpers)
             helpers_info += h.ip + "/" + h.file_name + ", ";
@@ -946,7 +946,7 @@ RepairResp Datanode::do_repair_with_opt_isa(std::vector<DecodeRequest> helpers,
                     size_t buf_size =
                         packet_size * basis_results[i].basis.size();
 
-                    // Step 2: ¶Á basis Êı¾İ
+                    // Step 2: è¯» basis æ•°æ®
                     {
                         SCOPED_TIMER("read basis " + helper.file_name + " (" +
                                      std::to_string(buf_size) + "B)");
@@ -958,7 +958,7 @@ RepairResp Datanode::do_repair_with_opt_isa(std::vector<DecodeRequest> helpers,
                 }));
             }
 
-            // ¾ÛºÏÒì³£
+            // èšåˆå¼‚å¸¸
             std::exception_ptr first_exception = nullptr;
             for (auto &fut : futures) {
                 try {
@@ -972,7 +972,7 @@ RepairResp Datanode::do_repair_with_opt_isa(std::vector<DecodeRequest> helpers,
                 std::rethrow_exception(first_exception);
         }
 
-        // === XOR ĞŞ¸´ ===
+        // === XOR ä¿®å¤ ===
         char *decode_data;
         int ret = posix_memalign(reinterpret_cast<void **>(&decode_data),
                                  SIMD_ALIGNMENT, block_size);
@@ -988,7 +988,7 @@ RepairResp Datanode::do_repair_with_opt_isa(std::vector<DecodeRequest> helpers,
                                   packet_size);
         }
 
-        // === ´æÅÌ ===
+        // === å­˜ç›˜ ===
         {
             SCOPED_TIMER_WITH_CB(
                 "store repaired data: " + repair_file_name,
@@ -1022,7 +1022,7 @@ Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
             [&response](double ms) { response.repair_time = ms; });
         assert(block_size % w == 0);
 
-        // === ÈÕÖ¾ ===
+        // === æ—¥å¿— ===
         std::string helpers_info;
         for (const auto &h : helpers)
             helpers_info += h.ip + "/" + h.file_name + ", ";
@@ -1031,7 +1031,7 @@ Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
 
         std::vector<char *> original_datas(helpers.size());
 
-        // === ·ÖÅäÊı¾İ buffer£¨shared_ptr ±£»î£©===
+        // === åˆ†é…æ•°æ® bufferï¼ˆshared_ptr ä¿æ´»ï¼‰===
         for (size_t i = 0; i < helpers.size(); ++i) {
             int ret =
                 posix_memalign(reinterpret_cast<void **>(&original_datas[i]),
@@ -1064,7 +1064,7 @@ Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
                     }));
             }
 
-            // ¾ÛºÏÒì³££¨±£ÁôÊ×¸öÒì³££©
+            // èšåˆå¼‚å¸¸ï¼ˆä¿ç•™é¦–ä¸ªå¼‚å¸¸ï¼‰
             std::exception_ptr first_exception = nullptr;
             for (auto &fut : futures) {
                 try {
@@ -1078,7 +1078,7 @@ Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
                 std::rethrow_exception(first_exception);
         }
 
-        // === XOR ĞŞ¸´ ===
+        // === XOR ä¿®å¤ ===
         std::vector<std::vector<int>> bitmatrix = concatMatrices(helpers);
         char *decode_data;
         int ret = posix_memalign(reinterpret_cast<void **>(&decode_data),
@@ -1096,7 +1096,7 @@ Datanode::do_repair_no_local_decode(std::vector<DecodeRequest> helpers,
                                        block_size / bitmatrix.size());
         }
 
-        // === ´æÅÌ ===
+        // === å­˜ç›˜ ===
         {
             SCOPED_TIMER_WITH_CB(
                 "store repaired data: " + repair_file_name,
@@ -1129,7 +1129,7 @@ RepairResp Datanode::do_repair(std::vector<DecodeRequest> helpers,
             [&response](double ms) { response.repair_time = ms; });
         assert(block_size % w == 0);
 
-        // === ÈÕÖ¾ ===
+        // === æ—¥å¿— ===
         std::string helpers_info;
         for (const auto &h : helpers)
             helpers_info += h.ip + "/" + h.file_name + ", ";
@@ -1138,7 +1138,7 @@ RepairResp Datanode::do_repair(std::vector<DecodeRequest> helpers,
 
         std::vector<char *> original_datas(helpers.size());
 
-        // === ·ÖÅäÊı¾İ buffer£¨shared_ptr ±£»î£©===
+        // === åˆ†é…æ•°æ® bufferï¼ˆshared_ptr ä¿æ´»ï¼‰===
         for (size_t i = 0; i < helpers.size(); ++i) {
             int ret =
                 posix_memalign(reinterpret_cast<void **>(&original_datas[i]),
@@ -1172,7 +1172,7 @@ RepairResp Datanode::do_repair(std::vector<DecodeRequest> helpers,
                 }));
             }
 
-            // ¾ÛºÏÒì³££¨±£ÁôÊ×¸öÒì³££©
+            // èšåˆå¼‚å¸¸ï¼ˆä¿ç•™é¦–ä¸ªå¼‚å¸¸ï¼‰
             std::exception_ptr first_exception = nullptr;
             for (auto &fut : futures) {
                 try {
@@ -1186,7 +1186,7 @@ RepairResp Datanode::do_repair(std::vector<DecodeRequest> helpers,
                 std::rethrow_exception(first_exception);
         }
 
-        // === XOR ĞŞ¸´ ===
+        // === XOR ä¿®å¤ ===
         char *decode_data;
         int ret = posix_memalign(reinterpret_cast<void **>(&decode_data),
                                  SIMD_ALIGNMENT, block_size);
@@ -1201,7 +1201,7 @@ RepairResp Datanode::do_repair(std::vector<DecodeRequest> helpers,
             decode_xor_isa(original_datas, block_size, decode_data);
         }
 
-        // === ´æÅÌ ===
+        // === å­˜ç›˜ ===
         {
             SCOPED_TIMER_WITH_CB(
                 "store repaired data: " + repair_file_name,
@@ -1275,7 +1275,7 @@ void Datanode::compute_original_data(char *buf,
     if (reps.empty() || packet_size == 0)
         return;
 
-    // key ¸ÄÎª uint64_t£¬value ¸ÄÎª offset£¨¸ü°²È«£©
+    // key æ”¹ä¸º uint64_tï¼Œvalue æ”¹ä¸º offsetï¼ˆæ›´å®‰å…¨ï¼‰
     std::unordered_map<uint64_t, size_t> cache; // offset in original_data
 
     for (size_t i = 0; i < reps.size(); ++i) {
@@ -1288,11 +1288,11 @@ void Datanode::compute_original_data(char *buf,
 
         auto it = cache.find(key);
         if (it != cache.end()) {
-            // ÃüÖĞ£ºmemcpy from cached offset
+            // å‘½ä¸­ï¼šmemcpy from cached offset
             const char *src_cached = original_data + it->second;
             std::memcpy(dst, src_cached, packet_size);
         } else {
-            // Î´ÃüÖĞ£º¼ÆËã
+            // æœªå‘½ä¸­ï¼šè®¡ç®—
             if (indices.empty()) {
                 std::memset(dst, 0, packet_size);
             } else {
@@ -1302,7 +1302,7 @@ void Datanode::compute_original_data(char *buf,
                     galois_region_xor(dst, src, dst, packet_size);
                 }
             }
-            cache[key] = dst_offset; // ´æ offset£¬¶ø·ÇÖ¸Õë£¬¾ø¶Ô°²È«
+            cache[key] = dst_offset; // å­˜ offsetï¼Œè€ŒéæŒ‡é’ˆï¼Œç»å¯¹å®‰å…¨
         }
     }
 }
@@ -1314,13 +1314,13 @@ Datanode::compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
         return {};
     }
 
-    // Step 1: ¸ßË¹ÏûÔªÇó RREF ºÍÖ÷ÔªÓ³Éä
+    // Step 1: é«˜æ–¯æ¶ˆå…ƒæ±‚ RREF å’Œä¸»å…ƒæ˜ å°„
     auto R = A;
     std::vector<int> pivot_row_for_col(
-        w, -1); // col c ¡ú ÄÄÒ»ĞĞÊÇÆäÖ÷ÔªĞĞ£¨ÔÚ R ÖĞµÄĞĞºÅ£©
+        w, -1); // col c â†’ å“ªä¸€è¡Œæ˜¯å…¶ä¸»å…ƒè¡Œï¼ˆåœ¨ R ä¸­çš„è¡Œå·ï¼‰
     int rank = 0;
     for (int c = 0; c < w && rank < w; ++c) {
-        // ÕÒÖ÷ÔªĞĞ
+        // æ‰¾ä¸»å…ƒè¡Œ
         int pivot = -1;
         for (int r = rank; r < w; ++r) {
             if (R[r][c] == 1) {
@@ -1334,7 +1334,7 @@ Datanode::compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
         std::swap(R[rank], R[pivot]);
         pivot_row_for_col[c] = rank;
 
-        // ÏûÈ¥ÆäËûËùÓĞĞĞµÄµÚ c ÁĞ
+        // æ¶ˆå»å…¶ä»–æ‰€æœ‰è¡Œçš„ç¬¬ c åˆ—
         for (int r = 0; r < w; ++r) {
             if (r != rank && R[r][c] == 1) {
                 for (int j = 0; j < w; ++j) {
@@ -1345,20 +1345,20 @@ Datanode::compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
         ++rank;
     }
 
-    // ÌáÈ¡»ù£¨Ç° rank ĞĞ£©
+    // æå–åŸºï¼ˆå‰ rank è¡Œï¼‰
     std::vector<std::vector<int>> basis(R.begin(), R.begin() + rank);
 
-    // Step 2: ¶ÔÃ¿¸öÔ­Ê¼ĞĞ A[i]£¬ÇóÆäÓÉÄÄĞ©»ùÏòÁ¿Òì»ò¶ø³É
+    // Step 2: å¯¹æ¯ä¸ªåŸå§‹è¡Œ A[i]ï¼Œæ±‚å…¶ç”±å“ªäº›åŸºå‘é‡å¼‚æˆ–è€Œæˆ
     std::vector<std::vector<int>> reps(w);
 
     for (int i = 0; i < w; ++i) {
-        auto v = A[i]; // µ±Ç°´ı±í³öĞĞ
+        auto v = A[i]; // å½“å‰å¾…è¡¨å‡ºè¡Œ
 
-        // ±éÀúËùÓĞÖ÷ÔªÁĞ£¨°´ÁĞµİÔöË³Ğò = »ùÏòÁ¿Ë³Ğò£©
+        // éå†æ‰€æœ‰ä¸»å…ƒåˆ—ï¼ˆæŒ‰åˆ—é€’å¢é¡ºåº = åŸºå‘é‡é¡ºåºï¼‰
         for (int c = 0; c < w; ++c) {
             if (v[c] == 1 && pivot_row_for_col[c] != -1) {
-                int basis_idx = pivot_row_for_col[c]; // ¸ÃÖ÷Ôª¶ÔÓ¦µÄ»ùË÷Òı£¨0
-                                                      // ~ rank-1£©
+                int basis_idx = pivot_row_for_col[c]; // è¯¥ä¸»å…ƒå¯¹åº”çš„åŸºç´¢å¼•ï¼ˆ0
+                                                      // ~ rank-1ï¼‰
                 reps[i].push_back(basis_idx);
 
                 // v ^= basis[basis_idx]
@@ -1368,13 +1368,13 @@ Datanode::compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
                 }
             }
         }
-        // ÀíÂÛÉÏ v Ó¦È« 0£»¿É¼Ó assert ¼ì²é
+        // ç†è®ºä¸Š v åº”å…¨ 0ï¼›å¯åŠ  assert æ£€æŸ¥
     }
 
     return {basis, reps};
 }
 
-// ====== ĞÂÔö£ºDatanode::encode_and_distribute ======
+// ====== æ–°å¢ï¼šDatanode::encode_and_distribute ======
 void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
                                      char *data_buf, size_t total_size) {
     int k = stripe_info.k;
@@ -1389,7 +1389,7 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     ELOG(WARNING) << "encode and distribute. stripe_" << stripe_info.stripe_id
                   << " will be stored in (" << stripe_info_str << ")";
 
-    // Ğ£ÑéÊı¾İÍêÕûĞÔ
+    // æ ¡éªŒæ•°æ®å®Œæ•´æ€§
     if (total_size != static_cast<size_t>(k) * block_size) {
         throw std::runtime_error("Invalid object size: expected" +
                                  std::to_string(k * block_size) + ", got " +
@@ -1406,7 +1406,7 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     char *data_start = data_buf;
     char *coding_start = coding_buf;
 
-    // ×¼±¸Êı¾İÖ¸Õë£¨Ö¸Ïò buf ÄÚ´æ£©
+    // å‡†å¤‡æ•°æ®æŒ‡é’ˆï¼ˆæŒ‡å‘ buf å†…å­˜ï¼‰
     std::vector<char *> data_ptrs(k), coding_ptrs(m);
     for (int i = 0; i < k; ++i)
         data_ptrs[i] = data_start + i * block_size;
@@ -1414,7 +1414,7 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     for (int i = 0; i < m; ++i)
         coding_ptrs[i] = coding_start + i * block_size;
 
-    // Ö´ĞĞ±àÂë
+    // æ‰§è¡Œç¼–ç 
     std::unique_ptr<ErasureCode> ec;
     if (stripe_info.ec_type == XOR) {
         ec = std::make_unique<XORCode>(k, m, w);
@@ -1427,7 +1427,7 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
         ec->encode(data_ptrs.data(), coding_ptrs.data(), block_size);
     }
 
-    // === ²¢·¢Ğ´ÈëËùÓĞ¿é£¨º¬±¾µØ£©===
+    // === å¹¶å‘å†™å…¥æ‰€æœ‰å—ï¼ˆå«æœ¬åœ°ï¼‰===
 
     std::vector<std::future<bool>> futures;
     futures.reserve(k + m);
@@ -1435,7 +1435,7 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
     {
         SCOPED_TIMER("distribute stripe_" +
                      std::to_string(stripe_info.stripe_id));
-        // Ìá½»ËùÓĞĞ´ÈÎÎñ£¨º¬±¾µØ´æ´¢£©
+        // æäº¤æ‰€æœ‰å†™ä»»åŠ¡ï¼ˆå«æœ¬åœ°å­˜å‚¨ï¼‰
         for (int idx = 0; idx < k + m; ++idx) {
             const auto &node = stripe_info.nodes_info[idx];
             char *block_data =
@@ -1444,15 +1444,15 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
             std::string key = "stripe_" +
                               std::to_string(stripe_info.stripe_id) + "_" +
                               std::to_string(idx);
-            // ÈôÊÇ±¾½Úµã ¡ú Ö±½Ó store_data£¨±ÜÃâ network loopback£©
+            // è‹¥æ˜¯æœ¬èŠ‚ç‚¹ â†’ ç›´æ¥ store_dataï¼ˆé¿å… network loopbackï¼‰
             if (idx == 0) {
                 futures.push_back(io_pool_->submit([this, key, data_buf, offset,
                                                     block_size]() {
                     return this->store_data(key, data_buf + offset, block_size);
                 }));
             } else {
-                // Ô¶³Ì½Úµã ¡ú Òì²½Ğ´£¨×¢Òâ£ºcoding_buf Ğè capture shared_ptr
-                // ÑÓ³¤ÉúÃüÖÜÆÚ£©
+                // è¿œç¨‹èŠ‚ç‚¹ â†’ å¼‚æ­¥å†™ï¼ˆæ³¨æ„ï¼šcoding_buf éœ€ capture shared_ptr
+                // å»¶é•¿ç”Ÿå‘½å‘¨æœŸï¼‰
                 futures.push_back(io_pool_->submit([this, node, key, data_buf,
                                                     offset, block_size]() {
                     return this->write_to_datanode(node.node_ip, node.node_port,
@@ -1462,7 +1462,7 @@ void Datanode::encode_and_distribute(const StripeInfo &stripe_info,
             }
         }
 
-        // === ¾ÛºÏ½á¹û£ºÈÎÒ»Ê§°Ü ¡ú È«²¿»Ø¹ö£¨TODO£º¿É¼Ó²¿·Ö³É¹¦²ßÂÔ£©===
+        // === èšåˆç»“æœï¼šä»»ä¸€å¤±è´¥ â†’ å…¨éƒ¨å›æ»šï¼ˆTODOï¼šå¯åŠ éƒ¨åˆ†æˆåŠŸç­–ç•¥ï¼‰===
         bool all_ok = true;
         for (auto &fut : futures) {
             if (!fut.get()) {
@@ -1485,20 +1485,20 @@ void Datanode::decode_xor_with_matrix(
     if (w == 0 || k == 0)
         return;
     if (block_size != w * packet_size) {
-        // ¿ÉÑ¡£º¼Ó assert »ò throw£¬ÒÀ¹¤³Ì¹æ·¶
+        // å¯é€‰ï¼šåŠ  assert æˆ– throwï¼Œä¾å·¥ç¨‹è§„èŒƒ
         return;
     }
 
-    // ±éÀúÃ¿¸ö´ó¿é£¨Í¨³£½ö1¸ö¿é£»ÈôÖ§³Ö multi-block ¿ÉÍâ²ã¼ÓÑ­»·£©
-    // ´Ë´¦°´ Jerasure ·ç¸ñ£ºÖ§³Ö block_size ÊÇ w*packet_size µÄÕûÊı±¶£¨¶à¸ö
-    // stripe£©
+    // éå†æ¯ä¸ªå¤§å—ï¼ˆé€šå¸¸ä»…1ä¸ªå—ï¼›è‹¥æ”¯æŒ multi-block å¯å¤–å±‚åŠ å¾ªç¯ï¼‰
+    // æ­¤å¤„æŒ‰ Jerasure é£æ ¼ï¼šæ”¯æŒ block_size æ˜¯ w*packet_size çš„æ•´æ•°å€ï¼ˆå¤šä¸ª
+    // stripeï¼‰
     for (size_t stripe = 0; stripe < block_size; stripe += w * packet_size) {
-        // ¶ÔÃ¿Ò»Êä³ö packet j£¨j in [0, w)£©
+        // å¯¹æ¯ä¸€è¾“å‡º packet jï¼ˆj in [0, w)ï¼‰
         for (size_t j = 0; j < w; ++j) {
             char *out_ptr = decode_data + stripe + j * packet_size;
             bool started = false;
 
-            // ±éÀúËùÓĞÔ´¿é i ºÍÆäÄÚ²¿ packet y
+            // éå†æ‰€æœ‰æºå— i å’Œå…¶å†…éƒ¨ packet y
             for (size_t i = 0; i < k; ++i) {
                 char *src_block = original_datas[i] + stripe;
                 for (size_t y = 0; y < w; ++y) {
@@ -1515,7 +1515,7 @@ void Datanode::decode_xor_with_matrix(
                 }
             }
 
-            // ÈôÈ«Îª 0 ĞĞ£¨ÀíÂÛÉÏ²»Ó¦³öÏÖ£©£¬ÇåÁã
+            // è‹¥å…¨ä¸º 0 è¡Œï¼ˆç†è®ºä¸Šä¸åº”å‡ºç°ï¼‰ï¼Œæ¸…é›¶
             if (!started) {
                 memset(out_ptr, 0, packet_size);
             }
@@ -1534,7 +1534,7 @@ void Datanode::decode_xor_with_matrix_isa(
     if (block_size != w * packet_size) {
         return;
     }
-    // ¶ÔÃ¿Ò»Êä³ö packet j£¨j in [0, w)£©
+    // å¯¹æ¯ä¸€è¾“å‡º packet jï¼ˆj in [0, w)ï¼‰
     for (size_t j = 0; j < w; ++j) {
         void *out_ptr = decode_data + j * packet_size;
         std::vector<void *> srcs;

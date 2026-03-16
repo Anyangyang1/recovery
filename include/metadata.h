@@ -21,20 +21,22 @@
 // #define COORDINATOR_IP "192.168.1.12"
 // #define COORDINATOR_IP "10.0.0.2"
 #define COORDINATOR_IP "100.0.0.2"
+#define CLIENT_IP "10.0.0.13"
+
 #define CLIENT_PORT 21212
 
 #define KB 1024
 #define MB (1024 * 1024)
 #define RPC_NUM 30
 
-#define SIMD_ALIGNMENT 32 // 64-byte ¶ÔÆë£¬¼æÈİ AVX2/AVX-512/cache line
+#define SIMD_ALIGNMENT 32 // 64-byte å¯¹é½ï¼Œå…¼å®¹ AVX2/AVX-512/cache line
 
 namespace ECProject {
 
 struct ECSchema {
     size_t block_size = 0;
     ECTYPE ec_type;
-    std::unique_ptr<ErasureCode> ec; // ¸ÄÎªÖÇÄÜÖ¸Õë£¬¸ü°²È«
+    std::unique_ptr<ErasureCode> ec; // æ”¹ä¸ºæ™ºèƒ½æŒ‡é’ˆï¼Œæ›´å®‰å…¨
 };
 
 struct Stripe {
@@ -58,7 +60,7 @@ struct DecodeRequest {
     std::string ip;
     int port;
     std::string file_name;
-    std::vector<std::vector<int>> matrix; // ½âÂë¾ØÕó£¨Èç¾ÀÉ¾Âë¾ØÕó£©
+    std::vector<std::vector<int>> matrix; // è§£ç çŸ©é˜µï¼ˆå¦‚çº åˆ ç çŸ©é˜µï¼‰
 };
 
 struct UploadInfo {
@@ -78,9 +80,9 @@ struct StripeInfo {
 };
 
 struct RepairPlan {
-    unsigned int stripe_id;             // ´ıĞŞ¸´µÄÌõ´øid
-    std::vector<DecodeRequest> helpers; // ²ÎÓëĞŞ¸´µÄhelpers
-    Node selected_new_node;             // ĞŞ¸´Íê³Éºó£¬Êı¾İ·ÅÖÃµÄÄ¿±ê½Úµã
+    unsigned int stripe_id;             // å¾…ä¿®å¤çš„æ¡å¸¦id
+    std::vector<DecodeRequest> helpers; // å‚ä¸ä¿®å¤çš„helpers
+    Node selected_new_node;             // ä¿®å¤å®Œæˆåï¼Œæ•°æ®æ”¾ç½®çš„ç›®æ ‡èŠ‚ç‚¹
     std::string repair_file_name;
 };
 
@@ -96,17 +98,19 @@ struct RepairResp {
 };
 
 struct GF2BasisResult {
-    std::vector<std::vector<int>> basis; // »ùÏòÁ¿£¨ĞĞ£©£¬size = rank
-    std::vector<std::vector<int>> reps;  // reps[i] = {k1, k2, ...} ±íÊ¾ row_i =
-                                         // basis[k1] ¨’ basis[k2] ¨’ ...
+    std::vector<std::vector<int>> basis; // åŸºå‘é‡ï¼ˆè¡Œï¼‰ï¼Œsize = rank
+    std::vector<std::vector<int>> reps;  // reps[i] = {k1, k2, ...} è¡¨ç¤º row_i =
+                                         // basis[k1] âŠ• basis[k2] âŠ• ...
 };
 
-// === ¹²ÏíÊı¾İ½á¹¹£ºÃ¿¸ö helper µÄ [buf, original_data] ===
+// === å…±äº«æ•°æ®ç»“æ„ï¼šæ¯ä¸ª helper çš„ [buf, original_data] ===
 struct HelperData {
-    std::unique_ptr<char[]> buf;           // ´ÓÍøÂç¶ÁµÄĞ¡ buffer£¨basis ´óĞ¡£©
-    std::unique_ptr<char[]> original_data; // »Ö¸´³öµÄÍêÕû block_size Êı¾İ
+    std::unique_ptr<char[]> buf;           // ä»ç½‘ç»œè¯»çš„å° bufferï¼ˆbasis å¤§å°ï¼‰
+    std::unique_ptr<char[]> original_data; // æ¢å¤å‡ºçš„å®Œæ•´ block_size æ•°æ®
     size_t buf_size = 0;
     size_t block_size = 0;
 };
+
+
 
 } // namespace ECProject

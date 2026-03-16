@@ -35,7 +35,7 @@ bool access_data(const std::string &key, char *value_buf,
     if (n == 0)
         return true;
     if (file_size % n != 0)
-        return false; // ²»Âú×ã¡°¸ÕºÃÕû³ı¡±Ç°Ìá ¡ú ´íÎó
+        return false; // ä¸æ»¡è¶³â€œåˆšå¥½æ•´é™¤â€å‰æ â†’ é”™è¯¯
 
     std::streamsize packet_size = file_size / n;
     char *out = value_buf;

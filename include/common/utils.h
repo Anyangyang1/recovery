@@ -49,7 +49,7 @@ bitMatrixToIntMatrix(const std::vector<std::vector<int>> &bitMatrix, int W);
 std::vector<std::vector<int>>
 intMatrixToBitMatrix(const std::vector<std::vector<int>> &intMatrix, int W);
 
-// ¸ßË¹ÏûÔªÇó 0-1 ¾ØÕóµÄÖÈ
+// é«˜æ–¯æ¶ˆå…ƒæ±‚ 0-1 çŸ©é˜µçš„ç§©
 int computeBinaryMatrixRank(vector<vector<int>> bitMatrix);
 
 int computeBinaryNonZeroCol(vector<vector<int>> bitMatrix);
@@ -112,7 +112,7 @@ std::string mapToString(const std::unordered_map<K, V> &mp) {
     return oss.str();
 }
 
-// 01 ¾ØÕó¹¤¾ßº¯Êı£¨ÉùÃ÷£©
+// 01 çŸ©é˜µå·¥å…·å‡½æ•°ï¼ˆå£°æ˜ï¼‰
 std::string matrix_to_01_string(const std::vector<std::vector<int>> &mat);
 std::vector<std::vector<int>> string_to_matrix(std::string_view s, size_t rows,
                                                size_t cols);
@@ -120,7 +120,7 @@ std::vector<std::vector<int>> string_to_matrix(std::string_view s, size_t rows,
 uint64_t indices_to_bitmask(const std::vector<int> &indices);
 std::string generate_random_string(size_t length);
 
-// ÄÚ´æ¶ÔÆë·ÖÅä£¨±ÜÃâ SIGBUS£©
+// å†…å­˜å¯¹é½åˆ†é…ï¼ˆé¿å… SIGBUSï¼‰
 inline void *aligned_malloc(size_t size, size_t alignment = 32) {
     void *ptr = nullptr;
 #ifdef _WIN32
@@ -148,9 +148,9 @@ bool writeVectorToCSV(const std::vector<T> &vec, const std::string &filename) {
     for (size_t i = 0; i < vec.size(); ++i) {
         file << vec[i];
         if (i != vec.size() - 1)
-            file << '\n'; // ×îºóÒ»ĞĞ²»¼Ó»»ĞĞ£¨¿ÉÑ¡£©
+            file << '\n'; // æœ€åä¸€è¡Œä¸åŠ æ¢è¡Œï¼ˆå¯é€‰ï¼‰
     }
-    // »òÍ³Ò»¼Ó»»ĞĞ£¨¸ü³£¼û£©£º
+    // æˆ–ç»Ÿä¸€åŠ æ¢è¡Œï¼ˆæ›´å¸¸è§ï¼‰ï¼š
     // for (const auto& x : vec) file << x << '\n';
 
     return file.good();

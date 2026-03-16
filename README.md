@@ -1,54 +1,54 @@
-# ¿âµÄ°²×°
+# åº“çš„å®‰è£…
 
 ## asio
 
-+ ÏÂÔØ×îĞÂ°æ±¾µÄasio¿â
++ ä¸‹è½½æœ€æ–°ç‰ˆæœ¬çš„asioåº“
 
 ```bash
 wget https://github.com/chriskohlhoff/asio/archive/refs/tags/asio-1-30-2.tar.gz
 ```
 
-+ ½âÑ¹
++ è§£å‹
 
 ```bash
 tar -zxvf asio-1-30-2.tar.gz
 ```
 
-½âÑ¹ºóµÃµ½µÄÄ¿Â¼
+è§£å‹åå¾—åˆ°çš„ç›®å½•
 
 ```bash
-asio-1.30.2/               ¡û ×¢Òâ£ºÄ¿Â¼ÃûÊÇ asio-1.30.2£¨²»ÊÇ asio-1-30-2£¡£©
-©¸©¤©¤ include/
-    ©À©¤©¤ asio.hpp
-    ©¸©¤©¤ asio/              ¡û ËùÓĞÍ·ÎÄ¼şÔÚ´Ë
+asio-1.30.2/               â† æ³¨æ„ï¼šç›®å½•åæ˜¯ asio-1.30.2ï¼ˆä¸æ˜¯ asio-1-30-2ï¼ï¼‰
+â””â”€â”€ include/
+    â”œâ”€â”€ asio.hpp
+    â””â”€â”€ asio/              â† æ‰€æœ‰å¤´æ–‡ä»¶åœ¨æ­¤
 ```
 
-+ ±àĞ´makefileÎÄ¼ş£¬½øĞĞ±àÒë
++ ç¼–å†™makefileæ–‡ä»¶ï¼Œè¿›è¡Œç¼–è¯‘
 
 ## C++20
 
 ```bash
-# ²é¿´µ±Ç°°æ±¾
+# æŸ¥çœ‹å½“å‰ç‰ˆæœ¬
 g++ --version
 
-# °²×°ĞÂ°æ±¾
+# å®‰è£…æ–°ç‰ˆæœ¬
 sudo yum install centos-release-scl
 sudo yum install devtoolset-11-gcc devtoolset-11-gcc-c++
 
 
-## 2Ñ¡1£¬ÁÙÊ±ÆôÓÃ»òÓÀ¾ÃÉúĞ§
-scl enable devtoolset-11 bash  # ÁÙÊ±ÆôÓÃ GCC 11
-# »ò¼Óµ½ ~/.bashrc£º
+## 2é€‰1ï¼Œä¸´æ—¶å¯ç”¨æˆ–æ°¸ä¹…ç”Ÿæ•ˆ
+scl enable devtoolset-11 bash  # ä¸´æ—¶å¯ç”¨ GCC 11
+# æˆ–åŠ åˆ° ~/.bashrcï¼š
 # echo "source /opt/rh/devtoolset-11/enable" >> ~/.bashrc
 
 
 echo "source /opt/rh/devtoolset-11/enable" >> ~/.bashrc
-source ~/.bashrc   # Á¢¼´ÉúĞ§µ±Ç°ÖÕ¶Ë£¬ÓÀ¾ÃÉúĞ§
+source ~/.bashrc   # ç«‹å³ç”Ÿæ•ˆå½“å‰ç»ˆç«¯ï¼Œæ°¸ä¹…ç”Ÿæ•ˆ
 ```
 
-## ±àÒëÆ÷Ê¶±ğµ½ÀÏ°æ±¾µÄasio
+## ç¼–è¯‘å™¨è¯†åˆ«åˆ°è€ç‰ˆæœ¬çš„asio
 
-Ö±½Ó±à¼­ `.vscode/c_cpp_properties.json`
+ç›´æ¥ç¼–è¾‘ `.vscode/c_cpp_properties.json`
 
 ```json
 {
@@ -56,143 +56,143 @@ source ~/.bashrc   # Á¢¼´ÉúĞ§µ±Ç°ÖÕ¶Ë£¬ÓÀ¾ÃÉúĞ§
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/asio-1.30.2/include",   // ¡û ±ØĞë·Å×îÇ°Ãæ£¡
+                "${workspaceFolder}/asio-1.30.2/include",   // â† å¿…é¡»æ”¾æœ€å‰é¢ï¼
                 "${workspaceFolder}/include",
                 "${workspaceFolder}/Jerasure-1.2A",
-                "/usr/include",        // ÏµÍ³Â·¾¶·ÅºóÃæ
+                "/usr/include",        // ç³»ç»Ÿè·¯å¾„æ”¾åé¢
                 "/usr/local/include"
             ],
             "defines": [],
-            "compilerPath": "/opt/rh/devtoolset-9/root/usr/bin/g++",  // ¿ÉÑ¡£ºÖ¸¶¨ĞÂ GCC
+            "compilerPath": "/opt/rh/devtoolset-9/root/usr/bin/g++",  // å¯é€‰ï¼šæŒ‡å®šæ–° GCC
             "cStandard": "c11",
-            "cppStandard": "c++17",   // ? ±ØĞëºÍ Makefile Ò»ÖÂ
+            "cppStandard": "c++17",   // ? å¿…é¡»å’Œ Makefile ä¸€è‡´
             "intelliSenseMode": "linux-gcc-x64"
         }
     ],
     "version": 4
 }
 ```
-## coro_rpc°²×°
-+ °²×°ylt
+## coro_rpcå®‰è£…
++ å®‰è£…ylt
 ```bash
-# ÕıÈ·¿ËÂ¡£¨º¬ËùÓĞ×ÓÄ£¿é£©
+# æ­£ç¡®å…‹éš†ï¼ˆå«æ‰€æœ‰å­æ¨¡å—ï¼‰
 git clone --recursive git@github.com:alibaba/yalantinglibs.git  
 ```
 
-# ¹¤³Ì¹¹½¨
+# å·¥ç¨‹æ„å»º
 
-## Ê×´Î¹¹½¨
+## é¦–æ¬¡æ„å»º
 ```bash
 mkdir -p build && cd build
 cmake .. -DCMAKE_BUILD_TYPE=Release
 make -j$(nproc)
 ```
-`-j`£º²¢ĞĞ±àÒë£¨¼ÓËÙ¹¹½¨£©
-`$(nproc)`£ºshell ÃüÁîÌæ»»£¬Õ¹¿ªÎª CPU ºËĞÄÊı
+`-j`ï¼šå¹¶è¡Œç¼–è¯‘ï¼ˆåŠ é€Ÿæ„å»ºï¼‰
+`$(nproc)`ï¼šshell å‘½ä»¤æ›¿æ¢ï¼Œå±•å¼€ä¸º CPU æ ¸å¿ƒæ•°
 
-## ÔËĞĞ
+## è¿è¡Œ
 ```bash
 ./main
 ```
 
-## ÇåÀí
+## æ¸…ç†
 ```bash
 make clean
-# »ò rm -rf *
+# æˆ– rm -rf *
 ```
 
 
-## Ò»Ğ©ÃüÁî
-Ê¹ÓÃĞÂ°æ±¾µÄcmake
+## ä¸€äº›å‘½ä»¤
+ä½¿ç”¨æ–°ç‰ˆæœ¬çš„cmake
 ```bash
 /opt/cmake/bin/cmake --version
 ```
-²âÁ¿ÍøÂç´ø¿í
+æµ‹é‡ç½‘ç»œå¸¦å®½
 ```bash
-# ·şÎñ¶Ë£¨Node A£©
+# æœåŠ¡ç«¯ï¼ˆNode Aï¼‰
 iperf3 -s
 
-# ¿Í»§¶Ë£¨Node B£©
+# å®¢æˆ·ç«¯ï¼ˆNode Bï¼‰
 iperf3 -c <server_ip> [-t 10] [-P 4]
 ```
-°²×°iperf3
+å®‰è£…iperf3
 ```bash
-sudo yum install iperf3          # CentOS 7/8£¨EPEL ĞèÏÈÆôÓÃ£©
-# »ò
+sudo yum install iperf3          # CentOS 7/8ï¼ˆEPEL éœ€å…ˆå¯ç”¨ï¼‰
+# æˆ–
 sudo dnf install iperf3          # RHEL 8+/Fedora/Rocky
-# ÈôÎ´ÕÒµ½£¬ÏÈÆôÓÃ EPEL£º
+# è‹¥æœªæ‰¾åˆ°ï¼Œå…ˆå¯ç”¨ EPELï¼š
 sudo yum install epel-release    # CentOS 7/8
 ```
 
-²é¿´Õ¼ÓÃ¶Ë¿ÚºÅµÄ½ø³Ì
+æŸ¥çœ‹å ç”¨ç«¯å£å·çš„è¿›ç¨‹
 ```bash
 sudo lsof -i :8080
-# »ò
+# æˆ–
 sudo netstat -tulnp | grep :8080
-# »ò£¨½ÏĞÂÏµÍ³ÍÆ¼ö£©
+# æˆ–ï¼ˆè¾ƒæ–°ç³»ç»Ÿæ¨èï¼‰
 ss -tulnp | grep :8080
 ```
-# wondershaperÊ¹ÓÃ
-+ Ö±½ÓÔËĞĞ
+# wondershaperä½¿ç”¨
++ ç›´æ¥è¿è¡Œ
 ```bash
 git clone https://github.com/magnific0/wondershaper.git
 cd wondershaper
-./wondershaper -h   # ²é¿´°ïÖú
+./wondershaper -h   # æŸ¥çœ‹å¸®åŠ©
 ```
-+ ÏµÍ³°²×°
++ ç³»ç»Ÿå®‰è£…
 ```bash
-sudo make install    # Ä¬ÈÏ°²×°µ½ /usr/bin/wondershaper
-which wondershaper   # ÑéÖ¤£ºÓ¦Êä³ö /usr/bin/wondershaper
+sudo make install    # é»˜è®¤å®‰è£…åˆ° /usr/bin/wondershaper
+which wondershaper   # éªŒè¯ï¼šåº”è¾“å‡º /usr/bin/wondershaper
 ```
-+ ²é¿´Íø¿¨Ãû
++ æŸ¥çœ‹ç½‘å¡å
 ```bash
 ip addr show
-# ³£¼ûÍø¿¨£ºens9£¨Äã¹ÜÀíÍø£©¡¢ib0£¨InfiniBand£©¡¢eth0¡¢enpXsY µÈ
+# å¸¸è§ç½‘å¡ï¼šens9ï¼ˆä½ ç®¡ç†ç½‘ï¼‰ã€ib0ï¼ˆInfiniBandï¼‰ã€eth0ã€enpXsY ç­‰
 ```
-+ ÏŞËÙ£¨µ¥Î»Kbps£©
++ é™é€Ÿï¼ˆå•ä½Kbpsï¼‰
 
-|³¡¾°|ÃüÁî|
+|åœºæ™¯|å‘½ä»¤|
 |---|---|
-|Ë«ÏòÏŞËÙ£ºens9 ÏÂĞĞ 100Mbps£¬ÉÏĞĞ 50Mbps|`sudo wondershaper -a ens9 -d 100000 -u 50000`|
-|½öÏŞÉÏ´«£ºib0 ÉÏĞĞ 1Gbps|`sudo wondershaper -a ib0 -u 1000000`|
-|½öÏŞÏÂÔØ£ºens9 ÏÂĞĞ 10Mbps|`sudo wondershaper -a ens9 -d 10000`|
+|åŒå‘é™é€Ÿï¼šens9 ä¸‹è¡Œ 100Mbpsï¼Œä¸Šè¡Œ 50Mbps|`sudo wondershaper -a ens9 -d 100000 -u 50000`|
+|ä»…é™ä¸Šä¼ ï¼šib0 ä¸Šè¡Œ 1Gbps|`sudo wondershaper -a ib0 -u 1000000`|
+|ä»…é™ä¸‹è½½ï¼šens9 ä¸‹è¡Œ 10Mbps|`sudo wondershaper -a ens9 -d 10000`|
 
-+ ²é¿´µ±Ç°ÏŞËÙ×´Ì¬
++ æŸ¥çœ‹å½“å‰é™é€ŸçŠ¶æ€
 ```bash
 sudo wondershaper -s -a ens9
-# Êä³öÊ¾Àı£º
+# è¾“å‡ºç¤ºä¾‹ï¼š
 # wondershaper active on ens9:
 #  Download rate: 100000 kbit
 #  Upload rate: 50000 kbit
 ```
-+ Çå³ıÏŞËÙ
++ æ¸…é™¤é™é€Ÿ
 ```bash
 sudo wondershaper -c -a ens9
 ```
-+ ³Ö¾Ã»¯ÅäÖÃ
++ æŒä¹…åŒ–é…ç½®
 ```bash
-# ±à¼­ÅäÖÃÎÄ¼ş
+# ç¼–è¾‘é…ç½®æ–‡ä»¶
 sudo vim /etc/systemd/wondershaper.conf
 
-# ÄÚÈİÊ¾Àı
+# å†…å®¹ç¤ºä¾‹
 # Interface: ens9, Download: 100Mbps, Upload: 50Mbps
 IFACE="ens9"
 DOWNRATE="100000"
 UPRATE="50000"
 
-# ¿É¼Ó¶à×é£¨Ã¿×éÓÃ¿ÕĞĞ¸ô¿ª£©
+# å¯åŠ å¤šç»„ï¼ˆæ¯ç»„ç”¨ç©ºè¡Œéš”å¼€ï¼‰
 # IFACE="ib0"
 # UPRATE="1000000"
 
-# Æô¶¯·şÎñ
+# å¯åŠ¨æœåŠ¡
 sudo systemctl enable --now wondershaper.service
 
-# ĞŞ¸Ä.conf,ÖØÆôÉúĞ§
+# ä¿®æ”¹.conf,é‡å¯ç”Ÿæ•ˆ
 sudo systemctl restart wondershaper.service
 ```
-+ ĞÂ°æ±¾Ê¹ÓÃ
++ æ–°ç‰ˆæœ¬ä½¿ç”¨
 ```bash
-sudo wondershaper start -a ens9 -d 10000 -u 5000   # ÏŞËÙ 10Mbps down / 5Mbps up
-sudo wondershaper stop -a ens9                      # Çå³ıÏŞËÙ
-sudo wondershaper status -a ens9                    # ²é¿´×´Ì¬
+sudo wondershaper start -a ens9 -d 10000 -u 5000   # é™é€Ÿ 10Mbps down / 5Mbps up
+sudo wondershaper stop -a ens9                      # æ¸…é™¤é™é€Ÿ
+sudo wondershaper status -a ens9                    # æŸ¥çœ‹çŠ¶æ€
 ```

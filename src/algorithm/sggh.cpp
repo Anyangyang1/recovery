@@ -9,17 +9,17 @@ using namespace ECProject;
 vector<vector<int>>
 SimilarityGreedy::generateOptDecodeBitMatrix(int failedBlock, int mode,
                                              unsigned int seed) {
-    
+
     auto bigMatrix = generateAllDecodingMatrix(failedBlock);
-    
+
     auto bitMatrix = ErasureCode::matrix2Bitmatrix(bigMatrix, W);
-   
+
     std::vector<unsigned int> firstSelectSet;
     if (mode == 0) {
         firstSelectSet = {0};
     } else if (mode == -1) {
         firstSelectSet = generateAllRangeN(bitMatrix.size());
-    } else {
+    }  else {
         firstSelectSet = generateUniqueRandom(bitMatrix.size(), mode, seed);
     }
 
@@ -41,7 +41,7 @@ SimilarityGreedy::generateOptDecodeBitMatrix(int failedBlock, int mode,
         std::chrono::duration_cast<std::chrono::nanoseconds>(end1 - start1);
     auto time1 = duration1.count() / 1e6;
     std::cout << "K: " << K << ", M: " << M << ", W: " << W
-              << ", SGGH Time: " << time1 << " ms\n";
+              << ", SGGH Time: " << time1 << " ms" << " ,ranks: " << bestMatrixRank << "\n";
     return bestMatrix;
 }
 
@@ -130,8 +130,8 @@ vector<vector<int>>
 SimilarityGreedy::generateAllDecodingMatrix(int failedBlock) {
     assert(failedBlock >= 0 && failedBlock < N);
 
-    // Step 1: �� codingMatrix תΪ Jerasure ����� int* ��ʽ��row-major, M x
-    // K��
+    // Step 1: 将 codingMatrix 转为 Jerasure 所需的 int* 格式（row-major, M x
+    // K）
     vector<int> codingFlat(M * K);
     for (int i = 0; i < M; ++i) {
         for (int j = 0; j < K; ++j) {
@@ -139,8 +139,8 @@ SimilarityGreedy::generateAllDecodingMatrix(int failedBlock) {
         }
     }
 
-    // Step 2: �������в���ģʽ���̶����� fixedErasedBlock���ٴ�����
-    // totalBlocks-1 ��ѡ M-1 ��
+    // Step 2: 构建所有擦除模式：固定擦除 fixedErasedBlock，再从其余
+    // totalBlocks-1 中选 M-1 个
     vector<int> otherBlocks;
     for (int i = 0; i < N; ++i) {
         if (i != failedBlock) {
@@ -148,7 +148,7 @@ SimilarityGreedy::generateAllDecodingMatrix(int failedBlock) {
         }
     }
 
-    // ������ϣ��򵥵ݹ� or ������
+    // 生成组合（简单递归 or 迭代）
     vector<vector<int>> erasePatterns;
     vector<int> current;
     int patternCount = 0;
@@ -167,19 +167,19 @@ SimilarityGreedy::generateAllDecodingMatrix(int failedBlock) {
     };
     dfs(0);
 
-    // Step 3: ��ÿ�ֲ���ģʽ�����ɽ�����󣬲���ȡ�ؽ� fixedErasedBlock
-    // ����һ��
+    // Step 3: 对每种擦除模式，生成解码矩阵，并提取重建 fixedErasedBlock
+    // 的那一行
     vector<vector<int>> bigMatrix;
 
     for (const auto &extraErased : erasePatterns) {
-        // ���� erased ����
+        // 构建 erased 数组
         vector<int> erased(N, 0);
         erased[failedBlock] = 1;
         for (int blk : extraErased) {
             erased[blk] = 1;
         }
 
-        // ���� Jerasure ���ɽ������
+        // 调用 Jerasure 生成解码矩阵
         vector<int> decodeMatrix(K * K);
         vector<int> dmIds(K);
         int ret = jerasure_make_decoding_matrix(
@@ -187,15 +187,15 @@ SimilarityGreedy::generateAllDecodingMatrix(int failedBlock) {
             dmIds.data());
 
         if (ret != 0) {
-            // ����ʧ�ܣ������ϲ�Ӧ�������� Cauchy ���� MDS��
+            // 解码失败（理论上不应发生，因 Cauchy 矩阵 MDS）
             break;
         }
 
-        vector<int> recoveryCoeffs(N, 0); // ��ʼ��ȫ0
-        // �ҵ���һ�������ؽ� fixedErasedBlock
-        // ע�⣺dmIds[j] ��ʾ decodeMatrix �� j �������ؽ�ԭʼ�� j
-        // �����ݿ飨0~K-1�� fixedErasedBlock >= K,
-        // �޸����Ͽ飬��Ҫ���ж���Ĵ���
+        vector<int> recoveryCoeffs(N, 0); // 初始化全0
+        // 找到哪一行用于重建 fixedErasedBlock
+        // 注意：dmIds[j] 表示 decodeMatrix 第 j 行用于重建原始第 j
+        // 个数据块（0~K-1） fixedErasedBlock >= K,
+        // 修复故障块，需要进行额外的处理
         if (failedBlock >= K) {
             int *decodeMatrixFlat = jerasure_matrix_multiply(
                 codingFlat.data(), decodeMatrix.data(), M, K, K, K, W);
@@ -206,10 +206,10 @@ SimilarityGreedy::generateAllDecodingMatrix(int failedBlock) {
                 recoveryCoeffs[blockIndex] = coeff;
             }
             free(decodeMatrixFlat);
-        } else { // �޸����ݿ飬�������߼�����
+        } else { // 修复数据块，按正常逻辑处理
             int targetRow =
-                failedBlock; // ����Ҫ�ؽ����ǵ� fixedErasedBlock �����ݿ�
-            // decodeMatrix[targetRow * K + j] �� dmIds[j] ���ϵ��
+                failedBlock; // 我们要重建的是第 fixedErasedBlock 个数据块
+            // decodeMatrix[targetRow * K + j] 是 dmIds[j] 块的系数
             for (int j = 0; j < K; ++j) {
                 int blockIndex = dmIds[j];
                 int coeff = decodeMatrix[targetRow * K + j];
@@ -246,7 +246,7 @@ SimilarityGreedy::generateAllDecodingMatrices(const vector<int> &failedBlocks) {
         if (!failedSet.count(i))
             candidates.push_back(i);
 
-    int need = M - F; // ���������Ŀ��������� M��
+    int need = M - F; // 需额外擦除的块数（凑足 M）
     assert(static_cast<int>(candidates.size()) >= need);
 
     // Step 3: generate combinations of size `need` from candidates
@@ -286,7 +286,7 @@ SimilarityGreedy::generateAllDecodingMatrices(const vector<int> &failedBlocks) {
         if (ret != 0)
             continue; // skip invalid (shouldn't happen for MDS)
 
-        // Precompute coding �� decodeMatrix if any failed block is parity
+        // Precompute coding × decodeMatrix if any failed block is parity
         int *codingTimesDecode = nullptr;
         bool hasParity = any_of(failedBlocks.begin(), failedBlocks.end(),
                                 [this](int b) { return b >= K; });
@@ -429,4 +429,126 @@ vector<vector<int>> SimilarityGreedy::generateOptDecodeBitMatrixWithFirstSelect(
     }
     // cout << endl;
     return ECProject::intMatrixToBitMatrix(optDecodeMatrix, W);
+}
+
+/**
+ * 智能启发式采样：基于稀疏度和相似度中心性筛选候选起始行
+ * @param bigMatrix: 全局候选矩阵 (M × N), M = C(k+m-1,k) * w
+ * @param sampleSize: 期望采样数量 S
+ * @param seed: 随机种子
+ * @return: 筛选后的候选起始行索引列表
+ */
+std::vector<unsigned int> SimilarityGreedy::generateHeuristicSample(
+    const std::vector<std::vector<int>> &bigMatrix, int sampleSize,
+    unsigned int seed) {
+
+    std::mt19937 rng(seed);
+    int M = bigMatrix.size();    // 总行数
+    int N = bigMatrix[0].size(); // 列数 = (k+m-1)*w
+
+    // === Step 1: 预计算每行的特征 ===
+    struct RowFeature {
+        int idx;           // 原始行索引
+        double sparsity;   // 稀疏度: 非零元素比例 (越低越好)
+        double centrality; // 相似度中心性: 与其他行的平均相似度 (越高越好)
+        double score;      // 综合得分
+    };
+
+    std::vector<RowFeature> features;
+    features.reserve(M);
+
+    // 1.1 计算稀疏度
+    for (int i = 0; i < M; i++) {
+        int nonZero = 0;
+        for (int j = 0; j < N; j++) {
+            if (bigMatrix[i][j] != 0)
+                nonZero++;
+        }
+        RowFeature f;
+        f.idx = i;
+        f.sparsity = static_cast<double>(nonZero) / N; // [0, 1]
+        f.centrality = 0.0;                            // 后续计算
+        features.push_back(f);
+    }
+
+    // 1.2 计算相似度中心性 (采样估算，避免 O(M^2))
+    // 对每行，随机采样 checkSamples 个其他行计算平均相似度
+    const int checkSamples = std::min(100, M - 1);
+    std::vector<int> sampleIdxs(M);
+    std::iota(sampleIdxs.begin(), sampleIdxs.end(), 0);
+
+    for (int i = 0; i < M; i++) {
+        // 随机采样 checkSamples 个其他行
+        std::shuffle(sampleIdxs.begin(), sampleIdxs.end(), rng);
+        int sumSim = 0;
+        int count = 0;
+        for (int s = 0; s < checkSamples && count < checkSamples; s++) {
+            int j = sampleIdxs[s];
+            if (j == i)
+                continue;
+            sumSim += computeRowSimilarity(bigMatrix[i], bigMatrix[j], N);
+            count++;
+        }
+        features[i].centrality = (count > 0)
+                                     ? static_cast<double>(sumSim) / count / N
+                                     : 0.0; // 归一化到 [0,1]
+    }
+
+    // 1.3 综合打分: score = α * (1 - sparsity) + β * centrality
+    // α, β 为权重，建议 α=0.6, β=0.4 (稀疏度略重要)
+    const double alpha = 0.0, beta = 1.0;
+    for (auto &f : features) {
+        f.score = alpha * (1.0 - f.sparsity) + beta * f.centrality;
+    }
+
+    // === Step 2: 基于得分筛选 top-K 候选 ===
+    // 先取 top-K (K = sampleSize * 3) 作为候选池，再随机采样 sampleSize 个
+    int candidatePoolSize = std::min(sampleSize * 3, M);
+
+    // 部分排序: O(M log K) 而不是 O(M log M)
+    std::partial_sort(features.begin(), features.begin() + candidatePoolSize,
+                      features.end(),
+                      [](const RowFeature &a, const RowFeature &b) {
+                          return a.score > b.score; // 得分高的在前
+                      });
+
+    // === Step 3: 从候选池中随机采样 sampleSize 个 (保持一定随机性) ===
+    std::vector<unsigned int> result;
+    result.reserve(sampleSize);
+
+    // 如果候选池 <= sampleSize, 直接返回全部
+    if (candidatePoolSize <= sampleSize) {
+        for (int i = 0; i < candidatePoolSize; i++) {
+            result.push_back(features[i].idx);
+        }
+        return result;
+    }
+
+    // 否则从 top-K 中随机采样 sampleSize 个
+    std::vector<int> poolIdxs(candidatePoolSize);
+    std::iota(poolIdxs.begin(), poolIdxs.end(), 0);
+    std::shuffle(poolIdxs.begin(), poolIdxs.end(), rng);
+
+    for (int i = 0; i < sampleSize; i++) {
+        result.push_back(features[poolIdxs[i]].idx);
+    }
+
+    return result;
+}
+
+/**
+ * 辅助函数: 计算两行的相似度 (共同非零位置的数量)
+ */
+int SimilarityGreedy::computeRowSimilarity(const std::vector<int> &row1,
+                                           const std::vector<int> &row2,
+                                           int len) {
+
+    int sim = 0;
+    for (int i = 0; i < len; i++) {
+        // 两行在同一位置都非零，计为1
+        if (row1[i] != 0 && row2[i] != 0 && row1[i] == row2[i]) {
+            sim++;
+        }
+    }
+    return sim;
 }

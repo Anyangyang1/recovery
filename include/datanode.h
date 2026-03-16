@@ -20,7 +20,7 @@
 #include <ylt/coro_rpc/coro_rpc_server.hpp>
 
 namespace ECProject {
-// Ğ­Òé²Ù×÷Âë£¨Data Port ÓÃ£©
+// åè®®æ“ä½œç ï¼ˆData Port ç”¨ï¼‰
 enum class DataOp : uint8_t {
     UPLOAD = 1,
     SET = 2,
@@ -28,7 +28,7 @@ enum class DataOp : uint8_t {
     GET_WITH_DECODE = 4
 };
 
-// ÈÎÎñ½á¹¹
+// ä»»åŠ¡ç»“æ„
 struct DataTask {
     DataOp op;
     std::string key;        // for SET/GET/GET_DECODE
@@ -51,50 +51,50 @@ class Datanode {
     void handle_delete_all_file();
 
     /**
-     * @brief ´ÓÖ¸¶¨½Úµã¶ÁÈ¡½øĞĞ¾Ö²¿½âÂëºóµÄÊı¾İ
-     * @param ip: ¶ÁÈ¡½ÚµãµÄip
-     * @param port: ¶ÁÈ¡½ÚµãµÄport
-     * @param key: ¶ÁÈ¡µÄÎÄ¼şÃû
-     * @param value: ½«Êı¾İ¶ÁÈëvalueÖĞ
-     * @param value_size: ¶ÁÈ¡Êı¾İµÄ´óĞ¡
-     * @param matrix: ½øĞĞ¾Ö²¿½âÂëµÄ¾ØÕó
-     * @return: Êı¾İ¶ÁÈ¡ÊÇ·ñ³É¹¦
+     * @brief ä»æŒ‡å®šèŠ‚ç‚¹è¯»å–è¿›è¡Œå±€éƒ¨è§£ç åçš„æ•°æ®
+     * @param ip: è¯»å–èŠ‚ç‚¹çš„ip
+     * @param port: è¯»å–èŠ‚ç‚¹çš„port
+     * @param key: è¯»å–çš„æ–‡ä»¶å
+     * @param value: å°†æ•°æ®è¯»å…¥valueä¸­
+     * @param value_size: è¯»å–æ•°æ®çš„å¤§å°
+     * @param matrix: è¿›è¡Œå±€éƒ¨è§£ç çš„çŸ©é˜µ
+     * @return: æ•°æ®è¯»å–æ˜¯å¦æˆåŠŸ
      */
     RepairResp read_from_datanode_with_local_decode(
         const std::string &ip, int port, const std::string &key, char *value,
         size_t value_size, const vector<vector<int>> &matrix);
 
     /**
-     * @brief ´ÓÖ¸¶¨½Úµã¶ÁÈ¡Êı¾İ
-     * @param ip: ¶ÁÈ¡½ÚµãµÄip
-     * @param port: ¶ÁÈ¡½ÚµãµÄport
-     * @param key: ¶ÁÈ¡µÄÎÄ¼şÃû
-     * @param value: ½«Êı¾İ¶ÁÈëvalueÖĞ
-     * @param value_size: ¶ÁÈ¡Êı¾İµÄ´óĞ¡
-     * @return: Êı¾İ¶ÁÈ¡ÊÇ·ñ³É¹¦
+     * @brief ä»æŒ‡å®šèŠ‚ç‚¹è¯»å–æ•°æ®
+     * @param ip: è¯»å–èŠ‚ç‚¹çš„ip
+     * @param port: è¯»å–èŠ‚ç‚¹çš„port
+     * @param key: è¯»å–çš„æ–‡ä»¶å
+     * @param value: å°†æ•°æ®è¯»å…¥valueä¸­
+     * @param value_size: è¯»å–æ•°æ®çš„å¤§å°
+     * @return: æ•°æ®è¯»å–æ˜¯å¦æˆåŠŸ
      */
     RepairResp read_from_datanode(const std::string &ip, int port,
                                   const std::string &key, char *value,
                                   size_t value_size);
 
     /**
-     * @brief ½«Êı¾İĞ´ÈëÖ¸¶¨½Úµã
-     * @param ip: Ğ´Èë½ÚµãµÄip
-     * @param port: Ğ´Èë½ÚµãµÄport
-     * @param key: Ğ´ÈëµÄÎÄ¼şÃû
-     * @param value: Ğ´ÈëµÄÊı¾İ
-     * @param value_size: Ğ´ÈëÊı¾İµÄ´óĞ¡
-     * @return: Êı¾İĞ´ÈëÊÇ·ñ³É¹¦
+     * @brief å°†æ•°æ®å†™å…¥æŒ‡å®šèŠ‚ç‚¹
+     * @param ip: å†™å…¥èŠ‚ç‚¹çš„ip
+     * @param port: å†™å…¥èŠ‚ç‚¹çš„port
+     * @param key: å†™å…¥çš„æ–‡ä»¶å
+     * @param value: å†™å…¥çš„æ•°æ®
+     * @param value_size: å†™å…¥æ•°æ®çš„å¤§å°
+     * @return: æ•°æ®å†™å…¥æ˜¯å¦æˆåŠŸ
      */
     bool write_to_datanode(const std::string &ip, int port,
                            const std::string &key, char *value,
                            size_t value_size);
 
     /**
-     * @brief Ö´ĞĞĞŞ¸´²Ù×÷
-     * @param stripe_id: ´ıĞŞ¸´µÄÌõ´øid
-     * @param helpers: ²ÎÓëĞŞ¸´µÄhelpers
-     * @param block_size: Êı¾İ¿éµÄ´óĞ¡
+     * @brief æ‰§è¡Œä¿®å¤æ“ä½œ
+     * @param stripe_id: å¾…ä¿®å¤çš„æ¡å¸¦id
+     * @param helpers: å‚ä¸ä¿®å¤çš„helpers
+     * @param block_size: æ•°æ®å—çš„å¤§å°
      */
     void do_repair_with_opt(std::vector<DecodeRequest> helpers,
                             size_t block_size, int w,
@@ -105,10 +105,10 @@ class Datanode {
                                       std::string repair_file_name);
 
     /**
-     * @brief Ö´ĞĞĞŞ¸´²Ù×÷
-     * @param stripe_id: ´ıĞŞ¸´µÄÌõ´øid
-     * @param helpers: ²ÎÓëĞŞ¸´µÄhelpers
-     * @param block_size: Êı¾İ¿éµÄ´óĞ¡
+     * @brief æ‰§è¡Œä¿®å¤æ“ä½œ
+     * @param stripe_id: å¾…ä¿®å¤çš„æ¡å¸¦id
+     * @param helpers: å‚ä¸ä¿®å¤çš„helpers
+     * @param block_size: æ•°æ®å—çš„å¤§å°
      */
     RepairResp do_repair(std::vector<DecodeRequest> helpers, size_t block_size,
                          int w, std::string repair_file_name);
@@ -122,11 +122,11 @@ class Datanode {
 
   private:
     /**
-     * @brief ½«Êı¾İĞ´Èë´ÅÅÌÖĞ
-     * @param key: Ğ´ÈëµÄÎÄ¼şÃû
-     * @param value: Ğ´ÈëµÄÊı¾İ
-     * @param value_size: Ğ´ÈëÊı¾İµÄ´óĞ¡
-     * @return: Êı¾İĞ´ÈëÊÇ·ñ³É¹¦
+     * @brief å°†æ•°æ®å†™å…¥ç£ç›˜ä¸­
+     * @param key: å†™å…¥çš„æ–‡ä»¶å
+     * @param value: å†™å…¥çš„æ•°æ®
+     * @param value_size: å†™å…¥æ•°æ®çš„å¤§å°
+     * @return: æ•°æ®å†™å…¥æ˜¯å¦æˆåŠŸ
      */
     bool store_data(const std::string &key, const char *value,
                     size_t value_size);
@@ -154,18 +154,18 @@ class Datanode {
                                     char *decode_data, size_t block_size,
                                     size_t packet_size);
     /**
-     * @brief ¸ù¾İÎ¬¾ØÕó£¬¼ÆËã»ùµ×ÏòÁ¿£¬ÒÔ¼°Ã¿Ò»ĞĞ¿ÉÒÔÓÉÄÄĞ©»ùµ×ÏòÁ¿±íÊ¾
-     * @param matrix: w*wµÄÎ¬¾ØÕó
+     * @brief æ ¹æ®ç»´çŸ©é˜µï¼Œè®¡ç®—åŸºåº•å‘é‡ï¼Œä»¥åŠæ¯ä¸€è¡Œå¯ä»¥ç”±å“ªäº›åŸºåº•å‘é‡è¡¨ç¤º
+     * @param matrix: w*wçš„ç»´çŸ©é˜µ
      * @return: {basis,
-     * reps}¡£ÆäÖĞbasis±íÊ¾»ùµ×ÏòÁ¿£¬reps±íÊ¾Ô­À´µÄ¾ØÕó¿ÉÒÔÓÉÄÄĞ©»ùµ×ÏòÁ¿ÏßĞÔ±íÊ¾
+     * reps}ã€‚å…¶ä¸­basisè¡¨ç¤ºåŸºåº•å‘é‡ï¼Œrepsè¡¨ç¤ºåŸæ¥çš„çŸ©é˜µå¯ä»¥ç”±å“ªäº›åŸºåº•å‘é‡çº¿æ€§è¡¨ç¤º
      */
     GF2BasisResult
     compute_basis_gf2_indices(const std::vector<std::vector<int>> &matrix);
 
     /**
-     * @brief ½«original_datasÖĞµÄËùÓĞÊı¾İÖ´ĞĞÒì»ò²Ù×÷²¢·µ»Ø
-     * @param original_datas: Êı¾İ
-     * @return: ·µ»ØÒì»òºóµÄÊı¾İ
+     * @brief å°†original_datasä¸­çš„æ‰€æœ‰æ•°æ®æ‰§è¡Œå¼‚æˆ–æ“ä½œå¹¶è¿”å›
+     * @param original_datas: æ•°æ®
+     * @return: è¿”å›å¼‚æˆ–åçš„æ•°æ®
      */
     void decode_xor(const std::vector<char *> &original_datas,
                     size_t block_size, char *decode_data);
@@ -177,11 +177,11 @@ class Datanode {
                           char *data_buf, char *decode_buf, size_t packet_size);
 
     /**
-     * @brief ¸ù¾İ¾Ö²¿½âÂëµÄÊı¾İ£¬¼ÆËã³ö½âÂëĞèÒªµÄÔ­Ê¼Êı¾İ
-     * @param buf: ¾Ö²¿½âÂëÊı¾İ
-     * @param reps: Ô­Ê¼Êı¾İ¿ÉÓÉÄÄĞ©¾Ö²¿½âÂëÊı¾İ¼ÆËãµÃµ½
-     * @param original_data: ½âÂëĞèÒªµÄÔ­Ê¼Êı¾İ
-     * @param packet_size: °üµÄ´óĞ¡
+     * @brief æ ¹æ®å±€éƒ¨è§£ç çš„æ•°æ®ï¼Œè®¡ç®—å‡ºè§£ç éœ€è¦çš„åŸå§‹æ•°æ®
+     * @param buf: å±€éƒ¨è§£ç æ•°æ®
+     * @param reps: åŸå§‹æ•°æ®å¯ç”±å“ªäº›å±€éƒ¨è§£ç æ•°æ®è®¡ç®—å¾—åˆ°
+     * @param original_data: è§£ç éœ€è¦çš„åŸå§‹æ•°æ®
+     * @param packet_size: åŒ…çš„å¤§å°
      */
     void compute_original_data(char *buf,
                                const std::vector<std::vector<int>> &reps,
@@ -207,7 +207,7 @@ class Datanode {
     // RPC
     std::unique_ptr<coro_rpc::coro_rpc_server> rpc_server_{nullptr};
 
-    // ====== ĞÂÔö£ºÍ³Ò»Êı¾İ·şÎñ ======
+    // ====== æ–°å¢ï¼šç»Ÿä¸€æ•°æ®æœåŠ¡ ======
     std::queue<DataTask> data_queue_;
     std::mutex data_mutex_;
     std::condition_variable data_cv_;
@@ -222,7 +222,7 @@ class Datanode {
     std::atomic<double> computing_time_{0.0};
     std::atomic<double> net_time_{0.0};
 
-    // // ¸¨Öú¹şÏ££¨C++11 ¼æÈİ£©
+    // // è¾…åŠ©å“ˆå¸Œï¼ˆC++11 å…¼å®¹ï¼‰
     // struct VecIntHash {
     //     size_t operator()(const std::vector<int> &v) const {
     //         size_t h = v.size();

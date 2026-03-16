@@ -9,7 +9,7 @@ extern "C" {
 #include "../Jerasure-1.2A/reed_sol.h"
 #include "../Jerasure-1.2A/jerasure.h"
 #include "../Jerasure-1.2A/galois.h"
-// ... ÆäËû
+// ... å…¶ä»–
 
 #ifdef __cplusplus
 }

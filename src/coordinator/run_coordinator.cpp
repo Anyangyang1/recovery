@@ -10,7 +10,7 @@ int main(int argc, char **argv)
     close(STDERR_FILENO);
   }
   
-  std::string xml_path = "/home/anyangyang/study/recovery/clusterinfo3.xml";
+  std::string xml_path = "/home/anyangyang/study/recovery/clusterinfo2.xml";
   int k = stoi(argv[1]);
   int m = stoi(argv[2]);
   int w = stoi(argv[3]);

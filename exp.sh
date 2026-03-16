@@ -1,21 +1,21 @@
 #!/bin/bash
 
-# ================== ÅäÖÃÇø ==================
+# ================== é…ç½®åŒº ==================
 COORDINATOR_HOST="node2"
 CLIENT_HOST="node1"
 DATANODES=("node3" "node4" "node5" "node6" "node7" "node8" "node11" "node12" "node14" "node15" "node17" "node18")
 
 
-# ²ÎÊıÊı×é£¨¿É×Ô¶¨Òå£©
-k_vals=(4 6 8)
-m_vals=(2 3)
-w_vals=(4 8 6)
+# å‚æ•°æ•°ç»„ï¼ˆå¯è‡ªå®šä¹‰ï¼‰
+k_vals=(8)
+m_vals=(3)
+w_vals=(4)
 stripe_num=1000
 
-INTERFACE="ens9"  # Íø¿¨Ãû£¬Çë¸ù¾İÊµ¼ÊĞŞ¸Ä£¨Èç ens192£©
+INTERFACE="ens9"  # ç½‘å¡åï¼Œè¯·æ ¹æ®å®é™…ä¿®æ”¹ï¼ˆå¦‚ ens192ï¼‰
 
-# ÏŞËÙÁĞ±í£¨µ¥Î»£ºGbps ¡ú ×ªÎª kbps£©
-# ¸ñÊ½: (label, kbps_down, kbps_up)
+# é™é€Ÿåˆ—è¡¨ï¼ˆå•ä½ï¼šGbps â†’ è½¬ä¸º kbpsï¼‰
+# æ ¼å¼: (label, kbps_down, kbps_up)
 throttles=(
     "10G 10000000 10000000"
     "5G  5000000 5000000"
@@ -27,7 +27,7 @@ throttles=(
 LOG_DIR="./repair_logs"
 mkdir -p "$LOG_DIR"
 
-# ================== ¸¨Öúº¯Êı ==================
+# ================== è¾…åŠ©å‡½æ•° ==================
 
 run_fg() {
     local host=$1; shift
@@ -76,9 +76,9 @@ apply_throttle() {
     done
 }
 
-# ================== Ö÷Âß¼­ ==================
+# ================== ä¸»é€»è¾‘ ==================
 
-# Íâ²ã£º±éÀú²ÎÊı×éºÏ
+# å¤–å±‚ï¼šéå†å‚æ•°ç»„åˆ
 for k in "${k_vals[@]}"; do
     for m in "${m_vals[@]}"; do
         for w in "${w_vals[@]}"; do
@@ -86,14 +86,14 @@ for k in "${k_vals[@]}"; do
 
             echo ">>> Running experiment: k=$k, m=$m, w=$w, b=$b"
 
-            # Æô¶¯ datanodes
+            # å¯åŠ¨ datanodes
             echo "  Starting datanodes..."
             for host in "${DATANODES[@]}"; do
                 run_bg "$host" "./exp/datanode"
             done
             sleep 8
 
-            # Æô¶¯ coordinator
+            # å¯åŠ¨ coordinator
             echo "  Starting coordinator on $COORDINATOR_HOST..."
             run_bg "$COORDINATOR_HOST" "./exp/coordinator $k $m $w $b"
             sleep 8
@@ -102,24 +102,24 @@ for k in "${k_vals[@]}"; do
             echo "  Running client set..."
             run_fg "$CLIENT_HOST" "./exp/client set $k $b $stripe_num" >/dev/null
 
-            # ±éÀúÏŞËÙ³¡¾°
+            # éå†é™é€Ÿåœºæ™¯
             for throttle in "${throttles[@]}"; do
                 read label down_kbps up_kbps <<< "$throttle"
                 echo "    Applying throttling: $label"
 
-                # ÉèÖÃÏŞËÙ
+                # è®¾ç½®é™é€Ÿ
                 cleanup_wondershaper
                 apply_throttle "$down_kbps" "$up_kbps"
                 sleep 2
 
-                # ¶¨ÒåÈÕÖ¾ÎÄ¼ş
+                # å®šä¹‰æ—¥å¿—æ–‡ä»¶
                 log_file="$LOG_DIR/k${k}_m${m}_w${w}_b${b}_${label}.log"
                 echo "      Logging to: $log_file"
                 echo "=== Experiment: k=$k, m=$m, w=$w, b=$b, bandwidth=$label ===" > "$log_file"
                 echo "Start time: $(date)" >> "$log_file"
                 echo "----------------------------------------" >> "$log_file"
 
-                # Ö´ĞĞ repair ÃüÁî²¢¼ÇÂ¼
+                # æ‰§è¡Œ repair å‘½ä»¤å¹¶è®°å½•
                 for cmd in \
                     "repair_node_no_local 0" \
                     "repair_node 0" \
@@ -140,7 +140,7 @@ for k in "${k_vals[@]}"; do
                 echo "      Done with $label"
             done
 
-            # ÇåÀí±¾ÂÖ
+            # æ¸…ç†æœ¬è½®
             echo "  Cleaning up processes and throttling..."
             kill_procs
             cleanup_wondershaper

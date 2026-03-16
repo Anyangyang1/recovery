@@ -15,15 +15,15 @@ bool writeRepairRespToCSV(const std::vector<RepairResp> &responses,
     if (!file.is_open())
         return false;
 
-    // Ğ´ header£¨¿ÉÑ¡µ«ÍÆ¼ö£©
+    // å†™ headerï¼ˆå¯é€‰ä½†æ¨èï¼‰
     file << "read_disk_time,local_decode_time,send_to_net_time,read_data_time,"
             "computing_time,write_disk_time,repair_time\n";
 
-    // °´ĞĞĞ´£ºÃ¿ĞĞÒ»¸ö RepairResp£¬°´×Ö¶ÎË³ĞòÊä³ö
+    // æŒ‰è¡Œå†™ï¼šæ¯è¡Œä¸€ä¸ª RepairRespï¼ŒæŒ‰å­—æ®µé¡ºåºè¾“å‡º
     for (const auto &r : responses) {
         file << r.read_from_disk_time << "," << r.local_decode_time << ","
              << r.send_to_net_time << "," << r.read_data_time << ','
-             << r.computing_time << ',' // ÈôÔ­×Ö¶ÎÃûÊÇ conputing_time£¬Ìæ»»´Ë´¦
+             << r.computing_time << ',' // è‹¥åŸå­—æ®µåæ˜¯ conputing_timeï¼Œæ›¿æ¢æ­¤å¤„
              << r.write_disk_time << ',' << r.repair_time << '\n';
     }
 
@@ -68,7 +68,7 @@ Coordinator::Coordinator(std::string ip, int port, std::string xml_path, int k,
         init_cluster_info();
     } catch (const std::exception &e) {
         ELOG(ERROR) << "init_cluster_info failed: " << e.what();
-        std::abort(); // »ò throw
+        std::abort(); // æˆ– throw
     }
 
     ec_schema_.ec = std::make_unique<XORCode>(k, m, w);
@@ -77,24 +77,24 @@ Coordinator::Coordinator(std::string ip, int port, std::string xml_path, int k,
 
     SimilarityGreedy sg = SimilarityGreedy(k, m, w);
     opt_decode_matrix_with_all_failed_mode_ =
-        sg.generateOptDecodeBitMatrixWithAllMode(0);
+        sg.generateOptDecodeBitMatrixWithAllMode(-1);
     ELOG(WARNING) << "init completely...";
 }
-Coordinator::~Coordinator() { // 1. ÏÈ¶Ï¿ªËùÓĞ datanodes£¨Í¬²½µÈ´ı£©
+Coordinator::~Coordinator() { // 1. å…ˆæ–­å¼€æ‰€æœ‰ datanodesï¼ˆåŒæ­¥ç­‰å¾…ï¼‰
     for (auto &[uri, client] : datanodes_) {
         if (client) {
-            client->close(); // »ò client->stop(); ²é API
-            // ¿É¼Ó syncAwait(client->async_close()) ÈôÖ§³Ö
+            client->close(); // æˆ– client->stop(); æŸ¥ API
+            // å¯åŠ  syncAwait(client->async_close()) è‹¥æ”¯æŒ
         }
     }
-    datanodes_.clear(); // È·±£ client Îö¹¹Ç°ÒÑ close
+    datanodes_.clear(); // ç¡®ä¿ client ææ„å‰å·² close
 
-    // 2. ÔÙÍ£ server
+    // 2. å†åœ server
     if (rpc_server_) {
         rpc_server_->stop();
     }
     if (io_pool_)
-        io_pool_->stop(); // È·±£ÈÎÎñÍê³É»òÈ¡Ïû
+        io_pool_->stop(); // ç¡®ä¿ä»»åŠ¡å®Œæˆæˆ–å–æ¶ˆ
 }
 void Coordinator::run() { auto ret = rpc_server_->start(); }
 
@@ -219,11 +219,11 @@ RepairResp Coordinator::request_repair_with_opt(unsigned int stripe_id,
                         repair_plan.helpers, ec_schema_.block_size,
                         ec_schema_.ec->w, repair_plan.repair_file_name));
             if (!result) {
-                // ´¦Àí RPC ´íÎó£¨Ç¿ÁÒ½¨Òé£¡£©
+                // å¤„ç† RPC é”™è¯¯ï¼ˆå¼ºçƒˆå»ºè®®ï¼ï¼‰
                 const auto &err = result.error();
                 ELOG(ERROR) << "RPC failed for repair: " << err;
-                // ¿ÉÑ¡£ºÌî³äÒ»¸öÊ§°ÜµÄ response
-                response.repair_time = -1.0; // ±ê¼ÇÊ§°Ü
+                // å¯é€‰ï¼šå¡«å……ä¸€ä¸ªå¤±è´¥çš„ response
+                response.repair_time = -1.0; // æ ‡è®°å¤±è´¥
                 return response;
             }
 
@@ -256,11 +256,11 @@ RepairResp Coordinator::request_repair(unsigned int stripe_id,
                 repair_plan.repair_file_name));
 
         if (!result) {
-            // ´¦Àí RPC ´íÎó£¨Ç¿ÁÒ½¨Òé£¡£©
+            // å¤„ç† RPC é”™è¯¯ï¼ˆå¼ºçƒˆå»ºè®®ï¼ï¼‰
             const auto &err = result.error();
             ELOG(ERROR) << "RPC failed for repair: " << err;
-            // ¿ÉÑ¡£ºÌî³äÒ»¸öÊ§°ÜµÄ response
-            response.repair_time = -1.0; // ±ê¼ÇÊ§°Ü
+            // å¯é€‰ï¼šå¡«å……ä¸€ä¸ªå¤±è´¥çš„ response
+            response.repair_time = -1.0; // æ ‡è®°å¤±è´¥
             return response;
         }
 
@@ -293,11 +293,11 @@ Coordinator::request_repair_no_local_decode(unsigned int stripe_id,
                     repair_plan.helpers, ec_schema_.block_size,
                     ec_schema_.ec->w, repair_plan.repair_file_name));
         if (!result) {
-            // ´¦Àí RPC ´íÎó£¨Ç¿ÁÒ½¨Òé£¡£©
+            // å¤„ç† RPC é”™è¯¯ï¼ˆå¼ºçƒˆå»ºè®®ï¼ï¼‰
             const auto &err = result.error();
             ELOG(ERROR) << "RPC failed for repair: " << err;
-            // ¿ÉÑ¡£ºÌî³äÒ»¸öÊ§°ÜµÄ response
-            response.repair_time = -1.0; // ±ê¼ÇÊ§°Ü
+            // å¯é€‰ï¼šå¡«å……ä¸€ä¸ªå¤±è´¥çš„ response
+            response.repair_time = -1.0; // æ ‡è®°å¤±è´¥
             return response;
         }
 
@@ -573,13 +573,13 @@ Coordinator::generate_repair_plan_with_opt(const Stripe &stripe,
     repair_plan.repair_file_name = "stripe_" + std::to_string(stripe_id) + "_" +
                                    std::to_string(failed_block_id);
     /*
-        ²âÊÔÊ¹ÓÃ£¬Ö®ºóÉ¾³ı
+        æµ‹è¯•ä½¿ç”¨ï¼Œä¹‹ååˆ é™¤
     */
     mutex_.lock();
     repair_file_placement_[new_node_id].push_back({stripe_id, failed_block_id});
     mutex_.unlock();
     /*
-        ²âÊÔÊ¹ÓÃ£¬Ö®ºóÉ¾³ı
+        æµ‹è¯•ä½¿ç”¨ï¼Œä¹‹ååˆ é™¤
     */
 
     return repair_plan;
@@ -604,18 +604,18 @@ RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
                                    std::to_string(failed_block_id);
 
     /*
-        ²âÊÔÊ¹ÓÃ£¬Ö®ºóÉ¾³ı
+        æµ‹è¯•ä½¿ç”¨ï¼Œä¹‹ååˆ é™¤
     */
     mutex_.lock();
     repair_file_placement_[new_node_id].push_back({stripe_id, failed_block_id});
     mutex_.unlock();
     /*
-        ²âÊÔÊ¹ÓÃ£¬Ö®ºóÉ¾³ı
+        æµ‹è¯•ä½¿ç”¨ï¼Œä¹‹ååˆ é™¤
     */
 
     std::vector<std::vector<int>> recoveryCoeffs(1, std::vector<int>(k, 0));
     std::vector<int> recoveryIds(k, 0);
-    // Ğ£Ñé¿é¹ÊÕÏ
+    // æ ¡éªŒå—æ•…éšœ
     if (failed_block_id >= (unsigned int)k) {
 
         int blkIdx = failed_block_id - k;
@@ -623,7 +623,7 @@ RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
             recoveryCoeffs[0][i] = codingMatrix[blkIdx][i];
             recoveryIds[i] = i;
         }
-    } else { // Êı¾İ¿é¹ÊÕÏ
+    } else { // æ•°æ®å—æ•…éšœ
         vector<int> codingFlat(m * k);
         for (int i = 0; i < m; ++i) {
             for (int j = 0; j < k; ++j) {
@@ -632,7 +632,7 @@ RepairPlan Coordinator::generate_repair_plan(const Stripe &stripe,
         }
         vector<int> erased(k + m, 0);
         erased[failed_block_id] = 1;
-        // µ÷ÓÃ Jerasure Éú³É½âÂë¾ØÕó
+        // è°ƒç”¨ Jerasure ç”Ÿæˆè§£ç çŸ©é˜µ
         vector<int> decodeMatrix(k * k);
         vector<int> dmIds(k);
         jerasure_make_decoding_matrix(k, m, w, codingFlat.data(), erased.data(),
@@ -683,7 +683,7 @@ Coordinator::get_submatrix(const std::vector<std::vector<int>> &decode_matrix,
     if (w == 0)
         return {};
 
-    // ¼ì²éÁĞ¶ÔÆë
+    // æ£€æŸ¥åˆ—å¯¹é½
     size_t total_cols = decode_matrix[0].size();
     if (total_cols % w != 0 || i < 0)
         return {};
@@ -693,10 +693,10 @@ Coordinator::get_submatrix(const std::vector<std::vector<int>> &decode_matrix,
     if (block_idx >= blocks)
         return {};
 
-    // ¼ÆËãµÚ i ¿éµÄÁĞ·¶Î§
+    // è®¡ç®—ç¬¬ i å—çš„åˆ—èŒƒå›´
     size_t start_col = block_idx * w;
 
-    // ÏÈ¼ì²éÊÇ·ñÈ«Áã£¨ÌáÇ°ÍË³öÓÅ»¯£©
+    // å…ˆæ£€æŸ¥æ˜¯å¦å…¨é›¶ï¼ˆæå‰é€€å‡ºä¼˜åŒ–ï¼‰
     bool all_zero = true;
     for (size_t r = 0; r < w && all_zero; ++r) {
         for (size_t c = 0; c < w && all_zero; ++c) {
@@ -707,10 +707,10 @@ Coordinator::get_submatrix(const std::vector<std::vector<int>> &decode_matrix,
     }
 
     if (all_zero) {
-        return {}; // ·µ»Ø¿Õ¾ØÕó
+        return {}; // è¿”å›ç©ºçŸ©é˜µ
     }
 
-    // ·ñÔò¿½±´×Ó¾ØÕó
+    // å¦åˆ™æ‹·è´å­çŸ©é˜µ
     std::vector<std::vector<int>> result(w, std::vector<int>(w));
     for (size_t r = 0; r < w; ++r) {
         std::copy_n(decode_matrix[r].begin() + start_col, w, result[r].begin());
@@ -738,16 +738,16 @@ unsigned int Coordinator::select_node(
     }
 
     if (candidates.empty()) {
-        return static_cast<unsigned int>(-1); // »ò throw/LOG_FATAL£¬ÒÀ²ßÂÔ¶ø¶¨
+        return static_cast<unsigned int>(-1); // æˆ– throw/LOG_FATALï¼Œä¾ç­–ç•¥è€Œå®š
     }
 
-    // Ê¹ÓÃ¾Ö²¿ RNG£¬±ÜÃâ static ×´Ì¬ÎÛÈ¾ÓëÏß³Ì¾ºÕù
+    // ä½¿ç”¨å±€éƒ¨ RNGï¼Œé¿å… static çŠ¶æ€æ±¡æŸ“ä¸çº¿ç¨‹ç«äº‰
     std::mt19937 gen;
     if (seed.has_value()) {
         gen.seed(seed.value());
     } else {
-        // ÎŞÖÖ×ÓÊ±Ê¹ÓÃËæ»úÉè±¸³õÊ¼»¯£¨Ã¿´Îµ÷ÓÃ¶ÀÁ¢£¬·Ç static£©
-        static std::random_device rd; // rd Ö»ÓÃÓÚ³õÊ¼»¯£¬¿É static
+        // æ— ç§å­æ—¶ä½¿ç”¨éšæœºè®¾å¤‡åˆå§‹åŒ–ï¼ˆæ¯æ¬¡è°ƒç”¨ç‹¬ç«‹ï¼Œé staticï¼‰
+        static std::random_device rd; // rd åªç”¨äºåˆå§‹åŒ–ï¼Œå¯ static
         gen.seed(rd());
     }
 
@@ -775,7 +775,7 @@ void Coordinator::clear_repair_file() {
 
 // void Coordinator::set(std::string &value) {
 //     auto response = request_set(value.size());
-//     // Step 2: Ö±Á¬ datanode data port (NO RPC!)
+//     // Step 2: ç›´è¿ datanode data port (NO RPC!)
 //     int data_port = response.node_port + SOCKET_PORT_OFFSET;
 //     ELOG(WARNING) << "[SET] Sending stripe_" << response.stripe_id << " ("
 //                   << value.size() << "B) to " << response.node_ip << ":"
@@ -786,7 +786,7 @@ void Coordinator::clear_repair_file() {
 //         socket.connect(asio::ip::tcp::endpoint(
 //             asio::ip::make_address(response.node_ip), data_port));
 
-//         // ·¢ header: op + stripe_id + size
+//         // å‘ header: op + stripe_id + size
 //         uint8_t op = static_cast<uint8_t>(DataOp::UPLOAD);
 //         asio::write(socket, asio::buffer(&op, 1));
 //         uint32_t sid = htonl(response.stripe_id);
@@ -794,7 +794,7 @@ void Coordinator::clear_repair_file() {
 //         asio::write(socket, asio::buffer(&sid, 4));
 //         asio::write(socket, asio::buffer(&sz, 4));
 
-//         // ·¢ body
+//         // å‘ body
 //         asio::write(socket, asio::buffer(value));
 //         socket.close();
 //         ELOG(WARNING) << "Send data completely.";

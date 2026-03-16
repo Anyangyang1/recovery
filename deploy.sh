@@ -1,17 +1,17 @@
 #!/bin/bash
 
-# ÅäÖÃÇø£¨°´ĞèĞŞ¸Ä£©
+# é…ç½®åŒºï¼ˆæŒ‰éœ€ä¿®æ”¹ï¼‰
 BIN_DIR="./exec"
 USER="anyangyang"
 REMOTE_DIR="~/exp"
 
-# ½ÚµãÁĞ±í£ºdatanode ²¿Êğµ½ node3~5£¬client ²¿Êğµ½ node6
-DATANODE_NODES=("node3" "node4" "node5" "node6" "node7" "node8" "node11" "node12" "node14" "node15" "node17" "node18")
+# èŠ‚ç‚¹åˆ—è¡¨ï¼šdatanode éƒ¨ç½²åˆ° node3~5ï¼Œclient éƒ¨ç½²åˆ° node6
+DATANODE_NODES=("node1" "node3" "node4" "node5" "node6" "node7" "node8" "node9" "node10" "node11" "node12" "node14" "node15" "node17" "node18")
 # DATANODE_NODES=("node11" "node12" "node13" "node14" "node15" "node17" "node18")
-CLIENT_NODES=("node1")
+CLIENT_NODES=("node13")
 COORDINATOR_NODES=("node2")
 
-# ¼ì²é±¾µØÎÄ¼şÊÇ·ñ´æÔÚ
+# æ£€æŸ¥æœ¬åœ°æ–‡ä»¶æ˜¯å¦å­˜åœ¨
 if [[ ! -f "$BIN_DIR/datanode" ]]; then
     echo "Error: $BIN_DIR/datanode not found"
     exit 1
@@ -25,7 +25,7 @@ if [[ ! -f "$BIN_DIR/test_client" ]]; then
     exit 1
 fi
 
-# ²¿Êğ datanode
+# éƒ¨ç½² datanode
 echo "Deploying datanode to ${DATANODE_NODES[*]}..."
 for node in "${DATANODE_NODES[@]}"; do
     echo "$node"
@@ -35,7 +35,7 @@ for node in "${DATANODE_NODES[@]}"; do
     }
 done
 
-# ²¿Êğ client
+# éƒ¨ç½² client
 echo "Deploying client to ${CLIENT_NODES[*]}..."
 for node in "${CLIENT_NODES[@]}"; do
     echo "$node"
@@ -45,7 +45,7 @@ for node in "${CLIENT_NODES[@]}"; do
     }
 done
 
-# ²¿Êğ client
+# éƒ¨ç½² client
 echo "Deploying coordinator to ${COORDINATOR_NODES[*]}..."
 for node in "${COORDINATOR_NODES[@]}"; do
     echo "$node"
@@ -55,7 +55,7 @@ for node in "${COORDINATOR_NODES[@]}"; do
     }
 done
 
-# # ²¿Êğ test_client
+# # éƒ¨ç½² test_client
 # echo "Deploying test_client to ${DATANODE_NODES[*]}..."
 # for node in "${DATANODE_NODES[@]}"; do
 #     echo "$node"
@@ -66,7 +66,7 @@ done
 # done
 
 
-# # ²¿Êğ test_server
+# # éƒ¨ç½² test_server
 # echo "Deploying test_server to ${DATANODE_NODES[*]}..."
 # for node in "${DATANODE_NODES[@]}"; do
 #     echo "$node"

@@ -13,9 +13,9 @@ std::string ECProject::append_timestamp_to_filename(const std::string& base_path
 
     std::ostringstream oss;
     oss << std::put_time(std::localtime(&time_t), "%Y%m%d%H%M%S");
-    // Èç¹ûĞèÒªºÁÃë¾«¶È£¬¿É×·¼Ó£º << '.' << std::setfill('0') << std::setw(3) << ms.count();
+    // å¦‚æœéœ€è¦æ¯«ç§’ç²¾åº¦ï¼Œå¯è¿½åŠ ï¼š << '.' << std::setfill('0') << std::setw(3) << ms.count();
 
-    // ·ÖÀëÂ·¾¶ºÍÀ©Õ¹Ãû
+    // åˆ†ç¦»è·¯å¾„å’Œæ‰©å±•å
     size_t last_dot = base_path.find_last_of('.');
     if (last_dot == std::string::npos) {
         return base_path + "_" + oss.str();
@@ -24,7 +24,7 @@ std::string ECProject::append_timestamp_to_filename(const std::string& base_path
     }
 }
 
-// ¸ßË¹ÏûÔªÇó 0-1 ¾ØÕóµÄÖÈ
+// é«˜æ–¯æ¶ˆå…ƒæ±‚ 0-1 çŸ©é˜µçš„ç§©
 int ECProject::computeBinaryMatrixRank(vector<vector<int>> matrix) {
     int rows = matrix.size();
     if (rows == 0)
@@ -33,7 +33,7 @@ int ECProject::computeBinaryMatrixRank(vector<vector<int>> matrix) {
     int rank = 0;
 
     for (int col = 0; col < cols && rank < rows; ++col) {
-        // ÕÒÖ÷Ôª
+        // æ‰¾ä¸»å…ƒ
         int pivot = -1;
         for (int r = rank; r < rows; ++r) {
             if (matrix[r][col] == 1) {
@@ -44,10 +44,10 @@ int ECProject::computeBinaryMatrixRank(vector<vector<int>> matrix) {
         if (pivot == -1)
             continue;
 
-        // ½»»»ĞĞ
+        // äº¤æ¢è¡Œ
         swap(matrix[rank], matrix[pivot]);
 
-        // ÏûÔª
+        // æ¶ˆå…ƒ
         for (int r = 0; r < rows; ++r) {
             if (r != rank && matrix[r][col] == 1) {
                 for (int c = 0; c < cols; ++c) {
@@ -61,7 +61,7 @@ int ECProject::computeBinaryMatrixRank(vector<vector<int>> matrix) {
 }
 
 
-// µİ¹éº¯Êı£¬ÓÃÓÚÉú³É×éºÏ
+// é€’å½’å‡½æ•°ï¼Œç”¨äºç”Ÿæˆç»„åˆ
 void ECProject::generate_combinations(int start, int n, int k, std::vector<int>& current, std::vector<std::vector<int>>& result, std::set<int>& isExist) {
     if (current.size() == k) {
         result.push_back(current);
@@ -81,7 +81,7 @@ void ECProject::generate_combinations(int start, int n, int k, std::vector<int>&
     }
 }
 
-// Ö÷º¯Êı£¬ÓÃÓÚÉú³ÉËùÓĞ k ×éºÏ
+// ä¸»å‡½æ•°ï¼Œç”¨äºç”Ÿæˆæ‰€æœ‰ k ç»„åˆ
 std::vector<std::vector<int>> ECProject::get_combinations(int n, int k) {
     std::vector<std::vector<int>> result;
     std::vector<int> current;
@@ -111,11 +111,11 @@ int ECProject::computeBinaryNonZeroCol(vector<vector<int>> bitMatrix) {
 }
 
 /**
- * @brief ½«¼ò»¯Î»¾ØÕó£¨Ã¿ĞĞ R x (C*W)£©×ª»»ÎªÕûÊı¾ØÕó£¨R x C£©
+ * @brief å°†ç®€åŒ–ä½çŸ©é˜µï¼ˆæ¯è¡Œ R x (C*W)ï¼‰è½¬æ¢ä¸ºæ•´æ•°çŸ©é˜µï¼ˆR x Cï¼‰
  *
- * @param bitMatrix: R ĞĞ£¬Ã¿ĞĞ³¤¶ÈÎª C * W£¬ÔªËØÎª 0/1
- * @param W: Ã¿×éÎ»Êı
- * @return std::vector<std::vector<int>>: R x C µÄÕûÊı¾ØÕó
+ * @param bitMatrix: R è¡Œï¼Œæ¯è¡Œé•¿åº¦ä¸º C * Wï¼Œå…ƒç´ ä¸º 0/1
+ * @param W: æ¯ç»„ä½æ•°
+ * @return std::vector<std::vector<int>>: R x C çš„æ•´æ•°çŸ©é˜µ
  */
 std::vector<std::vector<int>>
 ECProject::bitMatrixToIntMatrix(const std::vector<std::vector<int>> &bitMatrix,
@@ -133,7 +133,7 @@ ECProject::bitMatrixToIntMatrix(const std::vector<std::vector<int>> &bitMatrix,
     for (size_t i = 0; i < R; ++i) {
         for (size_t j = 0; j < C; ++j) {
             int val = 0;
-            // ´Ó¸ßÎ»µ½µÍÎ»£¨bitMatrix[i][j*W] ÊÇ×î¸ßÎ»£©
+            // ä»é«˜ä½åˆ°ä½ä½ï¼ˆbitMatrix[i][j*W] æ˜¯æœ€é«˜ä½ï¼‰
             for (int b = 0; b < W; ++b) {
                 val = (val << 1) | bitMatrix[i][j * W + b];
             }
@@ -156,9 +156,9 @@ ECProject::intMatrixToBitMatrix(const std::vector<std::vector<int>> &intMatrix,
     for (size_t i = 0; i < R; ++i) {
         for (size_t j = 0; j < C; ++j) {
             std::vector<int> bits(W, 0);
-            // ´Ó×î¸ßÎ»¿ªÊ¼Ìî³ä
+            // ä»æœ€é«˜ä½å¼€å§‹å¡«å……
             for (int b = 0; b < W; ++b) {
-                // ¼ì²éµÚ (W - 1 - i) Î»ÊÇ·ñÎª 1
+                // æ£€æŸ¥ç¬¬ (W - 1 - i) ä½æ˜¯å¦ä¸º 1
                 bits[b] = (intMatrix[i][j] >> (W - 1 - b)) & 1;
             }
             for (int b = 0; b < W; ++b) {
@@ -175,15 +175,15 @@ vector<unsigned int> ECProject::generateUniqueRandom(int N, int K,
         // throw std::invalid_argument("K must be between 0 and N");
         K = N;
     }
-    // ´´½¨ 0 µ½ N-1 µÄĞòÁĞ
+    // åˆ›å»º 0 åˆ° N-1 çš„åºåˆ—
     vector<unsigned int> nums(N);
-    std::iota(nums.begin(), nums.end(), 0); // Ìî³ä 0,1,2,...,N-1
+    std::iota(nums.begin(), nums.end(), 0); // å¡«å…… 0,1,2,...,N-1
 
-    // Ëæ»ú´òÂÒ
+    // éšæœºæ‰“ä¹±
     std::mt19937 rng(seed);
     std::shuffle(nums.begin(), nums.end(), rng);
 
-    // È¡Ç° K ¸ö
+    // å–å‰ K ä¸ª
     nums.resize(K);
     return nums;
 }
@@ -213,10 +213,10 @@ int ECProject::comb(int n, int k) {
         return 0;
     if (k == 0 || k == n)
         return 1;
-    k = min(k, n - k); // ÀûÓÃ¶Ô³ÆĞÔ¼õÉÙ¼ÆËã
+    k = min(k, n - k); // åˆ©ç”¨å¯¹ç§°æ€§å‡å°‘è®¡ç®—
     long long res = 1;
     for (long long i = 1; i <= k; ++i) {
-        res = res * (n - k + i) / i; // ÏÈ³Ëºó³ı£¬±£Ö¤Õû³ı
+        res = res * (n - k + i) / i; // å…ˆä¹˜åé™¤ï¼Œä¿è¯æ•´é™¤
     }
     return res;
 }
@@ -287,7 +287,7 @@ void ECProject::exit_when(bool condition,
 }
 
 
-// ====== ĞÂÔö¹¤¾ßº¯Êı ======
+// ====== æ–°å¢å·¥å…·å‡½æ•° ======
 std::string ECProject::matrix_to_01_string(const std::vector<std::vector<int>>& mat) {
     if (mat.empty()) return "";
     size_t rows = mat.size(), cols = mat[0].size();
@@ -331,7 +331,7 @@ std::string ECProject::generate_random_string(size_t length) {
 uint64_t ECProject::indices_to_bitmask(const std::vector<int>& indices) {
     uint64_t mask = 0;
     for (int idx : indices) {
-        // °²È«¼ì²é£¨¿ÉÑ¡£¬release ¿É¹Ø±Õ£©
+        // å®‰å…¨æ£€æŸ¥ï¼ˆå¯é€‰ï¼Œrelease å¯å…³é—­ï¼‰
         assert(idx >= 0 && idx < 64 && "Index out of 0~63 range");
         mask |= (1ULL << idx);
     }

@@ -19,7 +19,7 @@ class ScopedTimer {
         auto ms =
             std::chrono::duration<double, std::milli>(end - start_).count();
 
-        // ¹¹Ôì´øÎ»ÖÃµÄÏûÏ¢
+        // æ„é€ å¸¦ä½ç½®çš„æ¶ˆæ¯
         std::string full_msg =
             "[XXX.cpp:" + std::to_string(line_) + "] " + msg_;
 
@@ -40,7 +40,7 @@ class ScopedTimer {
             ELOG(WARNING) << full_msg << " [time]: " << ms << " ms.";
         }
 
-        // »Øµ÷´«³öºÄÊ±£¨¹Ø¼ü¸Ä¶¯£©
+        // å›è°ƒä¼ å‡ºè€—æ—¶ï¼ˆå…³é”®æ”¹åŠ¨ï¼‰
         if (callback_) {
             callback_(ms);
         }
@@ -55,7 +55,7 @@ class ScopedTimer {
     std::chrono::high_resolution_clock::time_point start_;
 };
 
-// ºêÏÔÊ½´«Èë __FILE__, __LINE__
+// å®æ˜¾å¼ä¼ å…¥ __FILE__, __LINE__
 #define SCOPED_TIMER(msg)                                                      \
     ::ECProject::ScopedTimer _timer { (msg), __FILE__, __LINE__ }
 

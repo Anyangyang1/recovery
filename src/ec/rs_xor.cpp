@@ -48,7 +48,7 @@ void XORCode::bitmatrix_encode_with_isa(char **data_ptrs, char **coding_ptrs,
             srcs.clear();
             for (int i = 0; i < k; ++i) {
                 for (int y = 0; y < w; ++y) {
-                    // bitmatrix layout: [j][i][y][r] ¡ú linear index
+                    // bitmatrix layout: [j][i][y][r] â†’ linear index
                     // int idx = ((j * k + i) * w + y) * w + r;
                     int idx = (j * k * w * w) + (r * k * w) + (i * w) + y; 
                     if (bitmatrix[idx]) {
@@ -56,7 +56,7 @@ void XORCode::bitmatrix_encode_with_isa(char **data_ptrs, char **coding_ptrs,
                     }
                 }
             }
-            srcs.push_back(out); // xor_gen ÒªÇó dst ÔÚÄ©Î²£¨¼û ISA-L£©
+            srcs.push_back(out); // xor_gen è¦æ±‚ dst åœ¨æœ«å°¾ï¼ˆè§ ISA-Lï¼‰
             if (srcs.size() == 2) {
                 memcpy(out, srcs[0], packet_size);
             } else {

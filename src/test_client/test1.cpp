@@ -59,7 +59,7 @@ std::vector<std::vector<int>> element_to_bitmatrix(int elt, int w) {
     return bitmatrix;
 }
 
-// ²âÊÔ2^wµÄÎ»¾ØÕóÊÇ·ñ¶¼¿ÉÄæ
+// æµ‹è¯•2^wçš„ä½çŸ©é˜µæ˜¯å¦éƒ½å¯é€†
 bool test_reverse(int w) {
     int num = (1 << w);
     // cout << "w: " << w << " ,num: " << num << "*************" <<  endl;
@@ -81,14 +81,14 @@ compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
         return {};
     }
 
-    // Step 1: ¸ßË¹ÏûÔªÇó RREF ºÍÖ÷ÔªÓ³Éä
+    // Step 1: é«˜æ–¯æ¶ˆå…ƒæ±‚ RREF å’Œä¸»å…ƒæ˜ å°„
     auto R = A;
     std::vector<int> pivot_row_for_col(
-        w, -1); // col c ¡ú ÄÄÒ»ĞĞÊÇÆäÖ÷ÔªĞĞ£¨ÔÚ R ÖĞµÄĞĞºÅ£©
+        w, -1); // col c â†’ å“ªä¸€è¡Œæ˜¯å…¶ä¸»å…ƒè¡Œï¼ˆåœ¨ R ä¸­çš„è¡Œå·ï¼‰
     int rank = 0;
 
     for (int c = 0; c < w && rank < w; ++c) {
-        // ÕÒÖ÷ÔªĞĞ
+        // æ‰¾ä¸»å…ƒè¡Œ
         int pivot = -1;
         for (int r = rank; r < w; ++r) {
             if (R[r][c] == 1) {
@@ -101,7 +101,7 @@ compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
         std::swap(R[rank], R[pivot]);
         pivot_row_for_col[c] = rank;
 
-        // ÏûÈ¥ÆäËûËùÓĞĞĞµÄµÚ c ÁĞ
+        // æ¶ˆå»å…¶ä»–æ‰€æœ‰è¡Œçš„ç¬¬ c åˆ—
         for (int r = 0; r < w; ++r) {
             if (r != rank && R[r][c] == 1) {
                 for (int j = 0; j < w; ++j) {
@@ -112,20 +112,20 @@ compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
         ++rank;
     }
 
-    // ÌáÈ¡»ù£¨Ç° rank ĞĞ£©
+    // æå–åŸºï¼ˆå‰ rank è¡Œï¼‰
     std::vector<std::vector<int>> basis(R.begin(), R.begin() + rank);
 
-    // Step 2: ¶ÔÃ¿¸öÔ­Ê¼ĞĞ A[i]£¬ÇóÆäÓÉÄÄĞ©»ùÏòÁ¿Òì»ò¶ø³É
+    // Step 2: å¯¹æ¯ä¸ªåŸå§‹è¡Œ A[i]ï¼Œæ±‚å…¶ç”±å“ªäº›åŸºå‘é‡å¼‚æˆ–è€Œæˆ
     std::vector<std::vector<int>> reps(w);
 
     for (int i = 0; i < w; ++i) {
-        auto v = A[i]; // µ±Ç°´ı±í³öĞĞ
+        auto v = A[i]; // å½“å‰å¾…è¡¨å‡ºè¡Œ
 
-        // ±éÀúËùÓĞÖ÷ÔªÁĞ£¨°´ÁĞµİÔöË³Ğò = »ùÏòÁ¿Ë³Ğò£©
+        // éå†æ‰€æœ‰ä¸»å…ƒåˆ—ï¼ˆæŒ‰åˆ—é€’å¢é¡ºåº = åŸºå‘é‡é¡ºåºï¼‰
         for (int c = 0; c < w; ++c) {
             if (v[c] == 1 && pivot_row_for_col[c] != -1) {
-                int basis_idx = pivot_row_for_col[c]; // ¸ÃÖ÷Ôª¶ÔÓ¦µÄ»ùË÷Òı£¨0
-                                                      // ~ rank-1£©
+                int basis_idx = pivot_row_for_col[c]; // è¯¥ä¸»å…ƒå¯¹åº”çš„åŸºç´¢å¼•ï¼ˆ0
+                                                      // ~ rank-1ï¼‰
                 reps[i].push_back(basis_idx);
 
                 // v ^= basis[basis_idx]
@@ -135,7 +135,7 @@ compute_basis_gf2_indices(const std::vector<std::vector<int>> &A) {
                 }
             }
         }
-        // ÀíÂÛÉÏ v Ó¦È« 0£»¿É¼Ó assert ¼ì²é
+        // ç†è®ºä¸Š v åº”å…¨ 0ï¼›å¯åŠ  assert æ£€æŸ¥
     }
 
     return {basis, reps};
@@ -202,7 +202,7 @@ get_submatrix(const std::vector<std::vector<int>> &decode_matrix, int i) {
     if (w == 0)
         return {};
 
-    // ¼ì²éÁĞ¶ÔÆë
+    // æ£€æŸ¥åˆ—å¯¹é½
     size_t total_cols = decode_matrix[0].size();
     if (total_cols % w != 0 || i < 0)
         return {};
@@ -212,10 +212,10 @@ get_submatrix(const std::vector<std::vector<int>> &decode_matrix, int i) {
     if (block_idx >= blocks)
         return {};
 
-    // ¼ÆËãµÚ i ¿éµÄÁĞ·¶Î§
+    // è®¡ç®—ç¬¬ i å—çš„åˆ—èŒƒå›´
     size_t start_col = block_idx * w;
 
-    // ÏÈ¼ì²éÊÇ·ñÈ«Áã£¨ÌáÇ°ÍË³öÓÅ»¯£©
+    // å…ˆæ£€æŸ¥æ˜¯å¦å…¨é›¶ï¼ˆæå‰é€€å‡ºä¼˜åŒ–ï¼‰
     bool all_zero = true;
     for (size_t r = 0; r < w && all_zero; ++r) {
         for (size_t c = 0; c < w && all_zero; ++c) {
@@ -226,10 +226,10 @@ get_submatrix(const std::vector<std::vector<int>> &decode_matrix, int i) {
     }
 
     if (all_zero) {
-        return {}; // ·µ»Ø¿Õ¾ØÕó
+        return {}; // è¿”å›ç©ºçŸ©é˜µ
     }
 
-    // ·ñÔò¿½±´×Ó¾ØÕó
+    // å¦åˆ™æ‹·è´å­çŸ©é˜µ
     std::vector<std::vector<int>> result(w, std::vector<int>(w));
     for (size_t r = 0; r < w; ++r) {
         std::copy_n(decode_matrix[r].begin() + start_col, w, result[r].begin());
@@ -341,14 +341,14 @@ int64_t xor_gen_and_cpy(const int k, const size_t block_size) {
 }
 
 void isa_jerasure_test(const int k, const int m, const size_t block_size) {
-    // === 1. ·ÖÅäÄÚ´æ ===
+    // === 1. åˆ†é…å†…å­˜ ===
     std::vector<uint8_t *> data(k);
     uint8_t *parity_isal = (uint8_t *)aligned_malloc(block_size);
     uint8_t *parity_jerasure = (uint8_t *)aligned_malloc(block_size);
 
     for (int i = 0; i < k; ++i) {
         data[i] = (uint8_t *)aligned_malloc(block_size);
-        // Ìî³ä£ºdata[0]=1, data[1]=2, data[2]=3
+        // å¡«å……ï¼šdata[0]=1, data[1]=2, data[2]=3
         std::memset(data[i], i + 1, block_size);
     }
 
@@ -361,7 +361,7 @@ void isa_jerasure_test(const int k, const int m, const size_t block_size) {
         srcs[k] = parity_isal;
 
         auto start = std::chrono::high_resolution_clock::now();
-        xor_gen(k + 1, block_size, srcs); //  4 ¸ö²ÎÊı
+        xor_gen(k + 1, block_size, srcs); //  4 ä¸ªå‚æ•°
         auto end = std::chrono::high_resolution_clock::now();
 
         auto us =
@@ -371,7 +371,7 @@ void isa_jerasure_test(const int k, const int m, const size_t block_size) {
         std::cout << "[ISA-L] XOR time: " << us << " us, bandwidth: " << mbps
                   << " MB/s\n";
 
-        // ÑéÖ¤£º1 ^ 2 ^ 3 = 0
+        // éªŒè¯ï¼š1 ^ 2 ^ 3 = 0
         uint8_t expected = 0; // = 0
         for (int i = 1; i <= k; i++) {
             expected ^= i;
@@ -386,12 +386,12 @@ void isa_jerasure_test(const int k, const int m, const size_t block_size) {
 
     // === 3. Jerasure XOR (RS(3,1) with identity matrix) ===
     {
-        // Jerasure RS ±àÂëĞè¾ØÕó£º¶ÔÓÚ XOR£¬¿ÉÓÃ [1, 1, 1] ÏµÊı
+        // Jerasure RS ç¼–ç éœ€çŸ©é˜µï¼šå¯¹äº XORï¼Œå¯ç”¨ [1, 1, 1] ç³»æ•°
         int *matrix = (int *)malloc(k * m * sizeof(int)); // GF(2^8)
-        // Éè m=1 ĞĞÎª [1, 1, 1] ¡ú P = D0 + D1 + D2 = D0 ¨’ D1 ¨’ D2
+        // è®¾ m=1 è¡Œä¸º [1, 1, 1] â†’ P = D0 + D1 + D2 = D0 âŠ• D1 âŠ• D2
 
         for (int i = 0; i < k * m; ++i) {
-            matrix[i] = 1; // ÕûÊı 1£¬²»ÊÇ×Ö½Ú 0x01
+            matrix[i] = 1; // æ•´æ•° 1ï¼Œä¸æ˜¯å­—èŠ‚ 0x01
         }
 
         auto start = std::chrono::high_resolution_clock::now();
@@ -420,7 +420,7 @@ void isa_jerasure_test(const int k, const int m, const size_t block_size) {
         free(matrix);
     }
 
-    // === 4. ÇåÀí ===
+    // === 4. æ¸…ç† ===
     for (auto p : data)
         aligned_free(p);
     aligned_free(parity_isal);
@@ -463,7 +463,7 @@ void reducePacketsTest() {
 }
 
 vector<double> reducePacketsTest(int k, int m, int w, int failedBlock) {
-    // Éú³É Cauchy ±àÂë¾ØÕó
+    // ç”Ÿæˆ Cauchy ç¼–ç çŸ©é˜µ
     SimilarityGreedy sg = SimilarityGreedy(k, m, w);
 
     auto start1 = std::chrono::high_resolution_clock::now();
@@ -543,7 +543,7 @@ void loadBalanceTest(int k, int m, int w, int N, int S, int failedNodeId) {
 void xorTimeTest(unsigned int value_size, bool use_jerasure) {
 
     // auto aligned_alloc_char = [](size_t n) {
-    //     void *p = aligned_alloc(32, n); // C11£¬POSIX ±£Ö¤
+    //     void *p = aligned_alloc(32, n); // C11ï¼ŒPOSIX ä¿è¯
     //     if (!p)
     //         throw std::bad_alloc();
     //     return std::unique_ptr<char[], decltype(&free)>(static_cast<char

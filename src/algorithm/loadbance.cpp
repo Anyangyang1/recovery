@@ -2,21 +2,21 @@
 #include "sggh.h"
 using namespace ECProject;
 /**
- * @brief ¸ù¾İÌõ´øµÄ·Ö²¼Çé¿ö£¬ÒÔ¼°½ÚµãµÄ¹ÊÕÏÇé¿ö£¬¼ÆËãÃ¿¸ö½Úµã²ÎÓëĞŞ¸´Ê±µÄ¸ºÔØ
+ * @brief æ ¹æ®æ¡å¸¦çš„åˆ†å¸ƒæƒ…å†µï¼Œä»¥åŠèŠ‚ç‚¹çš„æ•…éšœæƒ…å†µï¼Œè®¡ç®—æ¯ä¸ªèŠ‚ç‚¹å‚ä¸ä¿®å¤æ—¶çš„è´Ÿè½½
  *
- * @param assigment: Ìõ´ø·Ö²¼Çé¿ö
- * @param codingMatrix: M x W µÄ±àÂë¾ØÕó
- * @param W: ÓĞÏŞÓò W
- * @param N: ½ÚµãÊıÁ¿ (±ØĞë N >= 1)
- * @param seed: Ëæ»úÖÖ×Ó£¨¿ÉÑ¡£¬ÓÃÓÚ¿É¸´ÏÖ½á¹û£©
+ * @param assigment: æ¡å¸¦åˆ†å¸ƒæƒ…å†µ
+ * @param codingMatrix: M x W çš„ç¼–ç çŸ©é˜µ
+ * @param W: æœ‰é™åŸŸ W
+ * @param N: èŠ‚ç‚¹æ•°é‡ (å¿…é¡» N >= 1)
+ * @param seed: éšæœºç§å­ï¼ˆå¯é€‰ï¼Œç”¨äºå¯å¤ç°ç»“æœï¼‰
  * @return vector<vector<int>>: assignment[s][b] = node_id
  */
 vector<int> MultiStripeRecovery::getNodeLoad(int failedNodeId) {
     vector<int> nodeReload(nodeNums, 0);
-    // ¹ÊÕÏ½ÚµãÉÏµÄÌõ´ø·Ö²¼
+    // æ•…éšœèŠ‚ç‚¹ä¸Šçš„æ¡å¸¦åˆ†å¸ƒ
     auto failedNodeStripes = node2StripeAssignment[failedNodeId];
     SimilarityGreedy sg = SimilarityGreedy(K, M, W);
-    auto decodeMatrixes = sg.generateOptDecodeBitMatrixWithAllMode(0);          // ²ÉÓÃ±éÀúËùÓĞĞĞµÄ·½Ê½Éú³É½âÂë·½°¸
+    auto decodeMatrixes = sg.generateOptDecodeBitMatrixWithAllMode(-1);          // é‡‡ç”¨éå†æ‰€æœ‰è¡Œçš„æ–¹å¼ç”Ÿæˆè§£ç æ–¹æ¡ˆ
     cout << "failedNodeStripes.size(): " <<  failedNodeStripes.size() << endl;
     for(auto failedNodeStripe: failedNodeStripes) {
         int stripeId = failedNodeStripe.first;
@@ -46,32 +46,32 @@ double MultiStripeRecovery::computeLoadBalance(const vector<int>& loads) {
 
 
 // /**
-//  * @brief ½« S ¸öÌõ´ø¡¢Ã¿¸öÌõ´ø (K+M) ¸ö¿é£¬Ëæ»ú·ÖÅäµ½ N ¸ö½Úµã
+//  * @brief å°† S ä¸ªæ¡å¸¦ã€æ¯ä¸ªæ¡å¸¦ (K+M) ä¸ªå—ï¼Œéšæœºåˆ†é…åˆ° N ä¸ªèŠ‚ç‚¹
 //  *
-//  * @param S: Ìõ´øÊıÁ¿
-//  * @param K: Êı¾İ¿éÊı per stripe
-//  * @param M: Ğ£Ñé¿éÊı per stripe
-//  * @param N: ½ÚµãÊıÁ¿ (±ØĞë N >= 1)
-//  * @param seed: Ëæ»úÖÖ×Ó£¨¿ÉÑ¡£¬ÓÃÓÚ¿É¸´ÏÖ½á¹û£©
+//  * @param S: æ¡å¸¦æ•°é‡
+//  * @param K: æ•°æ®å—æ•° per stripe
+//  * @param M: æ ¡éªŒå—æ•° per stripe
+//  * @param N: èŠ‚ç‚¹æ•°é‡ (å¿…é¡» N >= 1)
+//  * @param seed: éšæœºç§å­ï¼ˆå¯é€‰ï¼Œç”¨äºå¯å¤ç°ç»“æœï¼‰
 //  * @return vector<vector<int>>: assignment[s][b] = node_id
 //  */
 vector<vector<int>> MultiStripeRecovery::assignStripesToNodes(unsigned int seed) {
     const int blocksPerStripe = K + M;
 
-    // ³õÊ¼»¯Ëæ»úÊıÉú³ÉÆ÷
+    // åˆå§‹åŒ–éšæœºæ•°ç”Ÿæˆå™¨
     std::mt19937 rng(seed);
 
-    // ½á¹û£ºS x (K+M)
+    // ç»“æœï¼šS x (K+M)
     vector<vector<int>> assignment(stripeNums, vector<int>(blocksPerStripe));
 
-    // ¶ÔÃ¿¸öÌõ´ø¶ÀÁ¢·ÖÅä
+    // å¯¹æ¯ä¸ªæ¡å¸¦ç‹¬ç«‹åˆ†é…
     for (int s = 0; s < stripeNums; ++s) {
-        // ·½·¨ 1£º¼òµ¥Ëæ»ú£¨ÔÊĞí½Úµã¸ºÔØ²»¾ù£©
+        // æ–¹æ³• 1ï¼šç®€å•éšæœºï¼ˆå…è®¸èŠ‚ç‚¹è´Ÿè½½ä¸å‡ï¼‰
         // for (int b = 0; b < blocksPerStripe; ++b) {
         //     assignment[s][b] = rng() % N;
         // }
 
-        // ·½·¨ 2£º¸ü¾ùºâµÄËæ»ú£¨ÍÆ¼ö£©¡ª¡ª ¶ÔÃ¿¸öÌõ´ø£¬´òÂÒ½ÚµãË³ĞòºóÑ­»··ÖÅä
+        // æ–¹æ³• 2ï¼šæ›´å‡è¡¡çš„éšæœºï¼ˆæ¨èï¼‰â€”â€” å¯¹æ¯ä¸ªæ¡å¸¦ï¼Œæ‰“ä¹±èŠ‚ç‚¹é¡ºåºåå¾ªç¯åˆ†é…
         vector<int> nodes(nodeNums);
         std::iota(nodes.begin(), nodes.end(), 0); // [0, 1, ..., N-1]
         std::shuffle(nodes.begin(), nodes.end(), rng);
@@ -84,14 +84,14 @@ vector<vector<int>> MultiStripeRecovery::assignStripesToNodes(unsigned int seed)
 }
 
 /**
- * @brief ½«Ìõ´ø´æ´¢µÄ·½Ê½¸ÄÎª½Úµã´æ´¢µÄ·½Ê½¡£
+ * @brief å°†æ¡å¸¦å­˜å‚¨çš„æ–¹å¼æ”¹ä¸ºèŠ‚ç‚¹å­˜å‚¨çš„æ–¹å¼ã€‚
  *
- * @param assignment: Ìõ´ø´æ´¢·½Ê½   Stripe 0: 4 11 2 3 10 8 
- * @param S: Ìõ´øÊı
- * @param blocksPerStripe: ¿éÊı per stripe
- * @param N: ½ÚµãÊıÁ¿ (±ØĞë N >= 1)
- * @return vector<vector<std::pair<int, int>>: nodeBlocks[i]±íÊ¾½Úµãi´æ´¢µÄËùÓĞ¿éÊı¼¯ºÏ£¬ÊÇÒ»¸öÊı×é
- *          Êı×éÖĞµÄÔªËØÊÇ¸ö<stripe_id, block_id>ÔªËØ¶Ô
+ * @param assignment: æ¡å¸¦å­˜å‚¨æ–¹å¼   Stripe 0: 4 11 2 3 10 8 
+ * @param S: æ¡å¸¦æ•°
+ * @param blocksPerStripe: å—æ•° per stripe
+ * @param N: èŠ‚ç‚¹æ•°é‡ (å¿…é¡» N >= 1)
+ * @return vector<vector<std::pair<int, int>>: nodeBlocks[i]è¡¨ç¤ºèŠ‚ç‚¹iå­˜å‚¨çš„æ‰€æœ‰å—æ•°é›†åˆï¼Œæ˜¯ä¸€ä¸ªæ•°ç»„
+ *          æ•°ç»„ä¸­çš„å…ƒç´ æ˜¯ä¸ª<stripe_id, block_id>å…ƒç´ å¯¹
  */
 vector<vector<pair<int, int>>> MultiStripeRecovery::getNode2StripeAssignment() {
     const int blocksPerStripe = K + M;
@@ -103,4 +103,216 @@ vector<vector<pair<int, int>>> MultiStripeRecovery::getNode2StripeAssignment() {
         }
     }
     return nodeBlocks;
+}
+
+
+
+
+
+
+vector<int> MultiStripeRecovery::getBalancedRecoveryPlan(int failedNodeId) {
+    // æ•…éšœèŠ‚ç‚¹ä¸Šçš„æ¡å¸¦åˆ†å¸ƒ
+    auto failedNodeStripes = node2StripeAssignment[failedNodeId];
+    
+    // è·å–æ‰€æœ‰å¯é€‰çš„è§£ç æ–¹æ¡ˆï¼ˆå››ç»´æ•°ç»„ï¼‰
+    SimilarityGreedy sg = SimilarityGreedy(K, M, W);
+    auto allDecodeMatrixes = sg.generateAllOptDecodeBitMatrixWithAllMode();
+
+    vector<StripeOption> stripeOptions;
+    for (auto& failedNodeStripe : failedNodeStripes) {
+        int stripeId = failedNodeStripe.first;
+        int failedBlockId = failedNodeStripe.second;
+        
+        StripeOption option;
+        option.stripeId = stripeId;
+        option.failedBlockId = failedBlockId;
+        option.decodeOptions = allDecodeMatrixes[failedBlockId];
+        option.stripeDistribution = stripe2NodeAssignment[stripeId];
+        
+        stripeOptions.push_back(option);
+    }
+    
+    // ç”¨äºå­˜å‚¨æœ€ä¼˜æ–¹æ¡ˆ
+    vector<int> bestSelection(stripeOptions.size(), 0);
+    double minLoadBalanceRatio = numeric_limits<double>::max();
+    vector<int> bestNodeLoad;
+    
+    // å›æº¯å‡½æ•°ï¼Œç©·ä¸¾æ‰€æœ‰å¯èƒ½çš„æ–¹æ¡ˆç»„åˆ
+    vector<int> currentSelection(stripeOptions.size(), 0);
+    
+    function<void(int)> backtrack = [&](int idx) {
+        if (idx == stripeOptions.size()) {
+            // è®¡ç®—å½“å‰æ–¹æ¡ˆçš„èŠ‚ç‚¹è´Ÿè½½
+            vector<int> nodeLoad(nodeNums, 0);
+            
+            for (size_t i = 0; i < stripeOptions.size(); i++) {
+                auto& stripeOpt = stripeOptions[i];
+                int selectedOption = currentSelection[i];
+                
+                // è·å–é€‰ä¸­çš„è§£ç çŸ©é˜µ
+                auto& decodeMatrix = stripeOpt.decodeOptions[selectedOption];
+                auto decodeRanks = SimilarityGreedy::computeBinaryMatrixRank(decodeMatrix, W);
+                
+                // ç´¯åŠ èŠ‚ç‚¹è´Ÿè½½
+                for (size_t j = 0; j < stripeOpt.stripeDistribution.size(); j++) {
+                    int nodeId = stripeOpt.stripeDistribution[j];
+                    if (nodeId != failedNodeId) {  // è·³è¿‡æ•…éšœèŠ‚ç‚¹
+                        nodeLoad[nodeId] += decodeRanks[j];
+                    }
+                }
+            }
+            
+            // è®¡ç®—è´Ÿè½½å‡è¡¡ç‡
+            double loadBalanceRatio = calculateLoadBalanceRatio(nodeLoad, failedNodeId);
+            
+            // æ›´æ–°æœ€ä¼˜æ–¹æ¡ˆ
+            if (loadBalanceRatio < minLoadBalanceRatio) {
+                minLoadBalanceRatio = loadBalanceRatio;
+                bestSelection = currentSelection;
+                bestNodeLoad = nodeLoad;
+            }
+            
+            return;
+        }
+        
+        // å°è¯•å½“å‰æ¡å¸¦çš„æ‰€æœ‰å¯é€‰æ–¹æ¡ˆ
+        int numOptions = stripeOptions[idx].decodeOptions.size();
+        for (int opt = 0; opt < numOptions; opt++) {
+            currentSelection[idx] = opt;
+            backtrack(idx + 1);
+        }
+    };
+    
+    // å¦‚æœç»„åˆæ•°å¤ªå¤šï¼Œä½¿ç”¨å¯å‘å¼æ–¹æ³•
+    long long totalCombinations = 1;
+    for (auto& opt : stripeOptions) {
+        // cout << "size: " << opt.decodeOptions.size() << endl;
+        totalCombinations *= opt.decodeOptions.size();
+    }
+    if (totalCombinations <= 100000 && totalCombinations > 0) {  // è®¾ç½®é˜ˆå€¼ï¼Œé¿å…ç»„åˆçˆ†ç‚¸
+        backtrack(0);
+    } else {
+        // ä½¿ç”¨è´ªå¿ƒå¯å‘å¼æ–¹æ³•
+        cout << "Too many combinations (" << totalCombinations 
+             << "), using greedy heuristic instead" << endl;
+        bestSelection = greedyBalancedSelection(stripeOptions, failedNodeId);
+        
+        // è®¡ç®—æœ€ç»ˆè´Ÿè½½
+        vector<int> nodeLoad(nodeNums, 0);
+        for (size_t i = 0; i < stripeOptions.size(); i++) {
+            auto& stripeOpt = stripeOptions[i];
+            int selectedOption = bestSelection[i];
+            auto& decodeMatrix = stripeOpt.decodeOptions[selectedOption];
+            auto decodeRanks = SimilarityGreedy::computeBinaryMatrixRank(decodeMatrix, W);
+            
+            for (size_t j = 0; j < stripeOpt.stripeDistribution.size(); j++) {
+                int nodeId = stripeOpt.stripeDistribution[j];
+                if (nodeId != failedNodeId) {
+                    nodeLoad[nodeId] += decodeRanks[j];
+                }
+            }
+        }
+        bestNodeLoad = nodeLoad;
+        minLoadBalanceRatio = calculateLoadBalanceRatio(nodeLoad, failedNodeId);
+    }
+    
+    cout << "Best load balance ratio: " << minLoadBalanceRatio << endl;
+    
+    // è¿”å›æœ€ä¼˜æ–¹æ¡ˆï¼šæ¯ä¸ªæ¡å¸¦é€‰æ‹©çš„è§£ç æ–¹æ¡ˆç´¢å¼•
+    return bestSelection;
+}
+
+// è®¡ç®—è´Ÿè½½å‡è¡¡ç‡ï¼ˆæ’é™¤æ•…éšœèŠ‚ç‚¹ï¼‰
+double MultiStripeRecovery::calculateLoadBalanceRatio(const vector<int>& nodeLoad, int failedNodeId) {
+    vector<int> validLoads;
+    for (int i = 0; i < nodeLoad.size(); i++) {
+        if (i != failedNodeId && nodeLoad[i] > 0) {
+            validLoads.push_back(nodeLoad[i]);
+        }
+    }
+    
+    if (validLoads.empty()) return 0.0;
+    
+    int maxLoad = *max_element(validLoads.begin(), validLoads.end());
+    double sumLoad = accumulate(validLoads.begin(), validLoads.end(), 0);
+    double avgLoad = sumLoad / validLoads.size();
+    
+    return (avgLoad > 0) ? (maxLoad / avgLoad) : 0.0;
+}
+
+// è´ªå¿ƒå¯å‘å¼é€‰æ‹©ï¼šæ¯æ¬¡é€‰æ‹©ä½¿å½“å‰è´Ÿè½½å‡è¡¡ç‡æœ€å°çš„æ–¹æ¡ˆ
+vector<int> MultiStripeRecovery::greedyBalancedSelection(
+    vector<StripeOption>& stripeOptions, int failedNodeId) {
+    
+    vector<int> selection(stripeOptions.size(), 0);
+    vector<int> currentLoad(nodeNums, 0);
+    
+    for (size_t i = 0; i < stripeOptions.size(); i++) {
+        auto& stripeOpt = stripeOptions[i];
+        int bestOption = 0;
+        double minRatio = numeric_limits<double>::max();
+        
+        // å°è¯•å½“å‰æ¡å¸¦çš„æ‰€æœ‰å¯é€‰æ–¹æ¡ˆ
+        for (size_t opt = 0; opt < stripeOpt.decodeOptions.size(); opt++) {
+            auto& decodeMatrix = stripeOpt.decodeOptions[opt];
+            auto decodeRanks = SimilarityGreedy::computeBinaryMatrixRank(decodeMatrix, W);
+            
+            // ä¸´æ—¶è®¡ç®—è´Ÿè½½
+            vector<int> tempLoad = currentLoad;
+            for (size_t j = 0; j < stripeOpt.stripeDistribution.size(); j++) {
+                int nodeId = stripeOpt.stripeDistribution[j];
+                if (nodeId != failedNodeId) {
+                    tempLoad[nodeId] += decodeRanks[j];
+                }
+            }
+            
+            double ratio = calculateLoadBalanceRatio(tempLoad, failedNodeId);
+            if (ratio < minRatio) {
+                minRatio = ratio;
+                bestOption = opt;
+            }
+        }
+        
+        // åº”ç”¨æœ€ä¼˜é€‰æ‹©
+        selection[i] = bestOption;
+        auto& decodeMatrix = stripeOpt.decodeOptions[bestOption];
+        auto decodeRanks = SimilarityGreedy::computeBinaryMatrixRank(decodeMatrix, W);
+        
+        for (size_t j = 0; j < stripeOpt.stripeDistribution.size(); j++) {
+            int nodeId = stripeOpt.stripeDistribution[j];
+            if (nodeId != failedNodeId) {
+                currentLoad[nodeId] += decodeRanks[j];
+            }
+        }
+    }
+    
+    return selection;
+}
+
+// åº”ç”¨æœ€ä¼˜ä¿®å¤æ–¹æ¡ˆï¼Œè¿”å›å„èŠ‚ç‚¹è´Ÿè½½
+vector<int> MultiStripeRecovery::applyBalancedRecovery(
+    int failedNodeId, const vector<int>& selection) {
+    
+    vector<int> nodeLoad(nodeNums, 0);
+    auto failedNodeStripes = node2StripeAssignment[failedNodeId];
+    
+    SimilarityGreedy sg = SimilarityGreedy(K, M, W);
+    auto allDecodeMatrixes = sg.generateAllOptDecodeBitMatrixWithAllMode();
+    
+    size_t idx = 0;
+    for (auto& failedNodeStripe : failedNodeStripes) {
+        int stripeId = failedNodeStripe.first;
+        int failedBlockId = failedNodeStripe.second;
+        
+        int selectedOption = selection[idx++];
+        auto& decodeMatrix = allDecodeMatrixes[failedBlockId][selectedOption];
+        auto decodeRanks = SimilarityGreedy::computeBinaryMatrixRank(decodeMatrix, W);
+        
+        auto stripeDistribution = stripe2NodeAssignment[stripeId];
+        for (size_t i = 0; i < stripeDistribution.size(); i++) {
+            nodeLoad[stripeDistribution[i]] += decodeRanks[i];
+        }
+    }
+    
+    return nodeLoad;
 }

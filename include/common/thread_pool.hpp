@@ -35,7 +35,7 @@ public:
 
     ~ThreadPool() { stop(); }
 
-    // Ìá½»ÈÎÎñ£¬·µ»Ø std::future<R>
+    // æäº¤ä»»åŠ¡ï¼Œè¿”å› std::future<R>
     template<class F, class... Args>
     auto submit(F&& f, Args&&... args) -> std::future<std::invoke_result_t<std::decay_t<F>, std::decay_t<Args>...>> {
         using R = std::invoke_result_t<std::decay_t<F>, std::decay_t<Args>...>;
@@ -54,7 +54,7 @@ public:
         return res;
     }
 
-    // ½öÖ´ĞĞ£¬²»¹ØĞÄ½á¹û£¨fire-and-forget£©
+    // ä»…æ‰§è¡Œï¼Œä¸å…³å¿ƒç»“æœï¼ˆfire-and-forgetï¼‰
     template<class F, class... Args>
     void execute(F&& f, Args&&... args) {
         submit(std::forward<F>(f), std::forward<Args>(args)...);

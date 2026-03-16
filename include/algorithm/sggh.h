@@ -1,6 +1,6 @@
 #pragma once
-#include "utils.h"
 #include "erasure_code.h"
+#include "utils.h"
 #include <random>
 #include <set>
 #include <vector>
@@ -9,59 +9,58 @@ namespace ECProject {
 class SimilarityGreedy {
   public:
     SimilarityGreedy(int K, int M, int W) : K(K), M(M), W(W), N(K + M) {
-        codingMatrix = ErasureCode::cauchy_original_coding_matrix_vector(K, M, W);
+        codingMatrix =
+            ErasureCode::cauchy_original_coding_matrix_vector(K, M, W);
     }
     ~SimilarityGreedy() {}
 
     /**
-     * @brief »ùÓÚÏàËÆ¶È£¬Éú³É×îÓÅ½âÂë¾ØÕó
-     * @param failedBlock: ¹ÊÕÏ¿éºÅ£¨0~K+M-1£©
+     * @brief åŸºäºç›¸ä¼¼åº¦ï¼Œç”Ÿæˆæœ€ä¼˜è§£ç çŸ©é˜µ
+     * @param failedBlock: æ•…éšœå—å·ï¼ˆ0~K+M-1ï¼‰
      * @param mode:
-     * ĞŞ¸´Ä£Ê½£¬mode=0Ö»Ñ¡È¡µÚ0ĞĞ×÷ÎªÆğÊ¼ĞĞ£¬mode=-1(Ä¬ÈÏ)Ñ¡È¡ËùÓĞµÄĞĞ×÷ÎªÆğÊ¼ĞĞ,
-     * mode=num(num > 0)Ëæ»úÑ¡È¡numĞĞ
-     * @param seed Ëæ»úÖÖ×Ó£¬ÉèÖÃmode>0²ÅÓĞÒâÒå
-     * @return: ×îÓÅ½âÂë¾ØÕó£¬Î¬¶È W x ((K+M)*W)
+     * ä¿®å¤æ¨¡å¼ï¼Œmode=0åªé€‰å–ç¬¬0è¡Œä½œä¸ºèµ·å§‹è¡Œï¼Œmode=-1(é»˜è®¤)é€‰å–æ‰€æœ‰çš„è¡Œä½œä¸ºèµ·å§‹è¡Œ,
+     * mode=num(num > 0)éšæœºé€‰å–numè¡Œ
+     * @param seed éšæœºç§å­ï¼Œè®¾ç½®mode>0æ‰æœ‰æ„ä¹‰
+     * @return: æœ€ä¼˜è§£ç çŸ©é˜µï¼Œç»´åº¦ W x ((K+M)*W)
      */
     vector<vector<int>>
     generateOptDecodeBitMatrix(int failedBlock, int mode = -1,
                                unsigned int seed = std::random_device{}());
 
-
-    vector<vector<int>>
-    generateOptDecodeBitMatrixBruteForce(int failedBlock);
+    vector<vector<int>> generateOptDecodeBitMatrixBruteForce(int failedBlock);
 
     /**
-     * @brief »ùÓÚÏàËÆ¶È£¬Éú³ÉËùÓĞµÄ×îÓÅ½âÂë¾ØÕó
-     * @param failedBlock: ¹ÊÕÏ¿éºÅ£¨0~K+M-1£©
-     * @return: °üº¬ËùÓĞµÄ×îÓÅ½âÂë¾ØÕó£¬Ã¿¸ö¾ØÕóµÄÎ¬¶È W x ((K+M)*W)
+     * @brief åŸºäºç›¸ä¼¼åº¦ï¼Œç”Ÿæˆæ‰€æœ‰çš„æœ€ä¼˜è§£ç çŸ©é˜µ
+     * @param failedBlock: æ•…éšœå—å·ï¼ˆ0~K+M-1ï¼‰
+     * @return: åŒ…å«æ‰€æœ‰çš„æœ€ä¼˜è§£ç çŸ©é˜µï¼Œæ¯ä¸ªçŸ©é˜µçš„ç»´åº¦ W x ((K+M)*W)
      */
     vector<vector<vector<int>>> generateAllOptDecodeBitMatrix(int failedBlock);
 
     /**
-     * @brief »ùÓÚÏàËÆ¶È£¬Éú³ÉËùÓĞ¹ÊÕÏÄ£Ê½µÄ×îÓÅ½âÂë¾ØÕó
+     * @brief åŸºäºç›¸ä¼¼åº¦ï¼Œç”Ÿæˆæ‰€æœ‰æ•…éšœæ¨¡å¼çš„æœ€ä¼˜è§£ç çŸ©é˜µ
      * @param mode:
-     * ĞŞ¸´Ä£Ê½£¬mode=0Ö»Ñ¡È¡µÚ0ĞĞ×÷ÎªÆğÊ¼ĞĞ£¬mode=-1(Ä¬ÈÏ)Ñ¡È¡ËùÓĞµÄĞĞ×÷ÎªÆğÊ¼ĞĞ,
-     * mode=num(num > 0)Ëæ»úÑ¡È¡numĞĞ
-     * @param seed Ëæ»úÖÖ×Ó£¬ÉèÖÃmode>0²ÅÓĞÒâÒå
+     * ä¿®å¤æ¨¡å¼ï¼Œmode=0åªé€‰å–ç¬¬0è¡Œä½œä¸ºèµ·å§‹è¡Œï¼Œmode=-1(é»˜è®¤)é€‰å–æ‰€æœ‰çš„è¡Œä½œä¸ºèµ·å§‹è¡Œ,
+     * mode=num(num > 0)éšæœºé€‰å–numè¡Œ
+     * @param seed éšæœºç§å­ï¼Œè®¾ç½®mode>0æ‰æœ‰æ„ä¹‰
      * @return:
-     * ËùÓĞ¹ÊÕÏÄ£Ê½µÄ×îÓÅ½âÂë¾ØÕó£¬µÚi¸ö¶şÎ¬¾ØÕó±íÊ¾µÚi¿é¹ÊÕÏÊ±£¨°üº¬Êı¾İ¿éºÍĞ£Ñé¿é£©µÄ×îÓÅ½âÂë¾ØÕó£¬Ã¿¸ö¾ØÕóÎ¬¶È
+     * æ‰€æœ‰æ•…éšœæ¨¡å¼çš„æœ€ä¼˜è§£ç çŸ©é˜µï¼Œç¬¬iä¸ªäºŒç»´çŸ©é˜µè¡¨ç¤ºç¬¬iå—æ•…éšœæ—¶ï¼ˆåŒ…å«æ•°æ®å—å’Œæ ¡éªŒå—ï¼‰çš„æœ€ä¼˜è§£ç çŸ©é˜µï¼Œæ¯ä¸ªçŸ©é˜µç»´åº¦
      * W x ((K+M)*W)
      */
     vector<vector<vector<int>>> generateOptDecodeBitMatrixWithAllMode(
         int mode = -1, unsigned int seed = std::random_device{}());
 
     /**
-     * @brief »ùÓÚÏàËÆ¶È£¬Éú³ÉËùÓĞ¹ÊÕÏÄ£Ê½µÄËùÓĞ×îÓÅ½âÂë¾ØÕó
-     * @return: ËÄÎ¬¾ØÕómatrix¡£matrix[i]±íÊ¾µÚi¿é¹ÊÕÏÊ±µÄËùÓĞ×îÓÅ½âÂë¾ØÕó
+     * @brief åŸºäºç›¸ä¼¼åº¦ï¼Œç”Ÿæˆæ‰€æœ‰æ•…éšœæ¨¡å¼çš„æ‰€æœ‰æœ€ä¼˜è§£ç çŸ©é˜µ
+     * @return: å››ç»´çŸ©é˜µmatrixã€‚matrix[i]è¡¨ç¤ºç¬¬iå—æ•…éšœæ—¶çš„æ‰€æœ‰æœ€ä¼˜è§£ç çŸ©é˜µ
      */
     vector<vector<vector<vector<int>>>>
     generateAllOptDecodeBitMatrixWithAllMode();
 
     /**
-     * @brief ¼ÆËãÎ»¾ØÕóµÄÖÈ£¬Ã»wÎªÒ»×é
-     * @param bitMatrix: WĞĞµÄÎ»¾ØÕó
-     * @param W: Ã¿WÁĞ·Ö×é£¬¹¹³ÉÒ»¸öW*WµÄÎ»¾ØÕó
-     * @return: Ã¿¸öÎ»¾ØÕóµÄÖÈ
+     * @brief è®¡ç®—ä½çŸ©é˜µçš„ç§©ï¼Œæ²¡wä¸ºä¸€ç»„
+     * @param bitMatrix: Wè¡Œçš„ä½çŸ©é˜µ
+     * @param W: æ¯Wåˆ—åˆ†ç»„ï¼Œæ„æˆä¸€ä¸ªW*Wçš„ä½çŸ©é˜µ
+     * @return: æ¯ä¸ªä½çŸ©é˜µçš„ç§©
      */
     static vector<int> computeBinaryMatrixRank(vector<vector<int>> &bitMmatrix,
                                                int W);
@@ -73,16 +72,16 @@ class SimilarityGreedy {
 
   private:
     /**
-     * @brief ¸ù¾İ¹ÊÕÏ¿éºÅ£¬Éú³ÉÈ«¾ÖºòÑ¡½âÂë¾ØÕó
-     * @param failedBlock: ¹ÊÕÏ¿éºÅ
-     * @return: È«¾ÖºòÑ¡½âÂë¾ØÕó
+     * @brief æ ¹æ®æ•…éšœå—å·ï¼Œç”Ÿæˆå…¨å±€å€™é€‰è§£ç çŸ©é˜µ
+     * @param failedBlock: æ•…éšœå—å·
+     * @return: å…¨å±€å€™é€‰è§£ç çŸ©é˜µ
      */
     vector<vector<int>> generateAllDecodingMatrix(int failedBlock);
 
     /**
      * @brief
-     * ¸üĞÂclosure¼¯ºÏ£¬½«valÒÔ¼°closureÖĞµÄËùÓĞÔªËØÓëvalÒì»òµÄ½á¹ûÌí¼Óµ½closureÖĞ
-     * @param closure: ±íÊ¾ÒÑ¾­Ñ¡È¡µÄĞŞ¸´ÏòÁ¿ÒÔ¼°ÄÜÓÉËüÏßĞÔ±í³öµÄËùÓĞÏòÁ¿¼¯ºÏ
+     * æ›´æ–°closureé›†åˆï¼Œå°†valä»¥åŠclosureä¸­çš„æ‰€æœ‰å…ƒç´ ä¸valå¼‚æˆ–çš„ç»“æœæ·»åŠ åˆ°closureä¸­
+     * @param closure: è¡¨ç¤ºå·²ç»é€‰å–çš„ä¿®å¤å‘é‡ä»¥åŠèƒ½ç”±å®ƒçº¿æ€§è¡¨å‡ºçš„æ‰€æœ‰å‘é‡é›†åˆ
      */
     void updateXorClosure(set<int> &closure, int val);
 
@@ -90,29 +89,36 @@ class SimilarityGreedy {
                            const vector<int> &candidate);
 
     /**
-     * @brief ¼ÆËãÒ»¸öºòÑ¡ÏòÁ¿Ïà¶ÔÓÚµ±Ç°closuresµÄÏàËÆ¶È
-     * @param closures: closures¼¯ºÏ£¬closures[i]±íÊ¾Ã¿¸ö¿éµÄclosure¼¯ºÏ
-     * @param candidate£ººòÑ¡ÏòÁ¿
-     * @return ·µ»ØÏàËÆ¶ÈµÄÖµ
+     * @brief è®¡ç®—ä¸€ä¸ªå€™é€‰å‘é‡ç›¸å¯¹äºå½“å‰closuresçš„ç›¸ä¼¼åº¦
+     * @param closures: closuresé›†åˆï¼Œclosures[i]è¡¨ç¤ºæ¯ä¸ªå—çš„closureé›†åˆ
+     * @param candidateï¼šå€™é€‰å‘é‡
+     * @return è¿”å›ç›¸ä¼¼åº¦çš„å€¼
      */
     int computeSimilarity(const vector<std::set<int>> &closures,
                           const vector<int> &candidate);
 
     /**
-     * @brief ÉèÖÃµÚÒ»¸öÑ¡È¡µÄĞĞ£¬Ñ°ÕÒ×î½âÂëÎ»¾ØÕó
-     * @param bitMatrix: È«¾ÖºòÑ¡Î»¾ØÕó
-     * @param firstSelect£º µÚÒ»¸öÑ¡È¡µÄĞĞºÅ
-     * @return ×îÓÅ½âÂëÎ¬¾ØÕó
+     * @brief è®¾ç½®ç¬¬ä¸€ä¸ªé€‰å–çš„è¡Œï¼Œå¯»æ‰¾æœ€è§£ç ä½çŸ©é˜µ
+     * @param bitMatrix: å…¨å±€å€™é€‰ä½çŸ©é˜µ
+     * @param firstSelectï¼š ç¬¬ä¸€ä¸ªé€‰å–çš„è¡Œå·
+     * @return æœ€ä¼˜è§£ç ç»´çŸ©é˜µ
      */
     vector<vector<int>> generateOptDecodeBitMatrixWithFirstSelect(
         const vector<vector<int>> &bitMatrix, int firstSelect);
 
+    std::vector<unsigned int>
+    generateHeuristicSample(const std::vector<std::vector<int>> &bitMatrix,
+                            int sampleSize, unsigned int seed);
+
+    int computeRowSimilarity(const std::vector<int> &row1,
+                             const std::vector<int> &row2, int len);
+
   private:
-    int K;                            // Êı¾İ¿éÊıÁ¿
-    int M;                            // Ğ£Ñé¿éÊıÁ¿
-    int W;                            // ÓĞÏŞÓòW
-    int N;                            // Êı¾İ¿éºÍĞ£Ñé¿éÊıÁ¿Ö®ºÍ
-    vector<vector<int>> codingMatrix; // ±àÂë¾ØÕó
+    int K;                            // æ•°æ®å—æ•°é‡
+    int M;                            // æ ¡éªŒå—æ•°é‡
+    int W;                            // æœ‰é™åŸŸW
+    int N;                            // æ•°æ®å—å’Œæ ¡éªŒå—æ•°é‡ä¹‹å’Œ
+    vector<vector<int>> codingMatrix; // ç¼–ç çŸ©é˜µ
 };
 
 } // namespace ECProject
